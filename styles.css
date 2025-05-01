@@ -24,9 +24,9 @@
 
 .sidebar-nav.active {
     background-color: white !important; /* White background for active */
-    color: #a30000 !important; /* Your RentaHub red color */
+    color: #8E1616 !important;
     position:relative; 
-    left: -12px; 
+    /* left: -12px;  */
     min-width: 37vh; 
     max-width: 37vh; 
     width: 37vh;
@@ -35,7 +35,7 @@
 }
 
 .sidebar-nav:hover {
-    background-color: rgba(255, 255, 255, 0.2); /* Optional slight hover effect for inactive links */
+    background-color: rgba(255, 255, 255, 0.2); 
     color: white;
 }
 
@@ -45,5 +45,47 @@
 }
 
 .sidebar-nav.active svg {
-    fill: #a30000; /* When active, SVG becomes red */
+    fill: #8E1616; /* When active, SVG becomes red */
+}
+
+/* Extra small devices (portrait phones, less than 576px) */
+@media (max-width: 575.98px) {
+    #main-container {
+        margin-left: 0;
+    }
+}
+
+/* Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    #main-container {
+        margin-left: 0;
+    }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    #main-container {
+        margin-left: 0;
+    }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    #main-container {
+        margin-left: 37vh;
+    }
+}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) and (max-width: 1399.98px) {
+    #main-container {
+        margin-left: 37vh;
+    }
+}
+
+/* Extra extra large devices (very large screens, 1400px and up) */
+@media (min-width: 1400px) {
+    #main-container {
+        margin-left: 37vh;
+    }
 }
