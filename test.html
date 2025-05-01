@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RentaHub Sidebar</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons (for icons) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .sidebar {
+      width: 260px;
+      height: 100vh;
+      background: linear-gradient(180deg, #a30000 0%, #cc4c4c 100%);
+      color: white;
+      border-top-right-radius: 15px;
+      border-bottom-right-radius: 15px;
+      padding: 20px;
+    }
+    .sidebar-logo img {
+      width: 50px;
+    }
+    .sidebar-logo h4 {
+      margin: 0;
+      font-weight: bold;
+    }
+    .sidebar-logo small {
+      font-size: 0.75rem;
+    }
+    .nav-link {
+      color: white;
+      font-weight: bold;
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+    }
+    .nav-link i {
+      margin-right: 10px;
+      font-size: 1.2rem;
+    }
+    .nav-link:hover {
+      color: #f1f1f1;
+    }
+  </style>
+</head>
+<body>
+
+<div class="sidebar d-flex flex-column">
+  <!-- Logo and tagline -->
+  <div class="sidebar-logo mb-4">
+    <div class="d-flex align-items-center mb-2">
+      <!-- Placeholder image for logo -->
+      <img src="https://via.placeholder.com/40x40?text=Logo" alt="Logo" class="me-2">
+      <h4>RentaHub</h4>
+    </div>
+    <small>Mas Organized, Less Kulit!</small>
+  </div>
+
+  <!-- Menu Items -->
+  <a href="#" class="nav-link">
+    <i class="bi bi-grid"></i>
+    Dashboard
+  </a>
+  <a href="#" class="nav-link">
+    <i class="bi bi-clipboard"></i>
+    Tasks
+  </a>
+</div>
+
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
