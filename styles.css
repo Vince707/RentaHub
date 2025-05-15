@@ -13,6 +13,11 @@
     background: linear-gradient(51deg, rgba(142, 22, 22, 1) 29%, rgba(201, 106, 106, 1) 80%);
 }
 
+.gradient-green-bg {
+    background: #6EC456;
+    background: linear-gradient(31deg, rgba(110, 196, 86, 1) 0%, rgba(169, 214, 156, 1) 100%);
+}
+
 .horizontal {
     border: none;
     background-color: #8E1616 !important;
@@ -55,6 +60,10 @@
     color: #8F1515; 
 }
 
+.font-green {
+    color: #6EC456 !important; 
+}
+
 .font-white {
     color: white !important; 
 }
@@ -86,7 +95,7 @@
 }
 
 .btn-red {
-    border: 2px solid #8B0000; /* Maroon border */
+    border: 0.2rem solid #8f1515;
     background-color: transparent;
     color: #8B0000; /* Maroon text */
     border-radius: 12px;
@@ -156,6 +165,79 @@
   .btn-white-fill:hover svg {
     fill: white; /* When active, SVG becomes red */
 }
+
+.btn-red-fill {
+    border: 0.2rem solid #891B1B;
+    background-color: #891B1B;
+    color: white; /* Maroon text */
+    border-radius: 12px;
+    padding: 8px 20px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.btn-red-fill:hover {
+    border: 0.2rem solid #8f1515;
+    background-color: transparent;
+    color: #8B0000; /* Maroon text */
+}
+  
+  .btn-red-fill:hover svg {
+    fill: #8f1515; /* When active, SVG becomes red */
+}
+.btn-green {
+    border: 0.2rem solid #6EC456;
+    background-color: transparent;
+    color: #6EC456; /* Maroon text */
+    border-radius: 12px;
+    padding: 8px 20px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.btn-green:hover {
+    background-color: #6EC456;
+    color: white;
+}
+  
+  .btn-green:hover svg {
+    fill: white; /* When active, SVG becomes red */
+}
+.btn-green-fill {
+    border: 0.2rem solid #6EC456;
+    background-color: #6EC456;
+    color: white; /* Maroon text */
+    border-radius: 12px;
+    padding: 8px 20px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.btn-green-fill:hover {
+    border: 0.2rem solid #6EC456;
+    background-color: transparent;
+    color: #6EC456; /* Maroon text */
+}
+  
+  .btn-green-fill:hover svg {
+    fill: #6EC456; /* When active, SVG becomes red */
+}
+
 /* Extra small devices (portrait phones, less than 576px) */
 @media (max-width: 575.98px) {
     #main-container {
@@ -206,9 +288,9 @@
 }
 
 .form-floating .form-control {
-    border: 4px solid #891B1B; /* Change border color */
+    border: 0.2rem solid #891B1B; /* Change border color */
     border-radius: 12px; /* Remove border radius */
-    padding: 1.2rem 0.75rem; /* Adjust padding */
+    padding: 0.3rem 2.5rem 0.3rem 1.5rem;
     transition: border-color 0.2s ease-in-out; /* Smooth transition */
 }
 
@@ -231,4 +313,212 @@
     top: -8px; /* Adjust label position */
     font-size: 1rem; /* Adjust font size */
     color: #891B1B; /* Change label color when focused or input is filled */
+}
+
+.custom-select {
+    border: 0.2rem solid #8f1515;
+    border-radius: 0.8rem;       
+    color: #8f1515;           
+    font-weight: bold;                
+    font-size: 1rem;           
+    padding: 0.3rem 2.5rem 0.3rem 1.5rem;
+    appearance: none;          
+    background-color: white;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg viewBox='0 0 140 140' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='30,50 70,90 110,50' fill='none' stroke='%238f1515' stroke-width='16' stroke-linecap='round' stroke-linejoin='round' /%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1.2rem;
+    cursor: pointer;
+  }
+  
+  .custom-select:focus {
+    border-color: #8f1515;
+    box-shadow: none;
+    outline: none;
+  }
+
+  input.search-input {
+    border: 0.2rem solid #8f1515;
+    border-radius: 0.8rem; 
+    padding: 0.4rem 1rem;          /* Comfortable padding */
+    font-size: 1rem;               /* Normal font size */
+    font-weight: bold;            /* Bold text for placeholder */
+    color: #891B1B;               /* Text color */
+    width: 100%;                  /* Full width input */
+    outline: none;                /* Remove default blue outline */
+    transition: border-color 0.2s ease-in-out;
+}
+
+input.search-input::placeholder {
+    color: #891B1B;               /* Placeholder color */
+    opacity: 1;                   /* Ensure visibility */
+}
+
+
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  text-align: left;
+  min-width: 576px;
+}
+
+.custom-table th {
+    background-color: #891B1B;
+    color: white;
+    padding: 10px;
+    font-weight: bold;
+}
+
+.custom-table td {
+    padding: 10px;
+    border-bottom: 1px solid #891B1B;
+    color: #891B1B;
+    transition: background-color 0.2s ease;
+}
+
+.custom-table tr:last-child td {
+    border-bottom: 2px solid #891B1B;
+}
+
+.custom-table tbody tr:hover {
+    background-color: #f9e6e6; /* Light maroon-pink background on hover */
+    cursor: pointer;
+}
+
+.date-input-container {
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    transform: translateY(-20%);
+  }
+  
+  .date-label {
+    font-weight: bold;
+    color: #8B0000;
+    margin-bottom: 5px;
+  }
+  
+  .date-label span {
+    color: #8B0000;
+  }
+  
+  .date-input-wrapper {
+    display: flex;
+    align-items: center;
+    border: 0.2rem solid #8f1515;
+    border-radius: 10px;
+    padding: 8px 12px;
+    position: relative;
+    background-color: #fff;
+    cursor: pointer;
+  }
+  
+  .custom-date-input {
+    border: none;
+    outline: none;
+    font-size: 16px;
+    color: #8B0000;
+    background-color: transparent;
+    width: 100%;
+    cursor: pointer;
+    padding-right: 30px; /* prevent overlap with icon */
+  }
+  
+  /* Native icon visibility: visible but styled */
+  .custom-date-input::-webkit-calendar-picker-indicator {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    cursor: pointer;
+    opacity: 0;
+  }
+  
+  .calendar-icon {
+    font-size: 20px;
+    color: #8B0000;
+    position: absolute;
+    right: 12px;
+    pointer-events: none;
+  }
+  
+  .border-danger {
+    border-color: #8B0000 !important;
+  }
+
+  /* Active pill with Bootstrap red color */
+  .nav-pills-red .nav-pills .nav-link.active {
+    background-color: #8f1515; /* Bootstrap's red (danger) */
+    color: #fff;
+  }
+  
+  /* Optional: red border and hover effects */
+  .nav-pills-red .nav-pills .nav-link {
+    color: #dc3545;
+    border: 1px solid transparent;
+  }
+  
+  .nav-pills-red .nav-pills .nav-link:hover {
+    background-color: #f8d7da;
+    color: #dc3545;
+  }
+  
+  .custom-pagination .page-link {
+  color: #891B1B;
+  border: 1px solid #891B1B;
+  background-color: #fff;
+}
+
+.custom-pagination .page-item.active .page-link {
+  background-color: #891B1B;
+  color: #fff;
+  border-color: #891B1B;
+}
+
+.custom-pagination .page-link:hover {
+  background-color: #891B1B;
+  color: #fff;
+}
+
+.custom-checkbox-container {
+  display: inline-flex;
+  align-items: center;
+  border: 0.2rem solid #8f1515;
+  border-radius: 10px;
+  padding: 8px 20px;
+  color: #891B1B;
+  font-weight: bold;
+  font-size: 1.2rem;
+  cursor: pointer;
+  user-select: none;
+  gap: 10px;
+}
+
+.custom-checkbox {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #891B1B;
+  border-radius: 6px;
+  background-color: transparent;
+  display: inline-block;
+  position: relative;
+}
+
+.custom-checkbox:checked {
+  background-color: #891B1B;
+}
+
+.custom-checkbox:checked::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 6px;
+  height: 12px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
 }

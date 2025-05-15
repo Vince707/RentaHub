@@ -1,0 +1,180 @@
+<apartmentManagement>
+    <renters>
+      <renter id="1">
+        <userId></userId>
+        <status></status>
+        <personalInfo>
+            <name>
+                <surname></surname>
+                <firstName></firstName>
+                <middleName></middleName>
+                <extension></extension>
+            </name>
+            <contact></contact>
+            <birthDate></birthDate>
+            <validId>
+                <validIdType></validIdType>
+                <validIdNumber></validIdNumber>
+            </validId>
+        </personalInfo>
+        <rentalInfo>
+            <unitId></unitId>
+            <leaseStart></leaseStart>
+            <leaseEnd></leaseEnd>
+            <contractTermInMonths></contractTermInMonths>
+            <leavingReason></leavingReason>
+        </rentalInfo>
+      </renter>
+    </renters>
+    <rooms>
+        <room id="">
+            <roomNo></roomNo>
+            <floorNo></floorNo>
+            <roomType></roomType>
+            <sizeSQM></sizeSQM>
+            <rentPrice></rentPrice>
+            <status></status>
+            <deleteReason></deleteReason>
+        </room>
+    </rooms>
+    <billing>
+        <utilityBills>
+            <utility type="Electricity">
+                <accountInfo>
+                    <accountName></accountName>
+                    <accountNumber></accountNumber>
+                    <meterNumber></meterNumber>
+                    <address></address>
+                </accountInfo>
+                <reading id="1">
+                    <readingDate></readingDate>
+                    <periodEnd></periodEnd>
+                    <dueDate></dueDate>
+                    <consumedKwhTotal></consumedKwhTotal>
+                    <amountPerKwh></amountPerKwh>
+                    <totalBill></totalBill>
+                    <status>Unpaid</status>
+                    <bill id="">
+                        <renterId></renterId>
+                        <currentReading></currentReading>
+                        <consumedKwh></consumedKwh>
+                        <amount></amount>
+                        <overpaid></overpaid>
+                        <debt></debt>
+                        <status>Unpaid</status>
+                    </bill>
+                </reading>
+            </utility>
+            <utility type="Water">
+                <accountInfo>
+                    <accountName></accountName>
+                    <accountNumber></accountNumber>
+                    <meterNumber></meterNumber>
+                    <address></address>
+                </accountInfo>
+                <reading id="1">
+                    <readingDate></readingDate>
+                    <periodEnd></periodEnd>
+                    <dueDate></dueDate>
+                    <consumedCubicMTotal></consumedCubicMTotal>
+                    <amountPerCubicM></amountPerCubicM>
+                    <totalBill></totalBill>
+                    <status>Unpaid</status>
+                    <bill id="">
+                        <renterId></renterId>
+                        <currentReading></currentReading>
+                        <consumedCubic></consumedCubic>
+                        <amount></amount>
+                        <overpaid></overpaid>
+                        <debt></debt>
+                        <status>Unpaid</status>
+                    </bill>
+                </reading>
+            </utility>
+        </utilityBills>
+        <rentBills>
+            <bill id="101">
+                <renterId>1</renterId>
+                <amount>3500</amount>
+                <dueDate>2025-04-10</dueDate>
+                <overpaid></overpaid>
+                <debt></debt>
+                <status>Unpaid</status>
+              </bill>
+        </rentBills>
+    </billing>
+  
+    <payments>
+      <payment id="201">
+        <renterId>2</renterId>
+        <paymentType></paymentType>
+        <paymentAmountType></paymentAmountType>
+        <paymentDate>2025-04-08</paymentDate>
+        <amount>5000</amount>
+        <paymentMethod></paymentMethod>
+        <remarks></remarks>
+      </payment>
+    </payments>
+  
+    <tasks>
+      <task id="301">
+        <title>Pay Meralco Electric Bill</title>
+        <type>Utility</type>
+        <concernedWith></concernedWith>
+        <amountPaid></amountPaid>
+        <dueDate>2025-04-15</dueDate>
+        <status>Pending</status>
+        <deleteReason></deleteReason>
+      </task>
+      <task id="302">
+        <title>Remind Juan Dela Cruz to pay rent</title>
+        <type>Collection</type>
+        <dueDate>2025-04-10</dueDate>
+        <status>Overdue</status>
+      </task>
+    </tasks>
+
+    <inquiries>
+        <inquiry id="">
+            <renterId></renterId>
+            <inquiryContent></inquiryContent>
+            <dateGenerated></dateGenerated>
+            <status></status>
+            <response></response>
+            <deleteReason></deleteReason>
+        </inquiry>
+    </inquiries>
+    <users>
+        <user id="1">
+            <email></email>
+            <password></password>
+            <dateGenerated></dateGenerated>
+            <userRole></userRole>
+            <status></status>
+            <lastLogin></lastLogin>
+        </user>
+    </users>
+    <caretakers>
+        <caretaker id="">
+            <userId></userId>
+            <personalInfo>
+                <name>
+                    <surname></surname>
+                    <firstName></firstName>
+                    <middleName></middleName>
+                    <extension></extension>
+                </name>
+            </personalInfo>
+        </caretaker>
+    </caretakers>
+    <auditTrail>
+        <action id="">
+            <userId></userId>
+            <ipAddress></ipAddress>
+            <concernedModule></concernedModule>
+            <actionPerformed></actionPerformed>
+            <timestamp></timestamp>
+        </action>
+    </auditTrail>
+  </apartmentManagement>
+  
