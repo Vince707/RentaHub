@@ -1,3 +1,11 @@
+$(window).on('load', function () {
+  // Fade out the loading screen
+  $('#loading-screen').fadeOut('slow', function () {
+    $('#main-content').fadeIn('slow');
+  });
+});
+
+
 let date = new Date(); // use let to allow updating
 const options = {
   year: "numeric",
@@ -15,8 +23,66 @@ function formatDateToYYYYMMDD(dateObj) {
   return `${year}-${month}-${day}`;
 }
 
+let renterDataMap = {};
+
+$.ajax({
+  url: 'apartment.xml',
+  dataType: 'xml',
+  success: function (xml) {
+    $(xml).find('renter').each(function () {
+      const id = $(this).attr('id');
+
+      renterDataMap[id] = {
+        userId: $(this).find('userId').text().trim(),
+        status: $(this).find('status').text().trim(),
+        surname: $(this).find('personalInfo > name > surname').text().trim(),
+        firstName: $(this).find('personalInfo > name > firstName').text().trim(),
+        middleName: $(this).find('personalInfo > name > middleName').text().trim(),
+        extension: $(this).find('personalInfo > name > extension').text().trim(),
+        contact: $(this).find('personalInfo > contact').text().trim(),
+        birthDate: $(this).find('personalInfo > birthDate').text().trim(),
+        validIdType: $(this).find('personalInfo > validId > validIdType').text().trim(),
+        validIdNumber: $(this).find('personalInfo > validId > validIdNumber').text().trim(),
+        unitId: $(this).find('rentalInfo > unitId').text().trim(),
+        leaseStart: $(this).find('rentalInfo > leaseStart').text().trim(),
+        leaseEnd: $(this).find('rentalInfo > leaseEnd').text().trim(),
+        contractTermInMonths: $(this).find('rentalInfo > contractTermInMonths').text().trim(),
+        leavingReason: $(this).find('rentalInfo > leavingReason').text().trim()
+      };
+    });
+  }
+});
+
+function displaySuccessModal(){
+  const url = new URL(window.location.href);
+  const urlParams = url.searchParams;
+  const renterAction = urlParams.get('renter');
+
+    switch (renterAction) {
+      case 'modified':
+        $('#modalModifyRenterSuccess').modal('show');
+        break;
+
+      case 'added':
+        $('#modalAddRenterSuccess').modal('show');
+        break;
+
+      case 'archived':
+        $('#modalRemoveRenterSuccess').modal('show');
+        break;
+
+      default:
+        // Do nothing or handle unknown action
+        break;
+    }
+
+   // Clean URL (remove all search parameters)
+    url.search = '';
+    window.history.replaceState({}, document.title, url.toString());
+}
 
 $(document).ready(function () {
+  displaySuccessModal();
   const today = formatDateToYYYYMMDD(new Date());
   $('#add-renter-birthdate').attr('max', today);
   $('#modify-renter-birthdate').attr('max', today);
@@ -97,7 +163,7 @@ $(document).ready(function () {
     if (password !== confirmPassword) return showError("Password do not match.", "#error-box-add-renter", "#error-text-add-renter");
     if (!isValidPasswordChars(password)) return showError("Password contains invalid characters.", "#error-box-add-renter", "#error-text-add-renter");
     const passwordCheck = isStrongPassword(password);
-    if (!passwordCheck.isValid) return showError(passwordCheck.errors.join("<br/>")), "#error-box-add-renter", "#error-text-add-renter";
+    if (!passwordCheck.isValid) return showError(passwordCheck.errors.join("<br/>"), "#error-box-add-renter", "#error-text-add-renter");
   
     // Fill confirmation modal
     $("#confirm-add-renter-first-name").text(firstName);
@@ -106,7 +172,7 @@ $(document).ready(function () {
     $("#confirm-add-renter-ext-name").text(extName);
     $("#confirm-add-renter-contact-number").text(contact);
     $("#confirm-add-renter-birthdate").text(birthdate);
-    $("#confirm-add-renter-valid-id-type").text(idType ? idType.replace(/-/g, " ").toUpperCase() : "");
+    $("#confirm-add-renter-valid-id-type").text(idType);
     $("#confirm-add-renter-valid-id-number").text(idNumber);
     $("#confirm-add-renter-room-number").text(room);
     $("#confirm-add-renter-contract-term").text(contractTerm);
@@ -121,20 +187,18 @@ $(document).ready(function () {
     $("#hidden-add-renter-ext-name").val(extName);
     $("#hidden-add-renter-contact-number").val(contact);
     $("#hidden-add-renter-birthdate").val(birthdate);
-    $("#hidden-add-renter-valid-id-type").val(idType ? idType.replace(/-/g, " ").toUpperCase() : "");
+    $("#hidden-add-renter-valid-id-type").val(idType);
     $("#hidden-add-renter-valid-id-number").val(idNumber);
     $("#hidden-add-renter-room-number").val(room);
     $("#hidden-add-renter-contract-term").val(contractTerm);
     $("#hidden-add-renter-lease-start").val(leaseStart);
     $("#hidden-add-renter-email").val(email);
-    
+    $("#hidden-add-renter-password").val(password);
+
     $('#modalAddRenter').modal('hide');
     $('#modalAddRenterConfirmation').modal('show');
     hideError("#error-box-add-renter", "#error-text-add-renter");
   });
-
-
-
 
 
   $('#button-modify-renter').on("click", function () {
@@ -202,11 +266,25 @@ $(document).ready(function () {
     $("#confirm-modify-renter-ext-name").text(extName);
     $("#confirm-modify-renter-contact-number").text(contact);
     $("#confirm-modify-renter-birthdate").text(birthdate);
-    $("#confirm-modify-renter-valid-id-type").text(idType ? idType.replace(/-/g, " ").toUpperCase() : "");
+    $("#confirm-modify-renter-valid-id-type").text(idType);
     $("#confirm-modify-renter-valid-id-number").text(idNumber);
     $("#confirm-modify-renter-room-number").text(room);
     $("#confirm-modify-renter-contract-term").text(contractTerm);
     $("#confirm-modify-renter-lease-start").text(leaseStart);
+
+    // FILL Hidden form for PHP
+    $("#hidden-modify-renter-first-name").val(firstName);
+    $("#hidden-modify-renter-middle-name").val(middleName);
+    $("#hidden-modify-renter-surname").val(surname);
+    $("#hidden-modify-renter-ext-name").val(extName);
+    $("#hidden-modify-renter-contact-number").val(contact);
+    $("#hidden-modify-renter-birthdate").val(birthdate);
+    $("#hidden-modify-renter-valid-id-type").val(idType);
+    $("#hidden-modify-renter-valid-id-number").val(idNumber);
+    $("#hidden-modify-renter-room-number").val(room);
+    $("#hidden-modify-renter-contract-term").val(contractTerm);
+    $("#hidden-modify-renter-lease-start").val(leaseStart);
+    $("#hidden-modify-renter-user-id").val(leaseStart);
   
     $('#modalModifyRenter').modal('hide');
     $('#modalModifyRenterConfirmation').modal('show');
@@ -224,9 +302,12 @@ $(document).ready(function () {
     }
   
     // Fill confirmation modal
-    // TODO: Display existing datas
     $("#confirm-remove-renter-reason").text(reason);
     $("#confirm-remove-renter-lease-end").text(leaseEnd);
+
+    // FILL Hidden form for PHP
+    $("#hidden-remove-renter-reason").val(reason);
+    $("#hidden-remove-renter-lease-end").val(leaseEnd);
   
     $('#modalRemoveRenter').modal('hide');
     $('#modalRemoveRenterConfirmation').modal('show');
@@ -541,6 +622,63 @@ $('#record-payment-rent-checkbox').prop('checked', false);
 
 
 });
+
+$(document).on("click", ".button-table-modify-renter", function () {
+  const renterId = $(this).data('renter-id');
+  const renter = renterDataMap[renterId];
+
+  if (renter) {
+    $('#modify-renter-surname').val(renter.surname);
+    $('#modify-renter-first-name').val(renter.firstName);
+    $('#modify-renter-middle-name').val(renter.middleName);
+    $('#modify-renter-ext-name').val(renter.extension);
+    $('#modify-renter-contact-number').val(renter.contact);
+    $('#modify-renter-birthdate').val(renter.birthDate);
+    $('#modify-renter-valid-id-type').val(renter.validIdType);
+    $('#modify-renter-valid-id-number').val(renter.validIdNumber);
+    $('#modify-renter-room-number').val(renter.unitId);
+    $('#modify-renter-contract-term').val(renter.contractTermInMonths);
+    $('#modify-renter-lease-start').val(renter.leaseStart);
+    $('#modify-renter-lease-end').val(renter.leaseEnd);
+    $('#modify-renter-leaving-reason').val(renter.leavingReason);
+    $("#hidden-modify-renter-renter-id").val(renterId);
+    $("#hidden-modify-renter-user-id").val(renter.userId);
+  } else {
+    alert("Renter data not found.");
+  }
+});
+
+$(document).on("click", ".button-table-remove-renter", function () {
+  const renterId = $(this).data('renter-id');
+  const renter = renterDataMap[renterId];
+
+  if (renter) {
+    $('#remove-renter-first-name').text(renter.firstName);
+    $('#remove-renter-middle-name').text(renter.middleName);
+    $('#remove-renter-surname').text(renter.surname);
+    $('#remove-renter-ext-name').text(renter.extension || ''); // in case ext is null
+    $('#remove-renter-contact-number').text(renter.contact);
+    $('#remove-renter-room-number').text(renter.unitId);
+    $('#remove-renter-lease-start').text(renter.leaseStart);
+
+    $('#confirm-remove-renter-first-name').text(renter.firstName);
+    $('#confirm-remove-renter-middle-name').text(renter.middleName);
+    $('#confirm-remove-renter-surname').text(renter.surname);
+    $('#confirm-remove-renter-ext-name').text(renter.extension || ''); // in case ext is null
+    $('#confirm-remove-renter-contact-number').text(renter.contact);
+    $('#confirm-remove-renter-room-number').text(renter.unitId);
+    $('#confirm-remove-renter-lease-start').text(renter.leaseStart);
+
+    $("#hidden-remove-renter-renter-id").val(renterId);
+    $("#hidden-remove-renter-user-id").val(renter.userId);
+    // You can also store renterId in a hidden input or data attribute if needed for backend deletion
+    $('#button-remove-renter').data('renter-id', renterId);
+  } else {
+    alert("Renter data not found.");
+  }
+});
+
+
 
 function sendNotification(renterID){
   // TODO: Send Notification

@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Payments &#128176; | RentaHub</title>
+    <title>Renter &#127969; | RentaHub</title>
     <link rel="icon" type="image/x-icon" href="images/logo-only.png" />
 
     <!-- Bootstrap 5 CSS -->
@@ -97,6 +97,11 @@
 
 <body class="h-100">  
   <audio id="error-sound" src="audio/error.mp3" preload="auto"></audio>
+  <!-- Loading Screen -->
+<div id="loading-screen">
+    <div class="spinner"></div>
+    <p>Loading, please wait...</p>
+</div>
   <!-- Toggle Button for sm and md screens -->
   <button class="btn d-block d-xl-none m-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#sideMenuOffcanvas"
     aria-controls="sideMenuOffcanvas">
@@ -229,43 +234,93 @@
 
         <!-- TABLE -->
         <table class="custom-table" id="renter-information-table">
-          <thead>
-            <tr>
-              <th>Room No.</th>
-              <th>Renter Name</th>
-              <th>Contact Number</th>
-              <th>Lease Start</th>
-              <th class="text-center">Status</th>
-              <th class="text-center">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1A</td>
-              <td>Dave Alon</td>
-              <td>0912 345 6789</td>
-              <td>January 18, 2025</td>
-              <td>
-                <div class="d-flex justify-content-center align-items-center">
-                  <span class="badge rounded-pill bg-warning" id="status">Overdue</span>
-                </div>
-              </td>
-              <td>
-                <div class="d-flex flex-row justify-content-center align-items-center align-self-center">
-                  <button type="button" class="ms-1 btn-red-fill d-flex align-items-center px-3 py-1" id="button-view" data-bs-toggle="modal" data-bs-target="#modalViewRenter">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M480-320q75 0 127.5-52.5T660-500q0-75-52.5-127.5T480-680q-75 0-127.5 52.5T300-500q0 75 52.5 127.5T480-320Zm0-72q-45 0-76.5-31.5T372-500q0-45 31.5-76.5T480-608q45 0 76.5 31.5T588-500q0 45-31.5 76.5T480-392Zm0 192q-146 0-266-81.5T40-500q54-137 174-218.5T480-800q146 0 266 81.5T920-500q-54 137-174 218.5T480-200Zm0-300Zm0 220q113 0 207.5-59.5T832-500q-50-101-144.5-160.5T480-720q-113 0-207.5 59.5T128-500q50 101 144.5 160.5T480-280Z"/></svg>
-                  </button>
-                  <button type="button" class="ms-1 btn-red-fill d-flex align-items-center px-3 py-1" id="button-edit" data-bs-toggle="modal" data-bs-target="#modalModifyRenter">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg>
-                  </button>
-                  <button type="button" class="ms-1 btn-red-fill d-flex align-items-center px-3 py-1" id="button-delete" data-bs-toggle="modal" data-bs-target="#modalRemoveRenter">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
+            <thead>
+                <tr>
+                <th>Room No.</th>
+                <th>Renter Name</th>
+                <th>Contact Number</th>
+                <th>Lease Start</th>
+                <th class="text-center">Status</th>
+                <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <xsl:for-each select="$data/apartmentManagement/renters/renter">
+                <xsl:if test="status != 'Archived'">
+                    <tr>
+                    <td><xsl:value-of select="rentalInfo/unitId"/></td>
+                    <td>
+                        <xsl:value-of select="personalInfo/name/firstName"/>&#160;
+                        <xsl:value-of select="personalInfo/name/middleName"/>&#160;
+                        <xsl:value-of select="personalInfo/name/surname"/>&#160;
+                        <xsl:value-of select="personalInfo/name/extension"/>
+                    </td>
+                    <td><xsl:value-of select="personalInfo/contact"/></td>
+                    <td><xsl:value-of select="rentalInfo/leaseStart"/></td>
+                    <td>
+                        <div class="d-flex justify-content-center align-items-center">
+                        <span class="badge rounded-pill bg-success" id="status">
+                            <xsl:value-of select="status"/>
+                        </span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex flex-row justify-content-center align-items-center align-self-center">
+
+                        <!-- Extract renter ID -->
+                        <xsl:variable name="renterId" select="@id"/>
+                        <xsl:variable name="userId" select="userId"/>
+
+                        <!-- VIEW button -->
+                        <button type="button" class="ms-1 btn-red-fill d-flex align-items-center px-3 py-1" id="button-view" data-bs-toggle="modal" data-bs-target="#modalViewRenter">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF">
+                            <path d="M480-320q75 0 127.5-52.5T660-500q0-75-52.5-127.5T480-680q-75 0-127.5 52.5T300-500q0 75 52.5 127.5T480-320Zm0-72q-45 0-76.5-31.5T372-500q0-45 31.5-76.5T480-608q45 0 76.5 31.5T588-500q0 45-31.5 76.5T480-392Zm0 192q-146 0-266-81.5T40-500q54-137 174-218.5T480-800q146 0 266 81.5T920-500q-54 137-174 218.5T480-200Zm0-300Zm0 220q113 0 207.5-59.5T832-500q-50-101-144.5-160.5T480-720q-113 0-207.5 59.5T128-500q50 101 144.5 160.5T480-280Z"/>
+                            </svg>
+                        </button>
+
+                        <!-- EDIT button -->
+                        <button
+                            type="button"
+                            class="ms-1 btn-red-fill d-flex align-items-center px-3 py-1 button-table-modify-renter"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modalModifyRenter">
+                            <xsl:attribute name="data-renter-id">
+                            <xsl:value-of select="$renterId"/>
+                            </xsl:attribute>
+                            <xsl:attribute name="data-user-id">
+                            <xsl:value-of select="$userId"/>
+                            </xsl:attribute>
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF">
+                            <path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/>
+                            </svg>
+                        </button>
+
+                        <!-- DELETE button -->
+                        <button
+                            type="button"
+                            class="ms-1 btn-red-fill d-flex align-items-center px-3 py-1 button-table-remove-renter"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modalRemoveRenter">
+                            <xsl:attribute name="data-renter-id">
+                            <xsl:value-of select="$renterId"/>
+                            </xsl:attribute>
+                            <xsl:attribute name="data-user-id">
+                            <xsl:value-of select="$userId"/>
+                            </xsl:attribute>
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF">
+                            <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/>
+                            </svg>
+                        </button>
+
+                        </div>
+                    </td>
+                    </tr>
+                </xsl:if>
+                </xsl:for-each>
+            </tbody>
         </table>
+
+        
       </div>
     </div>
   </div>
@@ -345,10 +400,22 @@
           <div class="d-flex flex-row mb-3 flex-wrap">
            <div class="me-2 mb-3 flex-fill">
             <select class="form-select custom-select" id="add-renter-room-number" required="required" style="height: 3.5rem;">
-              <option selected="selected" disabled="disabled" hidden="hidden">Room Number *</option> 
-              <option value="1A">1A</option>
-              <!-- TODO: FROM XML -->
-            </select>
+            <option selected="selected" disabled="disabled" hidden="hidden">Room Number *</option>
+
+            <xsl:for-each select="$data/apartmentManagement/rooms/room[roomNo != '']">
+                <xsl:variable name="roomNo" select="roomNo"/>
+                
+                <!-- Only display this room if it is NOT in use by a non-Archived renter -->
+                <xsl:if test="not(/apartmentManagement/renters/renter[status != 'Archived' and rentalInfo/unitId = $roomNo])">
+                    <option value="{roomNo}">
+                        <xsl:value-of select="roomNo"/>
+                    </option>
+                </xsl:if>
+            </xsl:for-each>
+        </select>
+
+
+
            </div>
             <div class="form-floating me-2 flex-fill">
               <input type="text" class="form-control" id="add-renter-contract-term" placeholder="" required="required"/>
@@ -422,7 +489,7 @@
             <p class="h4 font-red-gradient">Personal Information</p>
             <div class="d-flex flex-row">
               <p class="h5 font-red-gradient me-2">Name:</p>
-              <p class="font-red"><span id="confirm-add-renter-first-name" class="font-red"></span> <span id="confirm-add-renter-middle-name"></span> <span id="confirm-add-renter-surname"></span> <span id="confirm-add-renter-ext-name"></span></p>
+              <p class="font-red"><span id="confirm-add-renter-first-name" class="font-red"></span>&#160;<span id="confirm-add-renter-middle-name"></span>&#160;<span id="confirm-add-renter-surname"></span>&#160;<span id="confirm-add-renter-ext-name"></span></p>
             </div>
             <div class="d-flex flex-row">
               <p class="h5 font-red-gradient me-2">Contact Number:</p>
@@ -470,7 +537,7 @@
 
         <!-- Modal footer -->
         <div class="modal-footer">
-          <button type="button" class="btn-red" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalAddRenter">Return</button>
+          <button type="button" class="btn-red me-3" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalAddRenter">Return</button>
           <form id="add-renter" method="POST" action="functions/add-renter.php">
             <input type="hidden" id="hidden-add-renter-first-name" name="first_name"/>
             <input type="hidden" id="hidden-add-renter-middle-name" name="middle_name"/>
@@ -484,6 +551,7 @@
             <input type="hidden" id="hidden-add-renter-contract-term" name="contract_term"/>
             <input type="hidden" id="hidden-add-renter-lease-start" name="lease_start"/>
             <input type="hidden" id="hidden-add-renter-email" name="email"/>
+            <input type="hidden" id="hidden-add-renter-password" name="password"/>
             <button type="submit" class="btn-green-fill" data-bs-dismiss="modal" data-bs-toggle="modal"
                 data-bs-target="#modalAddRenterSuccess" id="button-confirm-add-renter">Confirm</button>
           </form>
@@ -518,7 +586,6 @@
 
 
   <!-- Modal Modify Renter -->
-   <!-- TODO: Get Clicked Data from XML -->
   <div class="modal fade" id="modalModifyRenter" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-md-down">
       <div class="modal-content p-4">
@@ -650,7 +717,7 @@
             <p class="h4 font-red-gradient">Personal Information</p>
             <div class="d-flex flex-row">
               <p class="h5 font-red-gradient me-2">Name:</p>
-              <p class="font-red"><span id="confirm-modify-renter-first-name" class="font-red"></span> <span id="confirm-modify-renter-middle-name"></span> <span id="confirm-modify-renter-surname"></span> <span id="confirm-modify-renter-ext-name"></span></p>
+              <p class="font-red"><span id="confirm-modify-renter-first-name" class="font-red"></span>&#160;<span id="confirm-modify-renter-middle-name"></span>&#160;<span id="confirm-modify-renter-surname"></span>&#160;<span id="confirm-modify-renter-ext-name"></span></p>
             </div>
             <div class="d-flex flex-row">
               <p class="h5 font-red-gradient me-2">Contact Number:</p>
@@ -692,8 +759,24 @@
 
         <!-- Modal footer -->
         <div class="modal-footer">
-          <button type="button" class="btn-red" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalModifyRenter">Return</button>
-          <button type="button" class="btn-green-fill" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalModifyRenterSuccess" id="button-confirm-modify-renter">Confirm</button>
+          <button type="button" class="btn-red me-3" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalModifyRenter">Return</button>
+          <form id="modify-renter" method="POST" action="functions/modify-renter.php">
+            <input type="hidden" id="hidden-modify-renter-first-name" name="first_name"/>
+            <input type="hidden" id="hidden-modify-renter-middle-name" name="middle_name"/>
+            <input type="hidden" id="hidden-modify-renter-surname" name="surname"/>
+            <input type="hidden" id="hidden-modify-renter-ext-name" name="ext_name"/>
+            <input type="hidden" id="hidden-modify-renter-contact-number" name="contact_number"/>
+            <input type="hidden" id="hidden-modify-renter-birthdate" name="birthdate"/>
+            <input type="hidden" id="hidden-modify-renter-valid-id-type" name="valid_id_type"/>
+            <input type="hidden" id="hidden-modify-renter-valid-id-number" name="valid_id_number"/>
+            <input type="hidden" id="hidden-modify-renter-room-number" name="room_number"/>
+            <input type="hidden" id="hidden-modify-renter-contract-term" name="contract_term"/>
+            <input type="hidden" id="hidden-modify-renter-lease-start" name="lease_start"/>
+            <input type="hidden" id="hidden-modify-renter-renter-id" name="renter_id"/>
+            <input type="hidden" id="hidden-modify-renter-user-id" name="user_id"/>
+
+            <button type="submit" class="btn-green-fill" data-bs-dismiss="modal" id="button-confirm-modify-renter">Confirm</button>
+            </form>
         </div>
       </div>
     </div>
@@ -738,7 +821,7 @@
         <div class="modal-body d-flex flex-column">
           <div class="d-flex flex-row">
             <p class="h5 font-red-gradient me-2">Name:</p>
-            <p class="font-red"><span id="remove-renter-first-name" class="font-red"></span> <span id="remove-renter-middle-name"></span> <span id="remove-renter-surname"></span> <span id="remove-renter-ext-name"></span></p>
+            <p class="font-red"><span id="remove-renter-first-name" class="font-red"></span>&#160;<span id="remove-renter-middle-name"></span>&#160;<span id="remove-renter-surname"></span>&#160;<span id="remove-renter-ext-name"></span></p>
           </div>
           <div class="d-flex flex-row">
             <p class="h5 font-red-gradient me-2">Contact Number:</p>
@@ -837,7 +920,17 @@
         <!-- Modal footer -->
         <div class="modal-footer">
           <button type="button" class="btn-red" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalRemoveRenter">Return</button>
-          <button type="button" class="btn-red-fill" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalRemoveRenterSuccess" id="button-confirm-remove-renter">Confirm</button>
+          <form id="remove-renter" method="POST" action="functions/remove-renter.php">
+            <input type="hidden" id="hidden-remove-renter-reason" name="reason" />
+            <input type="hidden" id="hidden-remove-renter-lease-end" name="lease_end" />
+            <input type="hidden" id="hidden-remove-renter-renter-id" name="renter_id" />
+            <input type="hidden" id="hidden-remove-renter-user-id" name="user_id" />
+
+            <button type="submit" class="btn-red-fill" id="button-confirm-remove-renter" data-bs-dismiss="modal">
+                Remove
+            </button>
+            </form>
+
         </div>
       </div>
     </div>
@@ -1386,7 +1479,7 @@
 
 
 
-  <!-- Modal View Renter -->
+  <!-- Modal View Archive Renter -->
    <!-- TODO: Get Clicked Data from XML -->
    <div class="modal fade" id="modalViewArchiveRenter" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-md-down">
@@ -1410,7 +1503,7 @@
                 Archived</div>
               
             </div>
-            <button type="button" class="ms-1 btn-red d-flex align-items-center px-3 py-1" data-bs-dismiss="modal">
+            <button type="button" class="ms-1 btn-red d-flex align-items-center px-3 py-1" data-bs-dismiss="modal"  data-bs-toggle="modal" data-bs-target="#modalArchiveRenter">
                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#8B0000"><path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z"/></svg>
                 Back
               </button>
@@ -1897,23 +1990,46 @@
               <th>Renter Name</th>
               <th>Contact Number</th>
               <th>Lease Ended</th>
+              <th>Status</th>
               <th class="text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>1A</td>
-              <td>Dave Alon</td>
-              <td>0912 345 6789</td>
-              <td>January 18, 2025</td>
-              <td>
-                <div class="d-flex flex-row justify-content-center align-items-center align-self-center">
-                  <button type="button" class="ms-1 btn-red-fill d-flex align-items-center px-3 py-1" id="button-view" data-bs-toggle="modal" data-bs-target="#modalViewArchiveRenter">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M480-320q75 0 127.5-52.5T660-500q0-75-52.5-127.5T480-680q-75 0-127.5 52.5T300-500q0 75 52.5 127.5T480-320Zm0-72q-45 0-76.5-31.5T372-500q0-45 31.5-76.5T480-608q45 0 76.5 31.5T588-500q0 45-31.5 76.5T480-392Zm0 192q-146 0-266-81.5T40-500q54-137 174-218.5T480-800q146 0 266 81.5T920-500q-54 137-174 218.5T480-200Zm0-300Zm0 220q113 0 207.5-59.5T832-500q-50-101-144.5-160.5T480-720q-113 0-207.5 59.5T128-500q50 101 144.5 160.5T480-280Z"/></svg>
-                  </button>
-                </div>
-              </td>
-            </tr>
+            <xsl:for-each select="$data/apartmentManagement/renters/renter">
+                <xsl:if test="status = 'Archived'">
+                    <tr>
+                    <td><xsl:value-of select="rentalInfo/unitId"/></td>
+                    <td>
+                        <xsl:value-of select="personalInfo/name/firstName"/>&#160;
+                        <xsl:value-of select="personalInfo/name/middleName"/>&#160;
+                        <xsl:value-of select="personalInfo/name/surname"/>&#160;
+                        <xsl:value-of select="personalInfo/name/extension"/>
+                    </td>
+                    <td><xsl:value-of select="personalInfo/contact"/></td>
+                    <td><xsl:value-of select="rentalInfo/leaseEnd"/></td>
+                    <td>
+                        <div class="d-flex justify-content-center align-items-center">
+                        <span class="badge rounded-pill bg-danger" id="status">
+                            <xsl:value-of select="status"/>
+                        </span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex flex-row justify-content-center align-items-center align-self-center">
+
+                        <!-- Extract renter ID -->
+                        <xsl:variable name="renterId" select="@id"/>
+                        <xsl:variable name="userId" select="userId"/>
+
+                        <!-- VIEW button -->
+                        <button type="button" class="ms-1 btn-red-fill d-flex align-items-center px-3 py-1 button-table-view-archive-renter" id="button-view" data-bs-toggle="modal" data-bs-target="#modalViewArchiveRenter">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M480-320q75 0 127.5-52.5T660-500q0-75-52.5-127.5T480-680q-75 0-127.5 52.5T300-500q0 75 52.5 127.5T480-320Zm0-72q-45 0-76.5-31.5T372-500q0-45 31.5-76.5T480-608q45 0 76.5 31.5T588-500q0 45-31.5 76.5T480-392Zm0 192q-146 0-266-81.5T40-500q54-137 174-218.5T480-800q146 0 266 81.5T920-500q-54 137-174 218.5T480-200Zm0-300Zm0 220q113 0 207.5-59.5T832-500q-50-101-144.5-160.5T480-720q-113 0-207.5 59.5T128-500q50 101 144.5 160.5T480-280Z"/></svg>
+                        </button>
+                        </div>
+                    </td>
+                    </tr>
+                </xsl:if>
+                </xsl:for-each>
           </tbody>
         </table>
 

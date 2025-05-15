@@ -2,24 +2,34 @@
 // File path
 $xmlFile = '../apartment.xml';
 
-// Load existing XML or create a new one if it doesn't exist
+// Load existing XML or create a new structure
 if (file_exists($xmlFile)) {
     $xml = simplexml_load_file($xmlFile);
 } else {
-    $xml = new SimpleXMLElement('<apartmentManagement><renters></renters></apartmentManagement>');
+    $xml = new SimpleXMLElement('<apartmentManagement><users></users><renters></renters></apartmentManagement>');
 }
 
-// Get the next ID
-$lastId = 0;
-foreach ($xml->renters->renter as $r) {
-    $id = (int)$r['id'];
-    if ($id > $lastId) {
-        $lastId = $id;
+// === Generate new user ID ===
+$lastUserId = 0;
+foreach ($xml->users->user as $user) {
+    $id = (int)$user['id'];
+    if ($id > $lastUserId) {
+        $lastUserId = $id;
     }
 }
-$newId = $lastId + 1;
+$newUserId = $lastUserId + 1;
 
-// Sanitize and collect form data
+// === Generate new renter ID ===
+$lastRenterId = 0;
+foreach ($xml->renters->renter as $renterNode) {
+    $id = (int)$renterNode['id'];
+    if ($id > $lastRenterId) {
+        $lastRenterId = $id;
+    }
+}
+$newRenterId = $lastRenterId + 1;
+
+// === Get Form Data ===
 $firstName = $_POST['first_name'] ?? '';
 $middleName = $_POST['middle_name'] ?? '';
 $surname = $_POST['surname'] ?? '';
@@ -32,12 +42,26 @@ $room = $_POST['room_number'] ?? '';
 $contractTerm = $_POST['contract_term'] ?? '';
 $leaseStart = $_POST['lease_start'] ?? '';
 $email = $_POST['email'] ?? '';
+$password = $_POST['password']; // Default password, hash this in real apps
+$userRole = 'Renter';
+$status = 'Active';
+$dateGenerated = date('Y-m-d');
 
-// Add new renter
+// === Add to <users> ===
+$user = $xml->users->addChild('user');
+$user->addAttribute('id', $newUserId);
+$user->addChild('email', htmlspecialchars($email));
+$user->addChild('password', htmlspecialchars($password));
+$user->addChild('dateGenerated', $dateGenerated);
+$user->addChild('userRole', $userRole);
+$user->addChild('status', $status);
+$user->addChild('lastLogin', $dateGenerated);
+
+// === Add to <renters> ===
 $renter = $xml->renters->addChild('renter');
-$renter->addAttribute('id', $newId);
-$renter->addChild('userId', $email);
-$renter->addChild('status', 'active');
+$renter->addAttribute('id', $newRenterId);
+$renter->addChild('userId', $newUserId); // Link to user
+$renter->addChild('status', $status);
 
 $personalInfo = $renter->addChild('personalInfo');
 $name = $personalInfo->addChild('name');
@@ -56,17 +80,15 @@ $validId->addChild('validIdNumber', htmlspecialchars($idNumber));
 $rentalInfo = $renter->addChild('rentalInfo');
 $rentalInfo->addChild('unitId', htmlspecialchars($room));
 $rentalInfo->addChild('leaseStart', htmlspecialchars($leaseStart));
-
-// Simple leaseEnd calculation: add contract months
 $leaseEnd = date('Y-m-d', strtotime("{$leaseStart} +{$contractTerm} months"));
 $rentalInfo->addChild('leaseEnd', $leaseEnd);
-
 $rentalInfo->addChild('contractTermInMonths', htmlspecialchars($contractTerm));
 $rentalInfo->addChild('leavingReason', '');
 
-// Save XML
+// Save updated XML
 $xml->asXML($xmlFile);
 
-header("Location: ../caretaker-renter.html"); 
+// Redirect or notify success
+header("Location: ../caretaker-renter.xml?renter=added");
 exit();
 ?>
