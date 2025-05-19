@@ -24,14 +24,24 @@ function formatDateToYYYYMMDD(dateObj) {
 }
 
 let renterDataMap = {};
+let roomsDataMap = {};
+let utilityBillsMap = {};
+let rentBillsMap = {};
+let paymentsMap = {};
+let tasksMap = {};
+let inquiriesMap = {};
+let usersMap = {};
+let caretakersMap = {};
+let auditTrailMap = {};
 
 $.ajax({
   url: 'apartment.xml',
   dataType: 'xml',
   success: function (xml) {
-    $(xml).find('renter').each(function () {
-      const id = $(this).attr('id');
 
+    // --- renters ---
+    $(xml).find('renters > renter').each(function () {
+      const id = $(this).attr('id').trim();
       renterDataMap[id] = {
         userId: $(this).find('userId').text().trim(),
         status: $(this).find('status').text().trim(),
@@ -50,8 +60,161 @@ $.ajax({
         leavingReason: $(this).find('rentalInfo > leavingReason').text().trim()
       };
     });
+
+    // --- rooms ---
+    $(xml).find('rooms > room').each(function () {
+      const id = $(this).attr('id').trim();
+      roomsDataMap[id] = {
+        roomNo: $(this).find('roomNo').text().trim(),
+        floorNo: $(this).find('floorNo').text().trim(),
+        roomType: $(this).find('roomType').text().trim(),
+        sizeSQM: $(this).find('sizeSQM').text().trim(),
+        rentPrice: $(this).find('rentPrice').text().trim(),
+        status: $(this).find('status').text().trim(),
+        deleteReason: $(this).find('deleteReason').text().trim()
+      };
+    });
+
+    // --- utilityBills ---
+    $(xml).find('billing > utilityBills > utility').each(function () {
+      const type = $(this).attr('type');
+      let readings = [];
+      $(this).find('reading').each(function () {
+        let bills = [];
+        $(this).find('bill').each(function () {
+          bills.push({
+            id: $(this).attr('id') || '',
+            renterId: $(this).find('renterId').text().trim(),
+            currentReading: $(this).find('currentReading').text().trim(),
+            consumedKwh: $(this).find('consumedKwh').text().trim() || $(this).find('consumedCubic').text().trim(),
+            amount: $(this).find('amount').text().trim(),
+            overpaid: $(this).find('overpaid').text().trim(),
+            debt: $(this).find('debt').text().trim(),
+            status: $(this).find('status').text().trim()
+          });
+        });
+
+        readings.push({
+          id: $(this).attr('id') || '',
+          readingDate: $(this).find('readingDate').text().trim(),
+          periodEnd: $(this).find('periodEnd').text().trim(),
+          dueDate: $(this).find('dueDate').text().trim(),
+          consumedKwhTotal: $(this).find('consumedKwhTotal').text().trim() || $(this).find('consumedCubicMTotal').text().trim(),
+          amountPerKwh: $(this).find('amountPerKwh').text().trim() || $(this).find('amountPerCubicM').text().trim(),
+          totalBill: $(this).find('totalBill').text().trim(),
+          status: $(this).find('status').text().trim(),
+          bills: bills
+        });
+      });
+
+      utilityBillsMap[type] = {
+        accountName: $(this).find('accountInfo > accountName').text().trim(),
+        accountNumber: $(this).find('accountInfo > accountNumber').text().trim(),
+        meterNumber: $(this).find('accountInfo > meterNumber').text().trim(),
+        address: $(this).find('accountInfo > address').text().trim(),
+        readings: readings
+      };
+    });
+
+    // --- rentBills ---
+    $(xml).find('billing > rentBills > bill').each(function () {
+      const id = $(this).attr('id').trim();
+      rentBillsMap[id] = {
+        renterId: $(this).find('renterId').text().trim(),
+        amount: $(this).find('amount').text().trim(),
+        dueDate: $(this).find('dueDate').text().trim(),
+        overpaid: $(this).find('overpaid').text().trim(),
+        debt: $(this).find('debt').text().trim(),
+        status: $(this).find('status').text().trim()
+      };
+    });
+
+    // --- payments ---
+    $(xml).find('payments > payment').each(function () {
+      const id = $(this).attr('id').trim();
+      paymentsMap[id] = {
+        renterId: $(this).find('renterId').text().trim(),
+        paymentType: $(this).find('paymentType').text().trim(),
+        paymentAmountType: $(this).find('paymentAmountType').text().trim(),
+        paymentDate: $(this).find('paymentDate').text().trim(),
+        amount: $(this).find('amount').text().trim(),
+        paymentMethod: $(this).find('paymentMethod').text().trim(),
+        remarks: $(this).find('remarks').text().trim()
+      };
+    });
+
+    // --- tasks ---
+    $(xml).find('tasks > task').each(function () {
+      const id = $(this).attr('id').trim();
+      tasksMap[id] = {
+        title: $(this).find('title').text().trim(),
+        type: $(this).find('type').text().trim(),
+        concernedWith: $(this).find('concernedWith').text().trim(),
+        amountPaid: $(this).find('amountPaid').text().trim(),
+        dueDate: $(this).find('dueDate').text().trim(),
+        status: $(this).find('status').text().trim(),
+        deleteReason: $(this).find('deleteReason').text().trim()
+      };
+    });
+
+    // --- inquiries ---
+    $(xml).find('inquiries > inquiry').each(function () {
+      const id = $(this).attr('id')?.trim() || ''; // could be empty
+      inquiriesMap[id] = {
+        renterId: $(this).find('renterId').text().trim(),
+        inquiryContent: $(this).find('inquiryContent').text().trim(),
+        dateGenerated: $(this).find('dateGenerated').text().trim(),
+        status: $(this).find('status').text().trim(),
+        response: $(this).find('response').text().trim(),
+        deleteReason: $(this).find('deleteReason').text().trim()
+      };
+    });
+
+    // --- users ---
+    $(xml).find('users > user').each(function () {
+      const id = $(this).attr('id').trim();
+      usersMap[id] = {
+        email: $(this).find('email').text().trim(),
+        password: $(this).find('password').text().trim(),
+        dateGenerated: $(this).find('dateGenerated').text().trim(),
+        userRole: $(this).find('userRole').text().trim(),
+        status: $(this).find('status').text().trim(),
+        lastLogin: $(this).find('lastLogin').text().trim()
+      };
+    });
+
+    // --- caretakers ---
+    $(xml).find('caretakers > caretaker').each(function () {
+      const id = $(this).attr('id')?.trim() || ''; // id may be empty
+      caretakersMap[id] = {
+        userId: $(this).find('userId').text().trim(),
+        surname: $(this).find('personalInfo > name > surname').text().trim(),
+        firstName: $(this).find('personalInfo > name > firstName').text().trim(),
+        middleName: $(this).find('personalInfo > name > middleName').text().trim(),
+        extension: $(this).find('personalInfo > name > extension').text().trim()
+      };
+    });
+
+    // --- auditTrail ---
+    $(xml).find('auditTrail > action').each(function () {
+      const id = $(this).attr('id')?.trim() || ''; // id may be empty
+      auditTrailMap[id] = {
+        userId: $(this).find('userId').text().trim(),
+        ipAddress: $(this).find('ipAddress').text().trim(),
+        concernedModule: $(this).find('concernedModule').text().trim(),
+        actionPerformed: $(this).find('actionPerformed').text().trim(),
+        timestamp: $(this).find('timestamp').text().trim()
+      };
+    });
+
+    const totalCurrentBill = calculateTotalCurrentBill();
+    const formatted = totalCurrentBill.toLocaleString("en-PH", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    $('#total-current-bill').text(formatted);
   }
 });
+
+   
+
 
 function displaySuccessModal(){
   const url = new URL(window.location.href);
@@ -75,6 +238,19 @@ function displaySuccessModal(){
         // Do nothing or handle unknown action
         break;
     }
+  const loginAction = urlParams.get('login');
+  switch (loginAction) {
+      case 'changePassSuccess':
+        $('#login-div').addClass("d-none");
+        $('#success-change-pass-div').removeClass("d-none").addClass("d-block");
+
+        break;
+
+      default:
+        // Do nothing or handle unknown action
+        break;
+    }
+  
 
    // Clean URL (remove all search parameters)
     url.search = '';
@@ -678,6 +854,82 @@ $(document).on("click", ".button-table-remove-renter", function () {
   }
 });
 
+$(document).on("click", ".button-table-view-renter", function () {
+  const renterId = $(this).data('renter-id');
+  const renter = renterDataMap[renterId];
+
+  if (renter) {
+    const unitId = renter.unitId.trim(); // ensure trimming
+    const room = roomsDataMap[unitId];
+    const roomNo = room ? room.roomNo : "N/A";
+    const userId = renter.userId.trim(); // ensure trimming
+    const user = usersMap[userId];
+    const email = user ? user.email : "N/A";
+
+
+
+    // Set display values
+    $('#view-add-renter-surname').text(renter.surname);
+    $('#view-add-renter-first-name').text(renter.firstName);
+    $('#view-add-renter-middle-name').text(renter.middleName);
+    $('#view-add-renter-ext-name').text(renter.extension);
+    $('#view-add-renter-contact-number').text(renter.contact);
+    $('#view-add-renter-birthdate').text(renter.birthDate);
+
+    $('#view-add-renter-valid-id-type').text(renter.validIdType);
+    $('#view-add-renter-valid-id-number').text(renter.validIdNumber);
+
+    $('#view-add-renter-room-number').text(roomNo); // ✅ This is now correct
+    $('#view-add-renter-contract-term').text(renter.contractTermInMonths + " months");
+    $('#view-add-renter-lease-start').text(renter.leaseStart);
+    $('#view-add-renter-roomNo').text(roomNo); // header
+    $('#view-add-renter-leaseStart').text(renter.leaseStart);
+    $('#view-add-renter-email').text(email);
+  } else {
+    alert("Renter data not found.");
+  }
+});
+
+$(document).on("click", ".button-table-view-archive-renter", function () {
+  const renterId = $(this).data('renter-id');
+  const renter = renterDataMap[renterId];
+
+  if (renter) {
+    const unitId = renter.unitId.trim();
+    const room = roomsDataMap[unitId];
+    const roomNo = room ? room.roomNo : "N/A";
+    const userId = renter.userId.trim(); // ensure trimming
+    const user = usersMap[userId];
+    const email = user ? user.email : "N/A";
+
+    // Populate modal fields
+    $('#view-archive-renter-surname').text(renter.surname);
+    $('#view-archive-renter-first-name').text(renter.firstName);
+    $('#view-archive-renter-middle-name').text(renter.middleName);
+    $('#view-archive-renter-ext-name').text(renter.extension);
+    $('#view-archive-renter-contact-number').text(renter.contact);
+    $('#view-archive-renter-birthdate').text(renter.birthDate);
+
+    $('#view-archive-renter-valid-id-type').text(renter.validIdType);
+    $('#view-archive-renter-valid-id-number').text(renter.validIdNumber);
+
+    $('#view-archive-renter-room-number').text(roomNo);
+    $('#view-archive-renter-roomNo').text(roomNo);
+    $('#view-archive-renter-contract-term').text(renter.contractTermInMonths + " months");
+    $('#view-archive-renter-lease-start').text(renter.leaseStart);
+    $('#view-archive-renter-leaseStart').text(renter.leaseStart);
+    $('#view-archive-renter-leaseEnd').text(renter.leaseEnd);
+    $('#view-archive-renter-email').text(email);
+    $('#view-archive-renter-leaving-reason').text(renter.deleteReason || "N/A");
+  } else {
+    alert("Renter data not found.");
+  }
+});
+
+
+
+
+
 
 
 function sendNotification(renterID){
@@ -734,6 +986,43 @@ function clearFieldsRemoveRenter() {
 }
 
 
+
+function redirectToDashboard(role) {
+  switch (role.toLowerCase()) {
+    case "admin":
+      window.location.href = "admin-dashboard.html";
+      break;
+    case "caretaker":
+      window.location.href = "caretaker-dashboard.html";
+      break;
+    case "renter":
+      window.location.href = "renter-dashboard.html";
+      break;
+    default:
+      showError("User role is not recognized.", "#login-error-box", "#login-error-msg");
+  }
+}
+
+function logout() {
+  localStorage.removeItem("currentUser");
+  window.location.href = "login.html";
+}
+
+function checkAccess(allowedRoles = []) {
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+  if (!currentUser || !currentUser.email || !currentUser.role) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  if (!allowedRoles.includes(currentUser.role.toLowerCase())) {
+    alert("Unauthorized access.");
+    window.location.href = "login.html";
+  }
+}
+
+
 // Error message helpers
 function showError(msg, boxId, textId) {
   $(boxId).removeClass("d-none").addClass("d-flex");
@@ -770,6 +1059,10 @@ function isValidPhoneNum(phone) {
 
 function isWhitespaceOnly(value) {
   return /^\s*$/.test(value);
+}
+
+function hasWhitespace(str) {
+  return /\s/.test(str);
 }
 
 function exceedsLengthLimit(value, limit = 1000) {
@@ -815,3 +1108,33 @@ function isStrongPassword(password) {
   return { isValid: errors.length === 0, errors };
 }
 
+function calculateTotalCurrentBill() {
+  let total = 0;
+  // Get current year and month in 'YYYY-MM' format
+  const now = new Date();
+  const yearMonth = now.toISOString().slice(0, 7);
+
+  // Sum rent bills for the current month
+  for (const billId in rentBillsMap) {
+    const bill = rentBillsMap[billId];
+    if (bill.dueDate && bill.dueDate.startsWith(yearMonth)) {
+      const amt = parseFloat(bill.amount);
+      if (!isNaN(amt)) total += amt;
+    }
+  }
+
+  // Sum utility bills for the current month
+  for (const utilityType in utilityBillsMap) {
+    const utility = utilityBillsMap[utilityType];
+    utility.readings.forEach(reading => {
+      if (reading.dueDate && reading.dueDate.startsWith(yearMonth)) {
+        reading.bills.forEach(bill => {
+          const amt = parseFloat(bill.amount);
+          if (!isNaN(amt)) total += amt;
+        });
+      }
+    });
+  }
+
+  return total;
+}

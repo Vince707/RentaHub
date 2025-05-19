@@ -272,7 +272,13 @@
                         <xsl:variable name="userId" select="userId"/>
 
                         <!-- VIEW button -->
-                        <button type="button" class="ms-1 btn-red-fill d-flex align-items-center px-3 py-1" id="button-view" data-bs-toggle="modal" data-bs-target="#modalViewRenter">
+                        <button type="button" class="ms-1 btn-red-fill d-flex align-items-center px-3 py-1 button-table-view-renter" data-bs-toggle="modal" data-bs-target="#modalViewRenter">
+                           <xsl:attribute name="data-renter-id">
+                            <xsl:value-of select="$renterId"/>
+                            </xsl:attribute>
+                            <xsl:attribute name="data-user-id">
+                            <xsl:value-of select="$userId"/>
+                            </xsl:attribute>
                             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF">
                             <path d="M480-320q75 0 127.5-52.5T660-500q0-75-52.5-127.5T480-680q-75 0-127.5 52.5T300-500q0 75 52.5 127.5T480-320Zm0-72q-45 0-76.5-31.5T372-500q0-45 31.5-76.5T480-608q45 0 76.5 31.5T588-500q0 45-31.5 76.5T480-392Zm0 192q-146 0-266-81.5T40-500q54-137 174-218.5T480-800q146 0 266 81.5T920-500q-54 137-174 218.5T480-200Zm0-300Zm0 220q113 0 207.5-59.5T832-500q-50-101-144.5-160.5T480-720q-113 0-207.5 59.5T128-500q50 101 144.5 160.5T480-280Z"/>
                             </svg>
@@ -969,10 +975,10 @@
         <div class="modal-body d-flex flex-column">
           <div class="d-flex flex-sm-row flex-column justify-content-between align-items-start">
             <div class="d-flex flex-row align-items-center justify-content-between">
-              <p class="h2 font-red-gradient me-2">Pete Ressureccion</p>
-              <button type="button" class="btn-red d-flex align-items-center px-3 py-1" data-bs-toggle="modal" data-bs-target="#modalRemoveRenter">
+              <p class="h2 font-red-gradient me-2"><span id="view-add-renter-first-name" class="h2"></span>&#160;<span id="view-add-renter-middle-name" class="h2"></span>&#160;<span id="view-add-renter-surname" class="h2"></span>&#160;<span id="view-add-renter-ext-name" class="h2"></span></p>
+              <!-- <button type="button" class="btn-red d-flex align-items-center px-3 py-1" data-bs-toggle="modal" data-bs-target="#modalRemoveRenter">
                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#8B0000"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg>
-              </button>
+              </button> -->
               
             </div>
             <button type="button" class="ms-1 btn-red d-flex align-items-center px-3 py-1" data-bs-dismiss="modal">
@@ -983,11 +989,11 @@
           </div>
           <div class="horizontal mt-1 mb-2"></div>
           <div class="d-flex flex-row">
-            <p class="h5 font-red-gradient">Room 1B | Lease Start: May 20, 2025</p>
-            <button type="button" class="ms-auto btn-red d-flex align-items-center px-3 py-1" data-bs-toggle="modal" data-bs-target="#modalModifyRenter">
+            <p class="h5 font-red-gradient">Room <span id="view-add-renter-roomNo"></span> | Lease Start: <span id="view-add-renter-leaseStart"></span></p>
+            <!-- <button type="button" class="ms-auto btn-red d-flex align-items-center px-3 py-1" data-bs-toggle="modal" data-bs-target="#modalModifyRenter">
               <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#8B0000"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg>
               Edit
-            </button>
+            </button> -->
           </div>
           <!-- Nav pills -->
           <div class="nav-pills-red border-bottom border-3 border-danger">
@@ -1010,28 +1016,28 @@
                 <div class="d-flex flex-wrap mt-2">
                   <div class="d-flex flex-column mb-3 me-5 gradient-red-bg p-4 rounded-3">
                     <p class="h4 font-white mb-3">Personal Information</p>
-                    <div class="d-flex flex-row">
+                    <!-- <div class="d-flex flex-row">
                       <p class="h5 font-white me-2">Name:</p>
-                      <p class="font-white"><span id="view-add-renter-first-name" class="font-red"></span> <span id="view-add-renter-middle-name"></span> <span id="view-add-renter-surname"></span> <span id="view-add-renter-ext-name"></span></p>
-                    </div>
+                      <p class="font-white"><span id="view-add-renter-first-name" class="font-white"></span> <span id="view-add-renter-middle-name"></span> <span id="view-add-renter-surname"></span> <span id="view-add-renter-ext-name"></span></p>
+                    </div> -->
                     <div class="d-flex flex-row">
                       <p class="h5 font-white me-2">Contact Number:</p>
-                      <p id="view-add-renter-contact-number" class="font-red"></p>
+                      <p id="view-add-renter-contact-number" class="font-white"></p>
                     </div>
                     <div class="d-flex flex-row">
                       <p class="h5 font-white me-2">Birth Date:</p>
-                      <p id="view-add-renter-birthdate" class="font-red"></p>
+                      <p id="view-add-renter-birthdate" class="font-white"></p>
                     </div>
                   </div>
                   <div class="d-flex flex-column me-5 mb-3 gradient-red-bg p-4 rounded-3">
                     <p class="h4 font-white mb-3">Valid ID Information</p>
                     <div class="d-flex flex-row">
                       <p class="h5 font-white me-2">Valid ID Type:</p>
-                      <p id="view-add-renter-valid-id-type" class="font-red"></p>
+                      <p id="view-add-renter-valid-id-type" class="font-white"></p>
                     </div>
                     <div class="d-flex flex-row">
                       <p class="h5 font-white me-2">ID Number:</p>
-                      <p id="view-add-renter-valid-id-number" class="font-red"></p>
+                      <p id="view-add-renter-valid-id-number" class="font-white"></p>
                     </div>
                   </div>
                   
@@ -1039,22 +1045,22 @@
                     <p class="h4 font-white">Rental Information</p>
                     <div class="d-flex flex-row">
                       <p class="h5 font-white me-2">Room Number:</p>
-                      <p><span id="view-add-renter-room-number" class="font-red"></span></p>
+                      <p><span id="view-add-renter-room-number" class="font-white"></span></p>
                     </div>
                     <div class="d-flex flex-row">
                       <p class="h5 font-white me-2">Lease Start:</p>
-                      <p id="view-add-renter-lease-start" class="font-red"></p>
+                      <p id="view-add-renter-lease-start" class="font-white"></p>
                     </div>
                     <div class="d-flex flex-row">
                       <p class="h5 font-white me-2">Contract Term:</p>
-                      <p id="view-add-renter-contract-term" class="font-red"></p>
+                      <p id="view-add-renter-contract-term" class="font-white"></p>
                     </div>
                   </div>
                   <div class="d-flex flex-column me-5 mb-3 gradient-red-bg p-4 rounded-3">
                     <p class="h4 font-white">Security</p>
                     <div class="d-flex flex-row">
                       <p class="h5 font-white me-2">Email Address:</p>
-                      <p id="view-add-renter-email" class="font-red"></p>
+                      <p id="view-add-renter-email" class="font-white"></p>
                     </div>
                   </div>
                 </div>
@@ -1489,6 +1495,8 @@
         <div class="modal-body d-flex flex-column">
           <div class="d-flex flex-sm-row flex-column justify-content-between align-items-start">
             <div class="d-flex flex-row align-items-center justify-content-between">
+              <p class="h2 font-red-gradient me-2"><span id="view-archive-renter-first-name" class="h2"></span>&#160;<span id="view-archive-renter-middle-name" class="h2"></span>&#160;<span id="view-archive-renter-surname" class="h2"></span>&#160;<span id="view-archive-renter-ext-name" class="h2"></span></p>
+
               <div class="d-flex align-items-center px-3 py-1" style="border: 0.2rem solid #8f1515;
     background-color: transparent;
     color: #8B0000; /* Maroon text */
@@ -1511,7 +1519,7 @@
           </div>
           <div class="horizontal mt-1 mb-2"></div>
           <div class="d-flex flex-row">
-            <p class="h5 font-red-gradient">Room 1B | Lease Period: May 20, 2025 - June 23, 2025</p>
+            <p class="h5 font-red-gradient">Room <span id="view-archive-renter-roomNo"></span> | Lease Period: <span id="view-archive-renter-leaseStart"></span> to <span id="view-archive-renter-leaseEnd"></span></p>
           </div>
           <!-- Nav pills -->
           <div class="nav-pills-red border-bottom border-3 border-danger">
@@ -1534,28 +1542,28 @@
                 <div class="d-flex flex-wrap mt-2">
                   <div class="d-flex flex-column mb-3 me-5 gradient-red-bg p-4 rounded-3">
                     <p class="h4 font-white mb-3">Personal Information</p>
-                    <div class="d-flex flex-row">
+                    <!-- <div class="d-flex flex-row">
                       <p class="h5 font-white me-2">Name:</p>
                       <p class="font-white"><span id="view-archive-renter-first-name" class="font-red"></span> <span id="view-archive-renter-middle-name"></span> <span id="view-archive-renter-surname"></span> <span id="view-archive-renter-ext-name"></span></p>
-                    </div>
+                    </div> -->
                     <div class="d-flex flex-row">
                       <p class="h5 font-white me-2">Contact Number:</p>
-                      <p id="view-archive-renter-contact-number" class="font-red"></p>
+                      <p id="view-archive-renter-contact-number" class="font-white"></p>
                     </div>
                     <div class="d-flex flex-row">
                       <p class="h5 font-white me-2">Birth Date:</p>
-                      <p id="view-archive-renter-birthdate" class="font-red"></p>
+                      <p id="view-archive-renter-birthdate" class="font-white"></p>
                     </div>
                   </div>
                   <div class="d-flex flex-column me-5 mb-3 gradient-red-bg p-4 rounded-3">
                     <p class="h4 font-white mb-3">Valid ID Information</p>
                     <div class="d-flex flex-row">
                       <p class="h5 font-white me-2">Valid ID Type:</p>
-                      <p id="view-archive-renter-valid-id-type" class="font-red"></p>
+                      <p id="view-archive-renter-valid-id-type" class="font-white"></p>
                     </div>
                     <div class="d-flex flex-row">
                       <p class="h5 font-white me-2">ID Number:</p>
-                      <p id="view-archive-renter-valid-id-number" class="font-red"></p>
+                      <p id="view-archive-renter-valid-id-number" class="font-white"></p>
                     </div>
                   </div>
                   
@@ -1563,29 +1571,29 @@
                     <p class="h4 font-white">Rental Information</p>
                     <div class="d-flex flex-row">
                       <p class="h5 font-white me-2">Room Number:</p>
-                      <p><span id="view-archive-renter-room-number" class="font-red"></span></p>
+                      <p><span id="view-archive-renter-room-number" class="font-white"></span></p>
                     </div>
                     <div class="d-flex flex-row">
                       <p class="h5 font-white me-2">Lease Start:</p>
-                      <p id="view-archive-renter-lease-start" class="font-red"></p>
+                      <p id="view-archive-renter-lease-start" class="font-white"></p>
                     </div>
                     <div class="d-flex flex-row">
                       <p class="h5 font-white me-2">Contract Term:</p>
-                      <p id="view-archive-renter-contract-term" class="font-red"></p>
+                      <p id="view-archive-renter-contract-term" class="font-white"></p>
                     </div>
                   </div>
                   <div class="d-flex flex-column me-5 mb-3 gradient-red-bg p-4 rounded-3">
                     <p class="h4 font-white">Security</p>
                     <div class="d-flex flex-row">
                       <p class="h5 font-white me-2">Email Address:</p>
-                      <p id="view-archive-renter-email" class="font-red"></p>
+                      <p id="view-archive-renter-email" class="font-white"></p>
                     </div>
                   </div>
                   <div class="d-flex flex-column me-5 mb-3 gradient-red-bg p-4 rounded-3">
                     <p class="h4 font-white">Leaving Reason</p>
                     <div class="d-flex flex-row">
                       <p class="h5 font-white me-2">Reason For Leaving:</p>
-                      <p id="view-archive-renter-leaving-reason" class="font-red"></p>
+                      <p id="view-archive-renter-leaving-reason" class="font-white"></p>
                     </div>
                   </div>
                 </div>
@@ -2022,7 +2030,13 @@
                         <xsl:variable name="userId" select="userId"/>
 
                         <!-- VIEW button -->
-                        <button type="button" class="ms-1 btn-red-fill d-flex align-items-center px-3 py-1 button-table-view-archive-renter" id="button-view" data-bs-toggle="modal" data-bs-target="#modalViewArchiveRenter">
+                        <button type="button" class="ms-1 btn-red-fill d-flex align-items-center px-3 py-1 button-table-view-archive-renter" data-bs-toggle="modal" data-bs-target="#modalViewArchiveRenter">
+                          <xsl:attribute name="data-renter-id">
+                            <xsl:value-of select="$renterId"/>
+                            </xsl:attribute>
+                            <xsl:attribute name="data-user-id">
+                            <xsl:value-of select="$userId"/>
+                            </xsl:attribute>
                             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M480-320q75 0 127.5-52.5T660-500q0-75-52.5-127.5T480-680q-75 0-127.5 52.5T300-500q0 75 52.5 127.5T480-320Zm0-72q-45 0-76.5-31.5T372-500q0-45 31.5-76.5T480-608q45 0 76.5 31.5T588-500q0 45-31.5 76.5T480-392Zm0 192q-146 0-266-81.5T40-500q54-137 174-218.5T480-800q146 0 266 81.5T920-500q-54 137-174 218.5T480-200Zm0-300Zm0 220q113 0 207.5-59.5T832-500q-50-101-144.5-160.5T480-720q-113 0-207.5 59.5T128-500q50 101 144.5 160.5T480-280Z"/></svg>
                         </button>
                         </div>

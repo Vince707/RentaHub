@@ -523,6 +523,48 @@ input.search-input::placeholder {
   transform: rotate(45deg);
 }
 
+.custom-checkbox-container-white {
+  display: inline-flex;
+  align-items: center;
+  border: 0.2rem solid white;
+  border-radius: 10px;
+  padding: 8px 20px;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2rem;
+  cursor: pointer;
+  user-select: none;
+  gap: 10px;
+}
+
+
+.custom-checkbox-white {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid white;
+  border-radius: 6px;
+  background-color: transparent;
+  display: inline-block;
+  position: relative;
+}
+
+.custom-checkbox-white:checked {
+  background-color: white;
+}
+
+.custom-checkbox-white:checked::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 6px;
+  height: 12px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
 /* Loading Screen Styles */
 #loading-screen {
   position: fixed;

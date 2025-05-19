@@ -2,27 +2,27 @@
 <apartmentManagement>
     <renters>
         <renter id="1">
-            <userId/>
-            <status/>
+            <userId>1</userId>
+            <status>Active</status>
             <personalInfo>
                 <name>
-                    <surname/>
-                    <firstName/>
-                    <middleName/>
-                    <extension/>
+                    <surname>Garcia</surname>
+                    <firstName>Juan</firstName>
+                    <middleName>Cruz</middleName>
+                    <extension>Jr.</extension>
                 </name>
-                <contact/>
-                <birthDate/>
+                <contact>09171234567</contact>
+                <birthDate>1995-04-12</birthDate>
                 <validId>
-                    <validIdType/>
-                    <validIdNumber/>
+                    <validIdType>driver-license</validIdType>
+                    <validIdNumber>DL-123456</validIdNumber>
                 </validId>
             </personalInfo>
             <rentalInfo>
-                <unitId/>
-                <leaseStart/>
-                <leaseEnd/>
-                <contractTermInMonths/>
+                <unitId>1</unitId>
+                <leaseStart>2025-05-01</leaseStart>
+                <leaseEnd>2026-05-01</leaseEnd>
+                <contractTermInMonths>12</contractTermInMonths>
                 <leavingReason/>
             </rentalInfo>
         </renter>
@@ -44,7 +44,7 @@
                 </validId>
             </personalInfo>
             <rentalInfo>
-                <unitId>1</unitId>
+                <unitId>2</unitId>
                 <leaseStart>2025-05-27</leaseStart>
                 <leaseEnd>2026-05-27</leaseEnd>
                 <contractTermInMonths>12</contractTermInMonths>
@@ -56,20 +56,20 @@
             <status>Active</status>
             <personalInfo>
                 <name>
-                    <surname>fea</surname>
-                    <firstName>fea</firstName>
+                    <surname>Fea</surname>
+                    <firstName>Fea</firstName>
                     <middleName/>
                     <extension/>
                 </name>
                 <contact>09090925793</contact>
-                <birthDate>1002-05-21</birthDate>
+                <birthDate>2002-05-21</birthDate>
                 <validId>
                     <validIdType>passport</validIdType>
                     <validIdNumber>passport123</validIdNumber>
                 </validId>
             </personalInfo>
             <rentalInfo>
-                <unitId>1</unitId>
+                <unitId>3</unitId>
                 <leaseStart>2025-05-26</leaseStart>
                 <leaseEnd>2025-09-26</leaseEnd>
                 <contractTermInMonths>4</contractTermInMonths>
@@ -82,52 +82,95 @@
             <personalInfo>
                 <name>
                     <surname>Surname</surname>
-                    <firstName>Firtsname</firstName>
+                    <firstName>Firstname</firstName>
                     <middleName/>
                     <extension/>
                 </name>
-                <contact>09090925793</contact>
-                <birthDate>2025-05-14</birthDate>
+                <contact>09090925794</contact>
+                <birthDate>1990-05-14</birthDate>
                 <validId>
                     <validIdType>prc</validIdType>
                     <validIdNumber>fea</validIdNumber>
                 </validId>
             </personalInfo>
             <rentalInfo>
-                <unitId>1</unitId>
+                <unitId>4</unitId>
                 <leaseStart>2025-05-18</leaseStart>
                 <leaseEnd>2025-05-29</leaseEnd>
                 <contractTermInMonths>5</contractTermInMonths>
                 <leavingReason>voluntary-leave</leavingReason>
             </rentalInfo>
         </renter>
+        <renter id="5">
+            <userId>5</userId>
+            <status>Active</status>
+            <personalInfo>
+                <name>
+                    <surname>Santos</surname>
+                    <firstName>Ana</firstName>
+                    <middleName>Maria</middleName>
+                    <extension/>
+                </name>
+                <contact>09181234567</contact>
+                <birthDate>1998-10-10</birthDate>
+                <validId>
+                    <validIdType>sss</validIdType>
+                    <validIdNumber>SSS-987654</validIdNumber>
+                </validId>
+            </personalInfo>
+            <rentalInfo>
+                <unitId>5</unitId>
+                <leaseStart>2025-06-01</leaseStart>
+                <leaseEnd>2026-06-01</leaseEnd>
+                <contractTermInMonths>12</contractTermInMonths>
+                <leavingReason/>
+            </rentalInfo>
+        </renter>
     </renters>
     <rooms>
-        <room id="2">
-            <roomNo>2</roomNo>
-            <floorNo/>
-            <roomType/>
-            <sizeSQM/>
-            <rentPrice/>
-            <status/>
+        <room id="1">
+            <roomNo>1A</roomNo>
+            <floorNo>1</floorNo>
+            <roomType>Studio</roomType>
+            <sizeSQM>20</sizeSQM>
+            <rentPrice>3500</rentPrice>
+            <status>Occupied</status>
             <deleteReason/>
         </room>
-        <room id="1">
-            <roomNo>1</roomNo>
-            <floorNo/>
-            <roomType/>
-            <sizeSQM/>
-            <rentPrice/>
-            <status/>
+        <room id="2">
+            <roomNo>2A</roomNo>
+            <floorNo>2</floorNo>
+            <roomType>Studio</roomType>
+            <sizeSQM>22</sizeSQM>
+            <rentPrice>3700</rentPrice>
+            <status>Occupied</status>
             <deleteReason/>
         </room>
         <room id="3">
-            <roomNo>3</roomNo>
-            <floorNo/>
-            <roomType/>
-            <sizeSQM/>
-            <rentPrice/>
-            <status/>
+            <roomNo>3A</roomNo>
+            <floorNo>3</floorNo>
+            <roomType>1BR</roomType>
+            <sizeSQM>28</sizeSQM>
+            <rentPrice>4200</rentPrice>
+            <status>Vacant</status>
+            <deleteReason/>
+        </room>
+        <room id="4">
+            <roomNo>4A</roomNo>
+            <floorNo>4</floorNo>
+            <roomType>2BR</roomType>
+            <sizeSQM>35</sizeSQM>
+            <rentPrice>5000</rentPrice>
+            <status>Occupied</status>
+            <deleteReason/>
+        </room>
+        <room id="5">
+            <roomNo>5A</roomNo>
+            <floorNo>5</floorNo>
+            <roomType>Studio</roomType>
+            <sizeSQM>25</sizeSQM>
+            <rentPrice>3900</rentPrice>
+            <status>Vacant</status>
             <deleteReason/>
         </room>
     </rooms>
@@ -135,52 +178,196 @@
         <utilityBills>
             <utility type="Electricity">
                 <accountInfo>
-                    <accountName/>
-                    <accountNumber/>
-                    <meterNumber/>
-                    <address/>
+                    <accountName>MERALCO</accountName>
+                    <accountNumber>ELEC-001</accountNumber>
+                    <meterNumber>MT-1001</meterNumber>
+                    <address>123 Main St</address>
                 </accountInfo>
                 <reading id="1">
-                    <readingDate/>
-                    <periodEnd/>
-                    <dueDate/>
-                    <consumedKwhTotal/>
-                    <amountPerKwh/>
-                    <totalBill/>
+                    <readingDate>2025-05-01</readingDate>
+                    <periodEnd>2025-05-31</periodEnd>
+                    <dueDate>2025-06-10</dueDate>
+                    <consumedKwhTotal>120</consumedKwhTotal>
+                    <amountPerKwh>10</amountPerKwh>
+                    <totalBill>1200</totalBill>
                     <status>Unpaid</status>
-                    <bill id="">
-                        <renterId/>
-                        <currentReading/>
-                        <consumedKwh/>
-                        <amount/>
-                        <overpaid/>
-                        <debt/>
+                    <bill id="E1">
+                        <renterId>1</renterId>
+                        <currentReading>1200</currentReading>
+                        <consumedKwh>120</consumedKwh>
+                        <amount>1200</amount>
+                        <overpaid>0</overpaid>
+                        <debt>0</debt>
+                        <status>Unpaid</status>
+                    </bill>
+                </reading>
+                <reading id="2">
+                    <readingDate>2025-04-01</readingDate>
+                    <periodEnd>2025-04-30</periodEnd>
+                    <dueDate>2025-05-10</dueDate>
+                    <consumedKwhTotal>110</consumedKwhTotal>
+                    <amountPerKwh>10</amountPerKwh>
+                    <totalBill>1100</totalBill>
+                    <status>Paid</status>
+                    <bill id="E2">
+                        <renterId>2</renterId>
+                        <currentReading>1100</currentReading>
+                        <consumedKwh>110</consumedKwh>
+                        <amount>1100</amount>
+                        <overpaid>0</overpaid>
+                        <debt>0</debt>
+                        <status>Paid</status>
+                    </bill>
+                </reading>
+                <reading id="3">
+                    <readingDate>2025-03-01</readingDate>
+                    <periodEnd>2025-03-31</periodEnd>
+                    <dueDate>2025-04-10</dueDate>
+                    <consumedKwhTotal>130</consumedKwhTotal>
+                    <amountPerKwh>10</amountPerKwh>
+                    <totalBill>1300</totalBill>
+                    <status>Unpaid</status>
+                    <bill id="E3">
+                        <renterId>3</renterId>
+                        <currentReading>1300</currentReading>
+                        <consumedKwh>130</consumedKwh>
+                        <amount>1300</amount>
+                        <overpaid>0</overpaid>
+                        <debt>0</debt>
+                        <status>Unpaid</status>
+                    </bill>
+                </reading>
+                <reading id="4">
+                    <readingDate>2025-02-01</readingDate>
+                    <periodEnd>2025-02-28</periodEnd>
+                    <dueDate>2025-03-10</dueDate>
+                    <consumedKwhTotal>100</consumedKwhTotal>
+                    <amountPerKwh>10</amountPerKwh>
+                    <totalBill>1000</totalBill>
+                    <status>Paid</status>
+                    <bill id="E4">
+                        <renterId>4</renterId>
+                        <currentReading>1000</currentReading>
+                        <consumedKwh>100</consumedKwh>
+                        <amount>1000</amount>
+                        <overpaid>0</overpaid>
+                        <debt>0</debt>
+                        <status>Paid</status>
+                    </bill>
+                </reading>
+                <reading id="5">
+                    <readingDate>2025-01-01</readingDate>
+                    <periodEnd>2025-01-31</periodEnd>
+                    <dueDate>2025-02-10</dueDate>
+                    <consumedKwhTotal>90</consumedKwhTotal>
+                    <amountPerKwh>10</amountPerKwh>
+                    <totalBill>900</totalBill>
+                    <status>Unpaid</status>
+                    <bill id="E5">
+                        <renterId>5</renterId>
+                        <currentReading>900</currentReading>
+                        <consumedKwh>90</consumedKwh>
+                        <amount>900</amount>
+                        <overpaid>0</overpaid>
+                        <debt>0</debt>
                         <status>Unpaid</status>
                     </bill>
                 </reading>
             </utility>
             <utility type="Water">
                 <accountInfo>
-                    <accountName/>
-                    <accountNumber/>
-                    <meterNumber/>
-                    <address/>
+                    <accountName>Maynilad</accountName>
+                    <accountNumber>WTR-002</accountNumber>
+                    <meterNumber>MT-2002</meterNumber>
+                    <address>123 Main St</address>
                 </accountInfo>
                 <reading id="1">
-                    <readingDate/>
-                    <periodEnd/>
-                    <dueDate/>
-                    <consumedCubicMTotal/>
-                    <amountPerCubicM/>
-                    <totalBill/>
+                    <readingDate>2025-05-01</readingDate>
+                    <periodEnd>2025-05-31</periodEnd>
+                    <dueDate>2025-06-10</dueDate>
+                    <consumedCubicMTotal>15</consumedCubicMTotal>
+                    <amountPerCubicM>50</amountPerCubicM>
+                    <totalBill>750</totalBill>
                     <status>Unpaid</status>
-                    <bill id="">
-                        <renterId/>
-                        <currentReading/>
-                        <consumedCubic/>
-                        <amount/>
-                        <overpaid/>
-                        <debt/>
+                    <bill id="W1">
+                        <renterId>1</renterId>
+                        <currentReading>150</currentReading>
+                        <consumedCubic>15</consumedCubic>
+                        <amount>750</amount>
+                        <overpaid>0</overpaid>
+                        <debt>0</debt>
+                        <status>Unpaid</status>
+                    </bill>
+                </reading>
+                <reading id="2">
+                    <readingDate>2025-04-01</readingDate>
+                    <periodEnd>2025-04-30</periodEnd>
+                    <dueDate>2025-05-10</dueDate>
+                    <consumedCubicMTotal>12</consumedCubicMTotal>
+                    <amountPerCubicM>50</amountPerCubicM>
+                    <totalBill>600</totalBill>
+                    <status>Paid</status>
+                    <bill id="W2">
+                        <renterId>2</renterId>
+                        <currentReading>120</currentReading>
+                        <consumedCubic>12</consumedCubic>
+                        <amount>600</amount>
+                        <overpaid>0</overpaid>
+                        <debt>0</debt>
+                        <status>Paid</status>
+                    </bill>
+                </reading>
+                <reading id="3">
+                    <readingDate>2025-03-01</readingDate>
+                    <periodEnd>2025-03-31</periodEnd>
+                    <dueDate>2025-04-10</dueDate>
+                    <consumedCubicMTotal>18</consumedCubicMTotal>
+                    <amountPerCubicM>50</amountPerCubicM>
+                    <totalBill>900</totalBill>
+                    <status>Unpaid</status>
+                    <bill id="W3">
+                        <renterId>3</renterId>
+                        <currentReading>180</currentReading>
+                        <consumedCubic>18</consumedCubic>
+                        <amount>900</amount>
+                        <overpaid>0</overpaid>
+                        <debt>0</debt>
+                        <status>Unpaid</status>
+                    </bill>
+                </reading>
+                <reading id="4">
+                    <readingDate>2025-02-01</readingDate>
+                    <periodEnd>2025-02-28</periodEnd>
+                    <dueDate>2025-03-10</dueDate>
+                    <consumedCubicMTotal>10</consumedCubicMTotal>
+                    <amountPerCubicM>50</amountPerCubicM>
+                    <totalBill>500</totalBill>
+                    <status>Paid</status>
+                    <bill id="W4">
+                        <renterId>4</renterId>
+                        <currentReading>100</currentReading>
+                        <consumedCubic>10</consumedCubic>
+                        <amount>500</amount>
+                        <overpaid>0</overpaid>
+                        <debt>0</debt>
+                        <status>Paid</status>
+                    </bill>
+                </reading>
+                <reading id="5">
+                    <readingDate>2025-01-01</readingDate>
+                    <periodEnd>2025-01-31</periodEnd>
+                    <dueDate>2025-02-10</dueDate>
+                    <consumedCubicMTotal>14</consumedCubicMTotal>
+                    <amountPerCubicM>50</amountPerCubicM>
+                    <totalBill>700</totalBill>
+                    <status>Unpaid</status>
+                    <bill id="W5">
+                        <renterId>5</renterId>
+                        <currentReading>140</currentReading>
+                        <consumedCubic>14</consumedCubic>
+                        <amount>700</amount>
+                        <overpaid>0</overpaid>
+                        <debt>0</debt>
                         <status>Unpaid</status>
                     </bill>
                 </reading>
@@ -191,29 +378,97 @@
                 <renterId>1</renterId>
                 <amount>3500</amount>
                 <dueDate>2025-04-10</dueDate>
-                <overpaid/>
-                <debt/>
+                <overpaid>0</overpaid>
+                <debt>0</debt>
+                <status>Unpaid</status>
+            </bill>
+            <bill id="102">
+                <renterId>2</renterId>
+                <amount>3700</amount>
+                <dueDate>2025-04-15</dueDate>
+                <overpaid>0</overpaid>
+                <debt>0</debt>
+                <status>Paid</status>
+            </bill>
+            <bill id="103">
+                <renterId>3</renterId>
+                <amount>4200</amount>
+                <dueDate>2025-05-01</dueDate>
+                <overpaid>0</overpaid>
+                <debt>0</debt>
+                <status>Unpaid</status>
+            </bill>
+            <bill id="104">
+                <renterId>4</renterId>
+                <amount>5000</amount>
+                <dueDate>2025-05-10</dueDate>
+                <overpaid>0</overpaid>
+                <debt>0</debt>
+                <status>Paid</status>
+            </bill>
+            <bill id="105">
+                <renterId>5</renterId>
+                <amount>3900</amount>
+                <dueDate>2025-06-01</dueDate>
+                <overpaid>0</overpaid>
+                <debt>0</debt>
                 <status>Unpaid</status>
             </bill>
         </rentBills>
     </billing>
     <payments>
         <payment id="201">
-            <renterId>2</renterId>
-            <paymentType/>
-            <paymentAmountType/>
+            <renterId>1</renterId>
+            <paymentType>Rent</paymentType>
+            <paymentAmountType>Full</paymentAmountType>
             <paymentDate>2025-04-08</paymentDate>
+            <amount>3500</amount>
+            <paymentMethod>GCash</paymentMethod>
+            <remarks>April rent</remarks>
+        </payment>
+        <payment id="202">
+            <renterId>2</renterId>
+            <paymentType>Rent</paymentType>
+            <paymentAmountType>Full</paymentAmountType>
+            <paymentDate>2025-04-15</paymentDate>
+            <amount>3700</amount>
+            <paymentMethod>Cash</paymentMethod>
+            <remarks>April rent</remarks>
+        </payment>
+        <payment id="203">
+            <renterId>3</renterId>
+            <paymentType>Utility</paymentType>
+            <paymentAmountType>Partial</paymentAmountType>
+            <paymentDate>2025-05-05</paymentDate>
+            <amount>1000</amount>
+            <paymentMethod>Bank Transfer</paymentMethod>
+            <remarks>Partial payment</remarks>
+        </payment>
+        <payment id="204">
+            <renterId>4</renterId>
+            <paymentType>Rent</paymentType>
+            <paymentAmountType>Full</paymentAmountType>
+            <paymentDate>2025-05-10</paymentDate>
             <amount>5000</amount>
-            <paymentMethod/>
-            <remarks/>
+            <paymentMethod>GCash</paymentMethod>
+            <remarks>May rent</remarks>
+        </payment>
+        <payment id="205">
+            <renterId>5</renterId>
+            <paymentType>Utility</paymentType>
+            <paymentAmountType>Full</paymentAmountType>
+            <paymentDate>2025-06-01</paymentDate>
+            <amount>700</amount>
+            <paymentMethod>Cash</paymentMethod>
+            <remarks>Water bill</remarks>
         </payment>
     </payments>
     <tasks>
         <task id="301">
             <title>Pay Meralco Electric Bill</title>
             <type>Utility</type>
-            <concernedWith/>
-            <amountPaid/>
+            <concernedWith>Electricity</concernedWith>
+            <amountPaid>1200</amountPaid>
             <dueDate>2025-04-15</dueDate>
             <status>Pending</status>
             <deleteReason/>
@@ -224,58 +479,163 @@
             <dueDate>2025-04-10</dueDate>
             <status>Overdue</status>
         </task>
+        <task id="303">
+            <title>Water Meter Reading</title>
+            <type>Utility</type>
+            <concernedWith>Water</concernedWith>
+            <amountPaid>0</amountPaid>
+            <dueDate>2025-05-10</dueDate>
+            <status>Pending</status>
+            <deleteReason/>
+        </task>
+        <task id="304">
+            <title>Schedule Room Cleaning</title>
+            <type>Maintenance</type>
+            <dueDate>2025-05-15</dueDate>
+            <status>Completed</status>
+        </task>
+        <task id="305">
+            <title>Collect May Rent</title>
+            <type>Collection</type>
+            <dueDate>2025-05-01</dueDate>
+            <status>Pending</status>
+        </task>
     </tasks>
     <inquiries>
-        <inquiry id="">
-            <renterId/>
-            <inquiryContent/>
-            <dateGenerated/>
-            <status/>
+        <inquiry id="401">
+            <renterId>1</renterId>
+            <inquiryContent>Can I have a copy of my contract?</inquiryContent>
+            <dateGenerated>2025-04-01</dateGenerated>
+            <status>Open</status>
+            <response>Sent via email</response>
+            <deleteReason/>
+        </inquiry>
+        <inquiry id="402">
+            <renterId>2</renterId>
+            <inquiryContent>How to pay via GCash?</inquiryContent>
+            <dateGenerated>2025-04-02</dateGenerated>
+            <status>Closed</status>
+            <response>Instructions sent</response>
+            <deleteReason/>
+        </inquiry>
+        <inquiry id="403">
+            <renterId>3</renterId>
+            <inquiryContent>Request for maintenance</inquiryContent>
+            <dateGenerated>2025-04-03</dateGenerated>
+            <status>Open</status>
+            <response>Scheduled</response>
+            <deleteReason/>
+        </inquiry>
+        <inquiry id="404">
+            <renterId>4</renterId>
+            <inquiryContent>Can I extend my lease?</inquiryContent>
+            <dateGenerated>2025-04-04</dateGenerated>
+            <status>Pending</status>
+            <response/>
+            <deleteReason/>
+        </inquiry>
+        <inquiry id="405">
+            <renterId>5</renterId>
+            <inquiryContent>Request for room transfer</inquiryContent>
+            <dateGenerated>2025-04-05</dateGenerated>
+            <status>Open</status>
             <response/>
             <deleteReason/>
         </inquiry>
     </inquiries>
     <users>
         <user id="1">
-            <email/>
-            <password/>
-            <dateGenerated/>
-            <userRole/>
-            <status/>
-            <lastLogin/>
+            <email>juan@gmail.com</email>
+            <password>NewPass#123</password>
+            <dateGenerated>2025-05-10</dateGenerated>
+            <userRole>renter</userRole>
+            <status>Active</status>
+            <lastLogin>2025-05-11</lastLogin>
         </user>
         <user id="2">
             <email>makotobluemazing707@gmail.com</email>
             <password>Bluemazing707@</password>
             <dateGenerated>2025-05-15</dateGenerated>
-            <userRole>Renter</userRole>
+            <userRole>caretaker</userRole>
             <status>Active</status>
-            <lastLogin/>
+            <lastLogin>2025-05-15</lastLogin>
         </user>
         <user id="3">
-            <email>amoi@gmail.com</email>
-            <password>Bluemazing707@</password>
+            <email>rontaniegra707@gmail.com</email>
+            <password>NewPass#23456</password>
             <dateGenerated>2025-05-15</dateGenerated>
-            <userRole>Renter</userRole>
+            <userRole>renter</userRole>
             <status>Active</status>
             <lastLogin>2025-05-15</lastLogin>
         </user>
         <user id="4">
-            <email>kifea@gmail.com</email>
+            <email>renter@gmail.com</email>
             <password>Bluemazing707@</password>
             <dateGenerated>2025-05-15</dateGenerated>
-            <userRole>Renter</userRole>
+            <userRole>renter</userRole>
             <status>Archived</status>
+            <lastLogin>2025-05-15</lastLogin>
+        </user>
+        <user id="5">
+            <email>admin@gmail.com</email>
+            <password>Bluemazing707@</password>
+            <dateGenerated>2025-05-15</dateGenerated>
+            <userRole>admin</userRole>
+            <status>Active</status>
             <lastLogin>2025-05-15</lastLogin>
         </user>
     </users>
     <caretakers>
-        <caretaker id="">
-            <userId/>
+        <caretaker id="501">
+            <userId>2</userId>
             <personalInfo>
                 <name>
-                    <surname/>
-                    <firstName/>
+                    <surname>Reyes</surname>
+                    <firstName>Maria</firstName>
+                    <middleName>Luisa</middleName>
+                    <extension/>
+                </name>
+            </personalInfo>
+        </caretaker>
+        <caretaker id="502">
+            <userId>6</userId>
+            <personalInfo>
+                <name>
+                    <surname>Delos Santos</surname>
+                    <firstName>Jose</firstName>
+                    <middleName/>
+                    <extension/>
+                </name>
+            </personalInfo>
+        </caretaker>
+        <caretaker id="503">
+            <userId>7</userId>
+            <personalInfo>
+                <name>
+                    <surname>Lim</surname>
+                    <firstName>Anna</firstName>
+                    <middleName/>
+                    <extension/>
+                </name>
+            </personalInfo>
+        </caretaker>
+        <caretaker id="504">
+            <userId>8</userId>
+            <personalInfo>
+                <name>
+                    <surname>Tan</surname>
+                    <firstName>Michael</firstName>
+                    <middleName/>
+                    <extension/>
+                </name>
+            </personalInfo>
+        </caretaker>
+        <caretaker id="505">
+            <userId>9</userId>
+            <personalInfo>
+                <name>
+                    <surname>Ocampo</surname>
+                    <firstName>Grace</firstName>
                     <middleName/>
                     <extension/>
                 </name>
@@ -283,12 +643,40 @@
         </caretaker>
     </caretakers>
     <auditTrail>
-        <action id="">
-            <userId/>
-            <ipAddress/>
-            <concernedModule/>
-            <actionPerformed/>
-            <timestamp/>
+        <action id="601">
+            <userId>1</userId>
+            <ipAddress>192.168.1.10</ipAddress>
+            <concernedModule>Rent Payment</concernedModule>
+            <actionPerformed>Paid Rent</actionPerformed>
+            <timestamp>2025-04-08T10:00:00</timestamp>
+        </action>
+        <action id="602">
+            <userId>2</userId>
+            <ipAddress>192.168.1.11</ipAddress>
+            <concernedModule>Utility Billing</concernedModule>
+            <actionPerformed>Updated Meter Reading</actionPerformed>
+            <timestamp>2025-04-10T12:00:00</timestamp>
+        </action>
+        <action id="603">
+            <userId>3</userId>
+            <ipAddress>192.168.1.12</ipAddress>
+            <concernedModule>Inquiry</concernedModule>
+            <actionPerformed>Submitted Inquiry</actionPerformed>
+            <timestamp>2025-04-12T09:30:00</timestamp>
+        </action>
+        <action id="604">
+            <userId>4</userId>
+            <ipAddress>192.168.1.13</ipAddress>
+            <concernedModule>Task</concernedModule>
+            <actionPerformed>Completed Task</actionPerformed>
+            <timestamp>2025-04-15T14:45:00</timestamp>
+        </action>
+        <action id="605">
+            <userId>5</userId>
+            <ipAddress>192.168.1.14</ipAddress>
+            <concernedModule>User Management</concernedModule>
+            <actionPerformed>Created User</actionPerformed>
+            <timestamp>2025-04-18T16:20:00</timestamp>
         </action>
     </auditTrail>
 </apartmentManagement>
