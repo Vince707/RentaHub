@@ -254,87 +254,81 @@
               <!-- METRICS -->
               <div class="row gx-3 gy-3">
                 <div class="col-12 col-sm-6 col-lg-4">
-                    <div class="gradient-red-bg d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
-                        <p class="h6 font-white my-0">Total Unpaid Bill</p>
-                        <p class="h3 font-white my-0">
-                        PHP 
-                        <xsl:value-of select="format-number(
-                            (
-                            sum($data//rentBills/bill[status='Unpaid']/amount)
-                            +
-                            sum($data//utilityBills/utility/reading/bill[status='Unpaid']/amount)
-                            )
-                            -
-                            sum($data//payments/payment/amount)
-                        , '###,##0.00')" />
-                        </p>
-                    </div>
-                    </div>
+                  <div class="gradient-red-bg d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
+                    <p class="h6 font-white my-0">Total Unpaid Bill</p>
+                    <p class="h3 font-white my-0"> PHP
+                      <span id="total-unpaid-bill" class="h3">0.00</span>
+                    </p>
+                  </div>
+                </div>
+
 
 
                 <div class="col-12 col-sm-6 col-lg-4">
                 <div class="gradient-red-bg d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
                     <p class="h6 font-white my-0">Total Current Bill</p>
                     <p class="h3 font-white my-0">
-                    PHP <span id="total-current-bill">0.00</span>
+                    PHP <span id="total-current-bill" class="h3">0.00</span>
                     </p>
                 </div>
                 </div>
 
 
-                <div class="col-12 col-sm-6 col-lg-4">
-                  <div
-                    class="red-border d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
-                    <p class="h6 font-red my-0">Overdue Bills</p>
-                    <p class="h3 font-red my-0">PHP 7,208.28</p>
-                  </div>
+               <div class="col-12 col-sm-6 col-lg-4">
+                <div class="red-border d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
+                  <p class="h6 font-red my-0">Overdue Bills</p>
+                  <p class="h3 font-red my-0">
+                    PHP <span id="overdue-bills-total" class="h3">0.00</span>
+                  </p>
                 </div>
+              </div>
+
 
                 <div class="col-12 col-sm-6 col-lg-4">
-                  <div
-                    class="red-border d-flex flex-row align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="56px" viewBox="0 -960 960 960" width="56px"
-                      fill="#8B0000">
-                      <path
-                        d="m422-232 207-248H469l29-227-185 267h139l-30 208ZM320-80l40-280H160l360-520h80l-40 320h240L400-80h-80Zm151-390Z" />
+                  <div class="red-border d-flex flex-row align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="56px" viewBox="0 -960 960 960" width="56px" fill="#8B0000">
+                      <path d="m422-232 207-248H469l29-227-185 267h139l-30 208ZM320-80l40-280H160l360-520h80l-40 320h240L400-80h-80Zm151-390Z" />
                     </svg>
-
                     <div class="d-flex flex-column align-items-center justify-content-center rounded-4 h-100">
                       <p class="h6 font-red my-0">Total Current Electric Bill</p>
-                      <p class="h3 font-red my-0">PHP 7,208.28</p>
+                      <p class="h3 font-red my-0">
+                        PHP <span id="total-current-electric-bill" class="h3">0.00</span>
+                      </p>
                     </div>
                   </div>
                 </div>
 
+
+                <!-- Water Bill -->
                 <div class="col-12 col-sm-6 col-lg-4">
-                  <div
-                    class="red-border d-flex flex-row align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="56px" viewBox="0 -960 960 960" width="56px"
-                      fill="#8B0000">
-                      <path
-                        d="M491-200q12-1 20.5-9.5T520-230q0-14-9-22.5t-23-7.5q-41 3-87-22.5T343-375q-2-11-10.5-18t-19.5-7q-14 0-23 10.5t-6 24.5q17 91 80 130t127 35ZM480-80q-137 0-228.5-94T160-408q0-100 79.5-217.5T480-880q161 137 240.5 254.5T800-408q0 140-91.5 234T480-80Zm0-80q104 0 172-70.5T720-408q0-73-60.5-165T480-774Q361-665 300.5-573T240-408q0 107 68 177.5T480-160Zm0-320Z" />
+                  <div class="red-border d-flex flex-row align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="56px" viewBox="0 -960 960 960" width="56px" fill="#8B0000">
+                      <path d="M491-200q12-1 20.5-9.5T520-230q0-14-9-22.5t-23-7.5q-41 3-87-22.5T343-375q-2-11-10.5-18t-19.5-7q-14 0-23 10.5t-6 24.5q17 91 80 130t127 35ZM480-80q-137 0-228.5-94T160-408q0-100 79.5-217.5T480-880q161 137 240.5 254.5T800-408q0 140-91.5 234T480-80Zm0-80q104 0 172-70.5T720-408q0-73-60.5-165T480-774Q361-665 300.5-573T240-408q0 107 68 177.5T480-160Zm0-320Z" />
                     </svg>
                     <div class="d-flex flex-column align-items-center justify-content-center rounded-4 h-100">
                       <p class="h6 font-red my-0">Total Current Water Bill</p>
-                      <p class="h3 font-red my-0">PHP 7,208.28</p>
+                      <p class="h3 font-red my-0">
+                        PHP <span id="total-current-water-bill" class="h3">0.00</span>
+                      </p>
                     </div>
                   </div>
                 </div>
 
+                <!-- Rent Bill -->
                 <div class="col-12 col-sm-6 col-lg-4">
-                  <div
-                    class="red-border d-flex flex-row align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="52px" viewBox="0 -960 960 960" width="52px"
-                      fill="#8B0000">
-                      <path
-                        d="M760-400v-260L560-800 360-660v60h-80v-100l280-200 280 200v300h-80ZM560-800Zm20 160h40v-40h-40v40Zm-80 0h40v-40h-40v40Zm80 80h40v-40h-40v40Zm-80 0h40v-40h-40v40ZM280-220l278 76 238-74q-5-9-14.5-15.5T760-240H558q-27 0-43-2t-33-8l-93-31 22-78 81 27q17 5 40 8t68 4q0-11-6.5-21T578-354l-234-86h-64v220ZM40-80v-440h304q7 0 14 1.5t13 3.5l235 87q33 12 53.5 42t20.5 66h80q50 0 85 33t35 87v40L560-60l-280-78v58H40Zm80-80h80v-280h-80v280Z" />
+                  <div class="red-border d-flex flex-row align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="52px" viewBox="0 -960 960 960" width="52px" fill="#8B0000">
+                      <path d="M760-400v-260L560-800 360-660v60h-80v-100l280-200 280 200v300h-80ZM560-800Zm20 160h40v-40h-40v40Zm-80 0h40v-40h-40v40Zm80 80h40v-40h-40v40Zm-80 0h40v-40h-40v40ZM280-220l278 76 238-74q-5-9-14.5-15.5T760-240H558q-27 0-43-2t-33-8l-93-31 22-78 81 27q17 5 40 8t68 4q0-11-6.5-21T578-354l-234-86h-64v220ZM40-80v-440h304q7 0 14 1.5t13 3.5l235 87q33 12 53.5 42t20.5 66h80q50 0 85 33t35 87v40L560-60l-280-78v58H40Zm80-80h80v-280h-80v280Z" />
                     </svg>
                     <div class="d-flex flex-column align-items-center justify-content-center rounded-4 h-100">
                       <p class="h6 font-red my-0">Total Current Rent Bill</p>
-                      <p class="h3 font-red my-0">PHP 7,208.28</p>
+                      <p class="h3 font-red my-0">
+                        PHP <span id="total-current-rent-bill" class="h3">0.00</span>
+                      </p>
                     </div>
                   </div>
                 </div>
+
 
                 <p class="h3 font-red-gradient me-2">Billings Summary</p>
                  
@@ -342,40 +336,25 @@
                 <!-- TABLE -->
                 <!-- TODO: XML Connect -->
                 <table class="custom-table" id="billings-summary">
-                  <thead>
-                    <tr>
-                      <th>Room No.</th>
-                      <th>Renter Name</th>
-                      <th>Month Due</th>
-                      <th>Electric Bill</th>
-                      <th>Water Bill</th>
-                      <th>Rent</th>
-                      <th>Overdue</th>
-                      <th>Total</th>
-                      <th>Total Unpaid</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>1A</td>
-                      <td>Dave Alon</td>
-                      <td>March 2025</td>
-                      <td class="text-warning">PHP 1,893.19<span class="badge rounded-pill bg-warning ms-1">Partial
-                          Payment</span></td>
-                      <td class="text-danger">PHP 1,893.19<span class="badge rounded-pill bg-danger ms-1">Unpaid</span>
-                      </td>
-                      <td class="text-danger">PHP 1,893.19<span class="badge rounded-pill bg-danger ms-1">Unpaid</span>
-                      </td>
-                      <td class="text-success">PHP 1,893.19<span class="badge rounded-pill bg-success ms-1">Full
-                          Payment</span></td>
-                      <td class="text-danger">PHP 1,893.19<span class="badge rounded-pill bg-danger ms-1">Unpaid</span>
-                      </td>
-                      <td class="text-danger">PHP 1,893.19<span class="badge rounded-pill bg-danger ms-1">Unpaid</span>
-                      </td>
+                <thead>
+                  <tr>
+                    <th>Room No.</th>
+                    <th>Renter Name</th>
+                    <th>Month Due</th>
+                    <th>Current Electric Bill</th>
+                    <th>Current Water Bill</th>
+                    <th>Current Rent</th>
+                    <th>Current Overdue</th>
+                    <th>Total Current</th>
+                    <th>Total Unpaid</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Rows will be inserted here by JavaScript -->
+                </tbody>
+              </table>
 
-                    </tr>
-                  </tbody>
-                </table>
+
 
               </div>
             </div>
@@ -387,8 +366,22 @@
               <div class="d-flex flex-row mt-3">
                 <select class="form-select custom-select select-sort me-1 col-1" id="select-billings-renter">
                   <option selected="selected" disabled="disabled" hidden="hidden">Renter</option>
-                  <option value="userid">Dave Alon</option>
+                  <xsl:for-each select="$data//apartmentManagement/renters/renter[status='Active']">
+                    <option value="{userId}">
+                      <xsl:value-of select="personalInfo/name/firstName"/>
+                      <xsl:text> </xsl:text>
+                      <xsl:value-of select="personalInfo/name/middleName"/>
+                      <xsl:if test="personalInfo/name/middleName"> </xsl:if>
+                        <xsl:text> </xsl:text>
+                      <xsl:value-of select="personalInfo/name/surname"/>
+                      <xsl:if test="personalInfo/name/extension">
+                        <xsl:text> </xsl:text>
+                        <xsl:value-of select="personalInfo/name/extension"/>
+                      </xsl:if>
+                    </option>
+                  </xsl:for-each>
                 </select>
+
                 <div class="date-input-container ms-2 d-flex flex-row" style="transform: translateY(0%);">
                   <label for="individual-month-due" class="date-label">Month Due</label>
                   <label class="date-input-wrapper ms-2">
@@ -405,40 +398,34 @@
               <!-- METRICS -->
               <div class="row gx-3 gy-3 mt-2">
                 <div class="col-12 col-sm-6 col-lg-3">
-                  <div
-                    class="gradient-red-bg d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
+                  <div class="gradient-red-bg d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
                     <p class="h6 font-white my-0 text-center">Total Unpaid Bill</p>
-                    <p class="h3 font-white my-0 text-center">PHP 7,208.28</p>
+                    <p class="h3 font-white my-0 text-center">PHP <span id="individual-total-unpaid" class="h3">0.00</span></p>
                   </div>
                 </div>
-
                 <div class="col-12 col-sm-6 col-lg-3">
-                  <div
-                    class="gradient-red-bg d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
+                  <div class="gradient-red-bg d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
                     <p class="h6 font-white my-0 text-center">Total Current Bill</p>
-                    <p class="h3 font-white my-0 text-center">PHP 7,208.28</p>
+                    <p class="h3 font-white my-0 text-center">PHP <span id="individual-current-bill" class="h3">0.00</span></p>
                   </div>
                 </div>
-
                 <div class="col-12 col-sm-6 col-lg-3">
-                  <div
-                    class="red-border d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
+                  <div class="red-border d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
                     <p class="h6 font-red my-0 text-center">Total Current Paid</p>
-                    <p class="h3 font-red my-0 text-center">PHP 7,208.28</p>
+                    <p class="h3 font-red my-0 text-center">PHP <span id="individual-current-paid" class="h3">0.00</span></p>
+                  </div>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-3">
+                  <div class="red-border d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
+                    <p class="h6 font-red my-0 text-center">Overpaid</p>
+                    <p class="h3 font-red my-0 text-center">PHP <span id="individual-overpaid" class="h3">0.00</span></p>
                   </div>
                 </div>
 
-                <div class="col-12 col-sm-6 col-lg-3">
-                  <div
-                    class="red-border d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
-                    <p class="h6 font-red my-0 text-center">Overpaid</p>
-                    <p class="h3 font-red my-0 text-center">PHP 7,208.28</p>
-                  </div>
-                </div>
                 <p class="h4 font-red-gradient">Individual Breakdown</p>
                 <div class="d-flex flex-wrap mt-2 justify-content-between">
                   <div class="col-12 col-sm-6 col-lg-5">
-                    <div class="gradient-red-bg d-flex flex-column align-items-start rounded-4 p-4 px-4 h-100">
+                    <div class="gradient-red-bg d-flex flex-column align-items-start rounded-4 p-4 px-4">
                       <div class="d-flex justify-content-between align-items-start w-100">
                         <div class="d-flex align-items-start">
                           <p class="h4 font-white mb-3 me-2 align-self-start">Electric Bill</p>
@@ -473,46 +460,54 @@
                       </div>
                       <div class="d-flex flex-row">
                         <p class="h6 font-white me-2">Reading Date:</p>
-                        <p class="font-white"></p>
+                        <p class="font-white" id="electric-reading-date"></p>
                       </div>
                       <div class="d-flex flex-row">
                         <p class="h6 font-white me-2">Due Date:</p>
-                        <p class="font-white"></p>
+                        <p class="font-white" id="electric-due-date"></p>
                       </div>
                       <div class="d-flex flex-row">
                         <p class="h6 font-white me-2">Current Reading:</p>
-                        <p class="font-white"></p>
+                        <p class="font-white" id="electric-current-reading"></p>
                       </div>
                       <div class="d-flex flex-row">
                         <p class="h6 font-white me-2">Previous Reading:</p>
-                        <p class="font-white"></p>
+                        <p class="font-white" id="electric-previous-reading"></p>
                       </div>
                       <div class="d-flex flex-row">
                         <p class="h6 font-white me-2">Consumed Kwh:</p>
-                        <p class="font-white"></p>
+                        <p class="font-white" id="electric-consumed-kwh"></p>
                       </div>
                       <div class="d-flex flex-row">
                         <p class="h6 font-white me-2">Amount per Kwh:</p>
-                        <p class="font-white"></p>
+                        <p class="font-white" id="electric-amount-per-kwh"></p>
                       </div>
                       <div class="d-flex flex-row justify-content-between w-100">
                         <div class="d-flex flex-row">
                           <p class="h4 font-white me-2">Your Bill:</p>
-                          <p class="font-white"></p>
+                          <p class="font-white" id="electric-your-bill"></p>
                         </div>
-                        
-                        <button type="button" class="btn-white d-flex align-items-center px-3 py-1" data-bs-toggle="modal"
-                    data-bs-target="#modalRecordPayment">
-                          Pay
-                        </button>
+                       <button type="button"
+                          class="btn-white pay-btn d-flex align-items-center px-3 py-1"
+                          data-type="Electric"
+                          data-bill-id="E1"
+                          data-reading-id="1"
+                          data-renter-id="1"
+                          data-bs-toggle="modal"
+                          data-bs-target="#modalRecordPayment">
+                    Pay
+                  </button>
+
+
                       </div>
+
                     </div>
                   </div>
 
 
 
                   <div class="col-12 col-sm-6 col-lg-5">
-                    <div class="gradient-red-bg d-flex flex-column align-items-start rounded-4 p-4 px-4 h-100">
+                    <div class="gradient-red-bg d-flex flex-column align-items-start rounded-4 p-4 px-4">
                       <div class="d-flex justify-content-between align-items-start w-100">
                         <div class="d-flex align-items-start">
                           <p class="h4 font-white mb-3 me-2 align-self-start">Water Bill</p>
@@ -547,46 +542,46 @@
                       </div>
                       <div class="d-flex flex-row">
                         <p class="h6 font-white me-2">Reading Date:</p>
-                        <p class="font-white"></p>
+                        <p class="font-white" id="water-reading-date"></p>
                       </div>
                       <div class="d-flex flex-row">
                         <p class="h6 font-white me-2">Due Date:</p>
-                        <p class="font-white"></p>
+                        <p class="font-white" id="water-due-date"></p>
                       </div>
                       <div class="d-flex flex-row">
                         <p class="h6 font-white me-2">Current Reading:</p>
-                        <p class="font-white"></p>
+                        <p class="font-white" id="water-current-reading"></p>
                       </div>
                       <div class="d-flex flex-row">
                         <p class="h6 font-white me-2">Previous Reading:</p>
-                        <p class="font-white"></p>
+                        <p class="font-white" id="water-previous-reading"></p>
                       </div>
                       <div class="d-flex flex-row">
                         <p class="h6 font-white me-2">Consumed m<sup>3</sup>:</p>
-                        <p class="font-white"></p>
+                        <p class="font-white" id="water-consumed-cubic"></p>
                       </div>
                       <div class="d-flex flex-row">
                         <p class="h6 font-white me-2">Amount per m<sup>3</sup>:</p>
-                        <p class="font-white"></p>
+                        <p class="font-white" id="water-amount-per-cubic"></p>
                       </div>
                       <div class="d-flex flex-row justify-content-between w-100">
                         <div class="d-flex flex-row">
                           <p class="h4 font-white me-2">Your Bill:</p>
-                          <p class="font-white"></p>
+                          <p class="font-white" id="water-your-bill"></p>
                         </div>
-                        
                         <button type="button" class="btn-white d-flex align-items-center px-3 py-1" data-bs-toggle="modal"
-                    data-bs-target="#modalRecordPayment">
+                          data-bs-target="#modalRecordPayment">
                           Pay
                         </button>
                       </div>
+
                     </div>
                   </div>
 
 
 
                   <div class="col-12 col-sm-6 col-lg-5 mt-5">
-                    <div class="gradient-red-bg d-flex flex-column align-items-start rounded-4 p-4 px-4 h-100">
+                    <div class="gradient-red-bg d-flex flex-column align-items-start rounded-4 p-4 px-4">
                       <div class="d-flex justify-content-between align-items-start w-100">
                         <div class="d-flex align-items-start">
                           <p class="h4 font-white mb-3 me-2 align-self-start">Rent</p>
@@ -611,29 +606,29 @@
                       </div>
                       <div class="d-flex flex-row">
                         <p class="h6 font-white me-2">Start &amp; Due Date:</p>
-                        <p class="font-white"></p>
+                        <p class="font-white" id="rent-start-due-date"></p>
                       </div>
                       <div class="d-flex flex-row">
                         <p class="h6 font-white me-2">End Date:</p>
-                        <p class="font-white"></p>
+                        <p class="font-white" id="rent-end-date"></p>
                       </div>
                       <div class="d-flex flex-row justify-content-between w-100">
                         <div class="d-flex flex-row">
                           <p class="h4 font-white me-2">Your Bill:</p>
-                          <p class="font-white"></p>
+                          <p class="font-white" id="rent-your-bill"></p>
                         </div>
-                        
-                       <button type="button" class="btn-white d-flex align-items-center px-3 py-1" data-bs-toggle="modal"
-                    data-bs-target="#modalRecordPayment">
+                        <button type="button" class="btn-white d-flex align-items-center px-3 py-1" data-bs-toggle="modal"
+                          data-bs-target="#modalRecordPayment">
                           Pay
                         </button>
                       </div>
+
                     </div>
                   </div>
 
 
                   <div class="col-12 col-sm-6 col-lg-5 mt-5">
-                    <div class="gradient-red-bg d-flex flex-column align-items-start rounded-4 p-4 px-4 h-100">
+                    <div class="gradient-red-bg d-flex flex-column align-items-start rounded-4 p-4 px-4">
                       <div class="d-flex justify-content-between align-items-start w-100">
                         <div class="d-flex align-items-start">
                           <p class="h4 font-white mb-3 me-2 align-self-start">Overdue Bills</p>
@@ -658,31 +653,40 @@
                       </div>
                       <div class="d-flex flex-row">
                         <p class="h6 font-white me-2">Electric Overdue:</p>
-                        <p class="font-white"></p>
+                        <p class="font-white" id="overdue-electric"></p>
+                        <div class="d-flex flex-row ms-5" id="overdue-electric-due-date-container" style="display:none;">
+                          <p class="h6 font-white me-2">Due Date:</p>
+                          <p class="font-white" id="overdue-electric-due-date"></p>
+                        </div>
                       </div>
                       <div class="d-flex flex-row">
                         <p class="h6 font-white me-2">Water Overdue:</p>
-                        <p class="font-white"></p>
+                        <p class="font-white" id="overdue-water"></p>
+                        <div class="d-flex flex-row ms-5" id="overdue-water-due-date-container" style="display:none;">
+                          <p class="h6 font-white me-2">Due Date:</p>
+                          <p class="font-white" id="overdue-water-due-date"></p>
+                        </div>
                       </div>
                       <div class="d-flex flex-row">
                         <p class="h6 font-white me-2">Rent Overdue:</p>
-                        <p class="font-white"></p>
-                        <div class="d-flex flex-row ms-5">
+                        <p class="font-white" id="overdue-rent"></p>
+                        <div class="d-flex flex-row ms-5" id="overdue-rent-due-date-container" style="display:none;">
                           <p class="h6 font-white me-2">Due Date:</p>
-                          <p class="font-white"></p>
+                          <p class="font-white" id="overdue-rent-due-date"></p>
                         </div>
                       </div>
+
                       <div class="d-flex flex-row justify-content-between w-100">
                         <div class="d-flex flex-row">
                           <p class="h4 font-white me-2">Your Bill:</p>
-                          <p class="font-white"></p>
+                          <p class="font-white" id="overdue-total"></p>
                         </div>
-                        
                         <button type="button" class="btn-white d-flex align-items-center px-3 py-1" data-bs-toggle="modal"
-                    data-bs-target="#modalRecordPayment">
+                          data-bs-target="#modalRecordPayment">
                           Pay
                         </button>
                       </div>
+
                     </div>
                   </div>
 
@@ -1944,7 +1948,7 @@
         <div class="modal-header d-flex flex-column align-items-start">
           <p class="modal-title h2 font-red-gradient">Record
             Payment</p>
-          <p class="modal-title h4 font-red-gradient">R25000002</p>
+          <p class="modal-title h4 font-red-gradient" id="record-payment-receipt-number"></p>
         </div>
 
         <!-- Modal body -->
@@ -1952,7 +1956,20 @@
           <div class="d-flex flex-column">
             <select class="form-select custom-select select-sort me-1 col-1" id="record-payment-renter">
               <option selected="selected" disabled="disabled" hidden="hidden">Renter Name *</option>
-              <option value="userid">Dave Alon</option>
+              <xsl:for-each select="$data//apartmentManagement/renters/renter[status='Active']">
+                    <option value="{userId}">
+                      <xsl:value-of select="personalInfo/name/firstName"/>
+                      <xsl:text> </xsl:text>
+                      <xsl:value-of select="personalInfo/name/middleName"/>
+                      <xsl:if test="personalInfo/name/middleName"> </xsl:if>
+                        <xsl:text> </xsl:text>
+                      <xsl:value-of select="personalInfo/name/surname"/>
+                      <xsl:if test="personalInfo/name/extension">
+                        <xsl:text> </xsl:text>
+                        <xsl:value-of select="personalInfo/name/extension"/>
+                      </xsl:if>
+                    </option>
+                  </xsl:for-each>
             </select>
             <p class="h4 font-red-gradient mt-3">Payment Type</p>
             <div class="d-flex flex-row">

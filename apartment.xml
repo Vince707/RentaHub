@@ -183,6 +183,25 @@
                     <meterNumber>MT-1001</meterNumber>
                     <address>123 Main St</address>
                 </accountInfo>
+                <reading id="0">
+                    <readingDate>2025-04-01</readingDate>
+                    <periodEnd>2025-04-30</periodEnd>
+                    <dueDate>2025-05-10</dueDate>
+                    <consumedKwhTotal>100</consumedKwhTotal>
+                    <amountPerKwh>10</amountPerKwh>
+                    <totalBill>1000</totalBill>
+                    <status>Paid</status>
+                    <bill id="E0">
+                        <renterId>1</renterId>
+                        <currentReading>1080</currentReading>
+                        <consumedKwh>100</consumedKwh>
+                        <amount>1000</amount>
+                        <overpaid>0</overpaid>
+                        <debt>0</debt>
+                        <status>Paid</status>
+                    </bill>
+                    </reading>
+
                 <reading id="1">
                     <readingDate>2025-05-01</readingDate>
                     <periodEnd>2025-05-31</periodEnd>
@@ -190,15 +209,15 @@
                     <consumedKwhTotal>120</consumedKwhTotal>
                     <amountPerKwh>10</amountPerKwh>
                     <totalBill>1200</totalBill>
-                    <status>Unpaid</status>
+                    <status>Partial</status> <!-- Partial payment on reading level -->
                     <bill id="E1">
-                        <renterId>1</renterId>
-                        <currentReading>1200</currentReading>
-                        <consumedKwh>120</consumedKwh>
-                        <amount>1200</amount>
-                        <overpaid>0</overpaid>
-                        <debt>0</debt>
-                        <status>Unpaid</status>
+                    <renterId>1</renterId>
+                    <currentReading>1200</currentReading>
+                    <consumedKwh>120</consumedKwh>
+                    <amount>600</amount> <!-- Partial amount paid -->
+                    <overpaid>0</overpaid>
+                    <debt>600</debt> <!-- Half unpaid -->
+                    <status>Partial</status>
                     </bill>
                 </reading>
                 <reading id="2">
@@ -210,13 +229,13 @@
                     <totalBill>1100</totalBill>
                     <status>Paid</status>
                     <bill id="E2">
-                        <renterId>2</renterId>
-                        <currentReading>1100</currentReading>
-                        <consumedKwh>110</consumedKwh>
-                        <amount>1100</amount>
-                        <overpaid>0</overpaid>
-                        <debt>0</debt>
-                        <status>Paid</status>
+                    <renterId>2</renterId>
+                    <currentReading>1100</currentReading>
+                    <consumedKwh>110</consumedKwh>
+                    <amount>1100</amount>
+                    <overpaid>0</overpaid>
+                    <debt>0</debt>
+                    <status>Paid</status>
                     </bill>
                 </reading>
                 <reading id="3">
@@ -288,15 +307,15 @@
                     <consumedCubicMTotal>15</consumedCubicMTotal>
                     <amountPerCubicM>50</amountPerCubicM>
                     <totalBill>750</totalBill>
-                    <status>Unpaid</status>
+                    <status>Partial</status>
                     <bill id="W1">
-                        <renterId>1</renterId>
-                        <currentReading>150</currentReading>
-                        <consumedCubic>15</consumedCubic>
-                        <amount>750</amount>
-                        <overpaid>0</overpaid>
-                        <debt>0</debt>
-                        <status>Unpaid</status>
+                    <renterId>1</renterId>
+                    <currentReading>150</currentReading>
+                    <consumedCubic>15</consumedCubic>
+                    <amount>375</amount> <!-- Partial payment -->
+                    <overpaid>0</overpaid>
+                    <debt>375</debt>
+                    <status>Partial</status>
                     </bill>
                 </reading>
                 <reading id="2">
@@ -375,28 +394,28 @@
         </utilityBills>
         <rentBills>
             <bill id="101">
-                <renterId>1</renterId>
-                <amount>3500</amount>
-                <dueDate>2025-04-10</dueDate>
-                <overpaid>0</overpaid>
-                <debt>0</debt>
-                <status>Unpaid</status>
+            <renterId>1</renterId>
+            <amount>3500</amount>
+            <dueDate>2025-04-10</dueDate>
+            <overpaid>0</overpaid>
+            <debt>500</debt> <!-- Partial payment, 500 still owed -->
+            <status>Partial</status> 
             </bill>
             <bill id="102">
-                <renterId>2</renterId>
-                <amount>3700</amount>
-                <dueDate>2025-04-15</dueDate>
-                <overpaid>0</overpaid>
-                <debt>0</debt>
-                <status>Paid</status>
+            <renterId>2</renterId>
+            <amount>3700</amount>
+            <dueDate>2025-04-15</dueDate>
+            <overpaid>0</overpaid>
+            <debt>0</debt>
+            <status>Paid</status>
             </bill>
             <bill id="103">
-                <renterId>3</renterId>
-                <amount>4200</amount>
-                <dueDate>2025-05-01</dueDate>
-                <overpaid>0</overpaid>
-                <debt>0</debt>
-                <status>Unpaid</status>
+            <renterId>3</renterId>
+            <amount>4200</amount>
+            <dueDate>2025-05-01</dueDate>
+            <overpaid>0</overpaid>
+            <debt>2100</debt> <!-- Half paid -->
+            <status>Partial</status>
             </bill>
             <bill id="104">
                 <renterId>4</renterId>
@@ -417,7 +436,7 @@
         </rentBills>
     </billing>
     <payments>
-        <payment id="201">
+       <payment id="R25000001">
             <renterId>1</renterId>
             <paymentType>Rent</paymentType>
             <paymentAmountType>Full</paymentAmountType>
@@ -426,7 +445,7 @@
             <paymentMethod>GCash</paymentMethod>
             <remarks>April rent</remarks>
         </payment>
-        <payment id="202">
+        <payment id="R25000002">
             <renterId>2</renterId>
             <paymentType>Rent</paymentType>
             <paymentAmountType>Full</paymentAmountType>
@@ -435,7 +454,7 @@
             <paymentMethod>Cash</paymentMethod>
             <remarks>April rent</remarks>
         </payment>
-        <payment id="203">
+        <payment id="R25000003">
             <renterId>3</renterId>
             <paymentType>Utility</paymentType>
             <paymentAmountType>Partial</paymentAmountType>
@@ -444,7 +463,7 @@
             <paymentMethod>Bank Transfer</paymentMethod>
             <remarks>Partial payment</remarks>
         </payment>
-        <payment id="204">
+        <payment id="R25000004">
             <renterId>4</renterId>
             <paymentType>Rent</paymentType>
             <paymentAmountType>Full</paymentAmountType>
@@ -453,7 +472,7 @@
             <paymentMethod>GCash</paymentMethod>
             <remarks>May rent</remarks>
         </payment>
-        <payment id="205">
+        <payment id="R25000005">
             <renterId>5</renterId>
             <paymentType>Utility</paymentType>
             <paymentAmountType>Full</paymentAmountType>
@@ -462,6 +481,7 @@
             <paymentMethod>Cash</paymentMethod>
             <remarks>Water bill</remarks>
         </payment>
+
     </payments>
     <tasks>
         <task id="301">
