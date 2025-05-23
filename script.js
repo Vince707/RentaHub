@@ -554,6 +554,50 @@ $.ajax({
       return '';
     }
 
+    function updateElectricBillCard(bill, reading, renterId) {
+  // Remove any existing Pay or Paid button
+  $('.electric-pay-button .pay-btn, .electric-pay-button .paid-btn').remove();
+
+  // Get the card container
+  const $card = $('.electric-bill-card .gradient-red-bg, .electric-bill-card .gradient-green-bg');
+
+  if (bill && bill.status !== 'Paid') {
+    // Ensure card is red
+    $card.removeClass('gradient-green-bg').addClass('gradient-red-bg');
+
+    // Add Pay button
+    $('.electric-pay-button').append(
+      `<button type="button"
+              class="btn-white pay-btn d-flex align-items-center px-3 py-1"
+              data-type="Electric"
+              data-bill-id="${bill.id}"
+              data-reading-id="${reading.id}"
+              data-renter-id="${renterId}"
+              data-bs-toggle="modal"
+              data-bs-target="#modalRecordPayment">
+        Pay
+      </button>`
+    );
+  } else {
+    // Ensure card is green
+    $card.removeClass('gradient-red-bg').addClass('gradient-green-bg');
+
+    // Add Paid badge
+    $('.electric-pay-button').append(
+      `<div class="d-flex align-items-center px-3 py-1 paid-btn" style="color: #FFFFFF;
+        font-size: 1.1rem;
+        font-weight: bold;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: background-color 0.3s, color 0.3s;">
+        Paid
+      </div>`
+    );
+  }
+}
+
+
 
     function populateElectricBillCard(renterId, selectedMonth) {
       const electricUtility = utilityBillsMap['Electricity'];
@@ -577,21 +621,7 @@ $.ajax({
         return;
       }
 
-     if (bill && bill.status !== 'Paid') {
-      $('.electric-bill-card').append(
-        `<button type="button"
-                class="btn-white pay-btn d-flex align-items-center px-3 py-1"
-                data-type="Electric"
-                data-bill-id="${bill.id}"
-                data-reading-id="${reading.id}"
-                data-renter-id="${renterId}"
-                data-bs-toggle="modal"
-                data-bs-target="#modalRecordPayment">
-          Pay
-        </button>`
-      );
-    }
-
+   updateElectricBillCard(bill, reading, renterId);
 
 
       // Get previous reading
@@ -606,8 +636,17 @@ $.ajax({
       $('#electric-your-bill').text('PHP ' + Number(bill.amount || 0).toLocaleString('en-PH', {minimumFractionDigits:2}));
     }
 
-
+    
     $('#select-billings-renter, #individual-month-due').on('change input', function() {
+      const $electricCard = $('.electric-bill-card .gradient-red-bg, .electric-bill-card .gradient-green-bg');
+      $electricCard.removeClass('gradient-green-bg').addClass('gradient-red-bg');
+      const $waterCard = $('.water-bill-card .gradient-red-bg, .water-bill-card .gradient-green-bg');
+      $waterCard.removeClass('gradient-green-bg').addClass('gradient-red-bg');
+      const $rentCard = $('.rent-bill-card .gradient-red-bg, .rent-bill-card .gradient-green-bg');
+      $rentCard.removeClass('gradient-green-bg').addClass('gradient-red-bg');
+      const $overdueCard = $('.overdue-bill-card .gradient-red-bg, .overdue-bill-card .gradient-green-bg');
+      $overdueCard.removeClass('gradient-green-bg').addClass('gradient-red-bg');
+      
       const renterId = $('#select-billings-renter').val();
       const selectedMonth = $('#individual-month-due').val(); // Format: "YYYY-MM"
       if (renterId && selectedMonth) {
@@ -641,6 +680,50 @@ $.ajax({
   return '';
 }
 
+function updateWaterBillCard(bill, reading, renterId) {
+  // Remove any existing Pay or Paid button
+  $('.water-pay-button .pay-btn, .water-pay-button .paid-btn').remove();
+
+  // Get the card container
+  const $card = $('.water-bill-card .gradient-red-bg, .water-bill-card .gradient-green-bg');
+
+  if (bill && bill.status !== 'Paid') {
+    // Ensure card is red
+    $card.removeClass('gradient-green-bg').addClass('gradient-red-bg');
+
+    // Add Pay button
+    $('.water-pay-button').append(
+      `<button type="button"
+              class="btn-white pay-btn d-flex align-items-center px-3 py-1"
+              data-type="Water"
+              data-bill-id="${bill.id}"
+              data-reading-id="${reading.id}"
+              data-renter-id="${renterId}"
+              data-bs-toggle="modal"
+              data-bs-target="#modalRecordPayment">
+        Pay
+      </button>`
+    );
+  } else {
+    // Ensure card is green
+    $card.removeClass('gradient-red-bg').addClass('gradient-green-bg');
+
+    // Add Paid badge
+    $('.water-pay-button').append(
+      `<div class="d-flex align-items-center px-3 py-1 paid-btn" style="color: #FFFFFF;
+        font-size: 1.1rem;
+        font-weight: bold;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: background-color 0.3s, color 0.3s;">
+        Paid
+      </div>`
+    );
+  }
+}
+
+
 function populateWaterBillCard(renterId, selectedMonth) {
   const waterUtility = utilityBillsMap['Water'];
   if (!waterUtility) {
@@ -661,6 +744,8 @@ function populateWaterBillCard(renterId, selectedMonth) {
     $('#water-reading-date, #water-due-date, #water-current-reading, #water-previous-reading, #water-consumed-cubic, #water-amount-per-cubic, #water-your-bill').text('');
     return;
   }
+
+    updateWaterBillCard(bill, reading, renterId);
 
   // Get previous reading
   const previousReading = getPreviousWaterReading(renterId, selectedMonth);
@@ -684,6 +769,50 @@ $('#select-billings-renter, #individual-month-due').on('change input', function(
   }
 });
 
+function updateRentBillCard(bill, renterId) {
+  const key = Object.keys(rentBillsMap).find(k => rentBillsMap[k] === bill);
+
+  // Remove any existing Pay or Paid button
+  $('.rent-pay-button .pay-btn, .rent-pay-button .paid-btn').remove();
+
+  // Get the card container (red or green)
+  const $card = $('.rent-bill-card .gradient-red-bg, .rent-bill-card .gradient-green-bg');
+
+  if (bill && bill.status !== 'Paid') {
+    // Ensure card is red
+    $card.removeClass('gradient-green-bg').addClass('gradient-red-bg');
+
+    // Add Pay button
+    $('.rent-pay-button').append(
+      `<button type="button"
+              class="btn-white pay-btn d-flex align-items-center px-3 py-1"
+              data-type="Rent"
+              data-bill-id="${key}"
+              data-renter-id="${renterId}"
+              data-bs-toggle="modal"
+              data-bs-target="#modalRecordPayment">
+        Pay
+      </button>`
+    );
+  } else {
+    // Ensure card is green
+    $card.removeClass('gradient-red-bg').addClass('gradient-green-bg');
+
+    // Add Paid badge
+    $('.rent-pay-button').append(
+      `<div class="d-flex align-items-center px-3 py-1 paid-btn" style="color: #FFFFFF;
+        font-size: 1.1rem;
+        font-weight: bold;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: background-color 0.3s, color 0.3s;">
+        Paid
+      </div>`
+    );
+  }
+}
+
 function populateRentCard(renterId, selectedMonth) {
   // Find the rent bill for this renter and month
   const rentBill = Object.values(rentBillsMap).find(bill =>
@@ -692,8 +821,10 @@ function populateRentCard(renterId, selectedMonth) {
 
   if (!rentBill) {
     $('#rent-start-due-date, #rent-end-date, #rent-your-bill').text('');
+    updateRentBillCard(null, renterId);
     return;
   }
+
 
   // Get the renter's lease info for start/end
   const renter = Object.values(renterDataMap).find(r => r.userId === renterId);
@@ -704,11 +835,15 @@ function populateRentCard(renterId, selectedMonth) {
   let dueDate = rentBill.dueDate || '';
   let startDueDate = leaseStart ? `${leaseStart} to ${dueDate}` : dueDate;
 
+  // Update the rent card's button and background
+  updateRentBillCard(rentBill, renterId);
+
+  // Update rent card info
   $('#rent-start-due-date').text(startDueDate);
   $('#rent-end-date').text(leaseEnd);
-
   $('#rent-your-bill').text('PHP ' + Number(rentBill.amount || 0).toLocaleString('en-PH', {minimumFractionDigits:2}));
 }
+
 
 $('#select-billings-renter, #individual-month-due').on('change input', function() {
   const renterId = $('#select-billings-renter').val();
@@ -816,7 +951,6 @@ function getNextReceiptNumber() {
   const maxNum = Math.max(...ids.map(id => parseInt(id.replace(/^R/, ''), 10)));
   const nextNum = maxNum + 1;
   // Pad with zeros to keep the same length (8 digits after R)
-  console.log("FUNC: " + "R" + String(nextNum).padStart(8, '0'))
   return "R" + String(nextNum).padStart(8, '0');
 }
 
@@ -851,9 +985,13 @@ $(document).on('click', '.pay-btn', function() {
   $('#record-payment-water-checkbox').prop('checked', type === 'Water');
   $('#record-payment-rent-checkbox').prop('checked', type === 'Rent');
 
-  let amount = (bill.status === 'Partial' || bill.status === 'Unpaid')
-    ? (bill.debt || bill.amount)
-    : bill.amount;
+  let amount;
+
+  if (bill.status === 'Partial') {
+    amount = bill.debt;
+  } else {
+    amount = bill.amount;
+  }
   $('#record-payment-payment-amount').val(amount);
 
   $('#record-payment-payment-date').val(formatDateToYYYYMMDD(new Date()));
@@ -1364,10 +1502,24 @@ $(document).ready(function () {
   "modify-water-address"
 ]);
   });
+  
+function getNextReceiptNumber() {
+  // Get all IDs from paymentsMap
+  const ids = Object.keys(paymentsMap)
+    .filter(id => /^R\d+$/.test(id)); // Only IDs like R25000001
+
+  if (ids.length === 0) return "R25000001"; // First receipt
+
+  // Find the max numeric part
+  const maxNum = Math.max(...ids.map(id => parseInt(id.replace(/^R/, ''), 10)));
+  const nextNum = maxNum + 1;
+  // Pad with zeros to keep the same length (8 digits after R)
+  return "R" + String(nextNum).padStart(8, '0');
+}
 
   $('#button-record-payment').on("click", function () {
      // Collect input values
-    //  TODO: Generate RECEIPT ID
+    const receiptID = getNextReceiptNumber();
     const renterName = $("#record-payment-renter").val();
     const paymentTypes = [];
     if ($("#record-payment-electric-checkbox").is(":checked")) paymentTypes.push("electric");
@@ -1379,7 +1531,6 @@ $(document).ready(function () {
     const paymentMethod = $("#record-payment-method").val(); 
     const paymentAmountType = $("#record-payment-amount-type").val();
     const remarks = $("#record-payment-remarks").val().trim();
-
 
     // VALIDATIONS
     if (!renterName || !paymentTypes || !paymentDate || !paymentAmount || !paymentMethod || !paymentAmountType) {
@@ -1401,6 +1552,7 @@ $(document).ready(function () {
     }
 
     // Fill confirmation modal
+    $("#confirm-record-receipt-number").text(receiptID);
     $("#confirm-record-renter-name").text(renterName);
     $("#confirm-record-payment-type").text(paymentTypes.join(", "));
     $("#confirm-record-payment-date").text(paymentDate);

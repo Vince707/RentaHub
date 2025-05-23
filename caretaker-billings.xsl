@@ -424,7 +424,7 @@
 
                 <p class="h4 font-red-gradient">Individual Breakdown</p>
                 <div class="d-flex flex-wrap mt-2 justify-content-between">
-                  <div class="col-12 col-sm-6 col-lg-5">
+                  <div class="col-12 col-sm-6 col-lg-5 electric-bill-card">
                     <div class="gradient-red-bg d-flex flex-column align-items-start rounded-4 p-4 px-4">
                       <div class="d-flex justify-content-between align-items-start w-100">
                         <div class="d-flex align-items-start">
@@ -482,12 +482,12 @@
                         <p class="h6 font-white me-2">Amount per Kwh:</p>
                         <p class="font-white" id="electric-amount-per-kwh"></p>
                       </div>
-                      <div class="d-flex flex-row justify-content-between w-100">
+                      <div class="d-flex flex-row justify-content-between w-100 electric-pay-button">
                         <div class="d-flex flex-row">
                           <p class="h4 font-white me-2">Your Bill:</p>
                           <p class="font-white" id="electric-your-bill"></p>
                         </div>
-                       <button type="button"
+                       <!-- <button type="button"
                           class="btn-white pay-btn d-flex align-items-center px-3 py-1"
                           data-type="Electric"
                           data-bill-id="E1"
@@ -496,7 +496,7 @@
                           data-bs-toggle="modal"
                           data-bs-target="#modalRecordPayment">
                     Pay
-                  </button>
+                    </button> -->
 
 
                       </div>
@@ -506,7 +506,7 @@
 
 
 
-                  <div class="col-12 col-sm-6 col-lg-5">
+                  <div class="col-12 col-sm-6 col-lg-5 water-bill-card">
                     <div class="gradient-red-bg d-flex flex-column align-items-start rounded-4 p-4 px-4">
                       <div class="d-flex justify-content-between align-items-start w-100">
                         <div class="d-flex align-items-start">
@@ -564,15 +564,21 @@
                         <p class="h6 font-white me-2">Amount per m<sup>3</sup>:</p>
                         <p class="font-white" id="water-amount-per-cubic"></p>
                       </div>
-                      <div class="d-flex flex-row justify-content-between w-100">
+                      <div class="d-flex flex-row justify-content-between w-100 water-pay-button">
                         <div class="d-flex flex-row">
                           <p class="h4 font-white me-2">Your Bill:</p>
                           <p class="font-white" id="water-your-bill"></p>
                         </div>
-                        <button type="button" class="btn-white d-flex align-items-center px-3 py-1" data-bs-toggle="modal"
+                        <!-- <button type="button"
+                          class="btn-white pay-btn d-flex align-items-center px-3 py-1"
+                          data-type="Water"  
+                          data-reading-id="1"
+                          data-renter-id="1"
+                          data-bs-toggle="modal"
                           data-bs-target="#modalRecordPayment">
                           Pay
-                        </button>
+                        </button> -->
+
                       </div>
 
                     </div>
@@ -612,15 +618,12 @@
                         <p class="h6 font-white me-2">End Date:</p>
                         <p class="font-white" id="rent-end-date"></p>
                       </div>
-                      <div class="d-flex flex-row justify-content-between w-100">
+                      <div class="d-flex flex-row justify-content-between w-100 rent-pay-button">
                         <div class="d-flex flex-row">
                           <p class="h4 font-white me-2">Your Bill:</p>
                           <p class="font-white" id="rent-your-bill"></p>
                         </div>
-                        <button type="button" class="btn-white d-flex align-items-center px-3 py-1" data-bs-toggle="modal"
-                          data-bs-target="#modalRecordPayment">
-                          Pay
-                        </button>
+                   
                       </div>
 
                     </div>
@@ -681,7 +684,12 @@
                           <p class="h4 font-white me-2">Your Bill:</p>
                           <p class="font-white" id="overdue-total"></p>
                         </div>
-                        <button type="button" class="btn-white d-flex align-items-center px-3 py-1" data-bs-toggle="modal"
+                        <button type="button"
+                          class="btn-white pay-btn d-flex align-items-center px-3 py-1"
+                          data-type="Overdue"  
+                          data-reading-id="1"
+                          data-renter-id="1"
+                          data-bs-toggle="modal"
                           data-bs-target="#modalRecordPayment">
                           Pay
                         </button>
@@ -2009,11 +2017,11 @@
               <option value="cash">Cash</option>
               <option value="gcash">GCash</option>
             </select>
-            <select class="form-select custom-select select-sort me-1 col-1 mt-3" id="record-payment-method">
+            <select class="form-select custom-select select-sort me-1 col-1 mt-3" id="record-payment-amount-type">
               <option selected="selected" disabled="disabled" hidden="hidden">Payment Amount Type
                 *</option>
-              <option value="cash">Full Payment</option>
-              <option value="gcash">Partial Payment</option>
+              <option value="full">Full Payment</option>
+              <option value="partial">Partial Payment</option>
             </select>
             <div class="form-floating me-2 flex-fill mt-3">
               <input type="text" class="form-control" id="record-payment-remarks" placeholder="placeholder" required="required"/>
@@ -2024,8 +2032,19 @@
 
         <!-- Modal footer -->
         <div class="modal-footer d-flex align-items-end">
-          <button type="button" class="btn-red" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn-green-fill" id="button-record-payment">Record</button>
+          <div id="error-box-record-payment" class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-10 col-lg-6" style="color:white; background-color: #a6192e;">
+            <i class="bi bi-exclamation-triangle-fill fs-3"></i>
+            <div>
+              <strong class="fs-5">Warning!</strong><br/>
+              <span class="small" id="error-text-record-payment"></span>
+            </div>
+          </div>
+          <div class="ms-auto">
+            <button type="button" class="btn-red"
+            data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn-green-fill"
+            id="button-record-payment">Record</button>
+          </div>
         </div>
       </div>
     </div>

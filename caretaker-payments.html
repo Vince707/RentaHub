@@ -505,8 +505,8 @@
                         id="record-payment-amount-type">
                         <option value="" selected disabled hidden>Payment Amount Type
                           *</option>
-                        <option value="cash">Full Payment</option>
-                        <option value="gcash">Partial Payment</option>
+                        <option value="full">Full Payment</option>
+                        <option value="partial">Partial Payment</option>
                       </select>
                       <div class="form-floating me-2 flex-fill mt-3">
                         <input type="text" class="form-control"
@@ -519,12 +519,12 @@
                   <!-- Modal footer -->
                   <div class="modal-footer d-flex align-items-end">
                     <div id="error-box-record-payment" class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-10 col-lg-6" style="color:white; background-color: #a6192e;">
-                    <i class="bi bi-exclamation-triangle-fill fs-3"></i>
-                    <div>
-                      <strong class="fs-5">Warning!</strong><br/>
-                      <span class="small" id="error-text-record-payment"></span>
+                      <i class="bi bi-exclamation-triangle-fill fs-3"></i>
+                      <div>
+                        <strong class="fs-5">Warning!</strong><br/>
+                        <span class="small" id="error-text-record-payment"></span>
+                      </div>
                     </div>
-                  </div>
                     <div class="ms-auto">
                       <button type="button" class="btn-red"
                       data-bs-dismiss="modal">Cancel</button>

@@ -3,11 +3,11 @@
     <renters>
         <renter id="1">
             <userId>1</userId>
-            <status>Active</status>
+            <status>Archived</status>
             <personalInfo>
                 <name>
                     <surname>Garcia</surname>
-                    <firstName>Juan</firstName>
+                    <firstName>Juanj</firstName>
                     <middleName>Cruz</middleName>
                     <extension>Jr.</extension>
                 </name>
@@ -19,11 +19,11 @@
                 </validId>
             </personalInfo>
             <rentalInfo>
-                <unitId>1</unitId>
+                <unitId>1A</unitId>
                 <leaseStart>2025-05-01</leaseStart>
-                <leaseEnd>2026-05-01</leaseEnd>
+                <leaseEnd>2025-05-23</leaseEnd>
                 <contractTermInMonths>12</contractTermInMonths>
-                <leavingReason/>
+                <leavingReason>end-of-contract</leavingReason>
             </rentalInfo>
         </renter>
         <renter id="2">
@@ -190,18 +190,19 @@
                     <consumedKwhTotal>100</consumedKwhTotal>
                     <amountPerKwh>10</amountPerKwh>
                     <totalBill>1000</totalBill>
-                    <status>Paid</status>
-                    <bill id="E0">
-                        <renterId>1</renterId>
-                        <currentReading>1080</currentReading>
-                        <consumedKwh>100</consumedKwh>
-                        <amount>1000</amount>
-                        <overpaid>0</overpaid>
-                        <debt>0</debt>
-                        <status>Paid</status>
-                    </bill>
-                    </reading>
-
+                    <status>Unpaid</status>
+                    <bills>
+                        <bill id="E0">
+                            <renterId>1</renterId>
+                            <currentReading>1080</currentReading>
+                            <consumedKwh>100</consumedKwh>
+                            <amount>1000</amount>
+                            <overpaid>0</overpaid>
+                            <debt>0</debt>
+                            <status>Unpaid</status>
+                        </bill>
+                    </bills>
+                </reading>
                 <reading id="1">
                     <readingDate>2025-05-01</readingDate>
                     <periodEnd>2025-05-31</periodEnd>
@@ -209,16 +210,18 @@
                     <consumedKwhTotal>120</consumedKwhTotal>
                     <amountPerKwh>10</amountPerKwh>
                     <totalBill>1200</totalBill>
-                    <status>Partial</status> <!-- Partial payment on reading level -->
-                    <bill id="E1">
-                    <renterId>1</renterId>
-                    <currentReading>1200</currentReading>
-                    <consumedKwh>120</consumedKwh>
-                    <amount>600</amount> <!-- Partial amount paid -->
-                    <overpaid>0</overpaid>
-                    <debt>600</debt> <!-- Half unpaid -->
                     <status>Partial</status>
-                    </bill>
+                    <bills>
+                        <bill id="E1">
+                            <renterId>1</renterId>
+                            <currentReading>1200</currentReading>
+                            <consumedKwh>120</consumedKwh>
+                            <amount>1000</amount>
+                            <overpaid>0</overpaid>
+                            <debt>600</debt>
+                            <status>Partial</status>
+                        </bill>
+                    </bills>
                 </reading>
                 <reading id="2">
                     <readingDate>2025-04-01</readingDate>
@@ -227,16 +230,18 @@
                     <consumedKwhTotal>110</consumedKwhTotal>
                     <amountPerKwh>10</amountPerKwh>
                     <totalBill>1100</totalBill>
-                    <status>Paid</status>
-                    <bill id="E2">
-                    <renterId>2</renterId>
-                    <currentReading>1100</currentReading>
-                    <consumedKwh>110</consumedKwh>
-                    <amount>1100</amount>
-                    <overpaid>0</overpaid>
-                    <debt>0</debt>
-                    <status>Paid</status>
-                    </bill>
+                    <status>Unpaid</status>
+                    <bills>
+                        <bill id="E2">
+                            <renterId>2</renterId>
+                            <currentReading>1100</currentReading>
+                            <consumedKwh>110</consumedKwh>
+                            <amount>1100</amount>
+                            <overpaid>0</overpaid>
+                            <debt>0</debt>
+                            <status>Unpaid</status>
+                        </bill>
+                    </bills>
                 </reading>
                 <reading id="3">
                     <readingDate>2025-03-01</readingDate>
@@ -246,15 +251,17 @@
                     <amountPerKwh>10</amountPerKwh>
                     <totalBill>1300</totalBill>
                     <status>Unpaid</status>
-                    <bill id="E3">
-                        <renterId>3</renterId>
-                        <currentReading>1300</currentReading>
-                        <consumedKwh>130</consumedKwh>
-                        <amount>1300</amount>
-                        <overpaid>0</overpaid>
-                        <debt>0</debt>
-                        <status>Unpaid</status>
-                    </bill>
+                    <bills>
+                        <bill id="E3">
+                            <renterId>3</renterId>
+                            <currentReading>1300</currentReading>
+                            <consumedKwh>130</consumedKwh>
+                            <amount>1300</amount>
+                            <overpaid>0</overpaid>
+                            <debt>0</debt>
+                            <status>Unpaid</status>
+                        </bill>
+                    </bills>
                 </reading>
                 <reading id="4">
                     <readingDate>2025-02-01</readingDate>
@@ -264,15 +271,17 @@
                     <amountPerKwh>10</amountPerKwh>
                     <totalBill>1000</totalBill>
                     <status>Paid</status>
-                    <bill id="E4">
-                        <renterId>4</renterId>
-                        <currentReading>1000</currentReading>
-                        <consumedKwh>100</consumedKwh>
-                        <amount>1000</amount>
-                        <overpaid>0</overpaid>
-                        <debt>0</debt>
-                        <status>Paid</status>
-                    </bill>
+                    <bills>
+                        <bill id="E4">
+                            <renterId>4</renterId>
+                            <currentReading>1000</currentReading>
+                            <consumedKwh>100</consumedKwh>
+                            <amount>1000</amount>
+                            <overpaid>0</overpaid>
+                            <debt>0</debt>
+                            <status>Paid</status>
+                        </bill>
+                    </bills>
                 </reading>
                 <reading id="5">
                     <readingDate>2025-01-01</readingDate>
@@ -282,15 +291,17 @@
                     <amountPerKwh>10</amountPerKwh>
                     <totalBill>900</totalBill>
                     <status>Unpaid</status>
-                    <bill id="E5">
-                        <renterId>5</renterId>
-                        <currentReading>900</currentReading>
-                        <consumedKwh>90</consumedKwh>
-                        <amount>900</amount>
-                        <overpaid>0</overpaid>
-                        <debt>0</debt>
-                        <status>Unpaid</status>
-                    </bill>
+                    <bills>
+                        <bill id="E5">
+                            <renterId>5</renterId>
+                            <currentReading>900</currentReading>
+                            <consumedKwh>90</consumedKwh>
+                            <amount>900</amount>
+                            <overpaid>0</overpaid>
+                            <debt>0</debt>
+                            <status>Unpaid</status>
+                        </bill>
+                    </bills>
                 </reading>
             </utility>
             <utility type="Water">
@@ -308,15 +319,17 @@
                     <amountPerCubicM>50</amountPerCubicM>
                     <totalBill>750</totalBill>
                     <status>Partial</status>
-                    <bill id="W1">
-                    <renterId>1</renterId>
-                    <currentReading>150</currentReading>
-                    <consumedCubic>15</consumedCubic>
-                    <amount>375</amount> <!-- Partial payment -->
-                    <overpaid>0</overpaid>
-                    <debt>375</debt>
-                    <status>Partial</status>
-                    </bill>
+                    <bills>
+                        <bill id="W1">
+                            <renterId>1</renterId>
+                            <currentReading>150</currentReading>
+                            <consumedCubic>15</consumedCubic>
+                            <amount>375</amount>
+                            <overpaid>0</overpaid>
+                            <debt>375</debt>
+                            <status>Partial</status>
+                        </bill>
+                    </bills>
                 </reading>
                 <reading id="2">
                     <readingDate>2025-04-01</readingDate>
@@ -326,15 +339,17 @@
                     <amountPerCubicM>50</amountPerCubicM>
                     <totalBill>600</totalBill>
                     <status>Paid</status>
-                    <bill id="W2">
-                        <renterId>2</renterId>
-                        <currentReading>120</currentReading>
-                        <consumedCubic>12</consumedCubic>
-                        <amount>600</amount>
-                        <overpaid>0</overpaid>
-                        <debt>0</debt>
-                        <status>Paid</status>
-                    </bill>
+                    <bills>
+                        <bill id="W2">
+                            <renterId>2</renterId>
+                            <currentReading>120</currentReading>
+                            <consumedCubic>12</consumedCubic>
+                            <amount>600</amount>
+                            <overpaid>0</overpaid>
+                            <debt>0</debt>
+                            <status>Paid</status>
+                        </bill>
+                    </bills>
                 </reading>
                 <reading id="3">
                     <readingDate>2025-03-01</readingDate>
@@ -344,15 +359,17 @@
                     <amountPerCubicM>50</amountPerCubicM>
                     <totalBill>900</totalBill>
                     <status>Unpaid</status>
-                    <bill id="W3">
-                        <renterId>3</renterId>
-                        <currentReading>180</currentReading>
-                        <consumedCubic>18</consumedCubic>
-                        <amount>900</amount>
-                        <overpaid>0</overpaid>
-                        <debt>0</debt>
-                        <status>Unpaid</status>
-                    </bill>
+                    <bills>
+                        <bill id="W3">
+                            <renterId>3</renterId>
+                            <currentReading>180</currentReading>
+                            <consumedCubic>18</consumedCubic>
+                            <amount>900</amount>
+                            <overpaid>0</overpaid>
+                            <debt>0</debt>
+                            <status>Unpaid</status>
+                        </bill>
+                    </bills>
                 </reading>
                 <reading id="4">
                     <readingDate>2025-02-01</readingDate>
@@ -362,15 +379,17 @@
                     <amountPerCubicM>50</amountPerCubicM>
                     <totalBill>500</totalBill>
                     <status>Paid</status>
-                    <bill id="W4">
-                        <renterId>4</renterId>
-                        <currentReading>100</currentReading>
-                        <consumedCubic>10</consumedCubic>
-                        <amount>500</amount>
-                        <overpaid>0</overpaid>
-                        <debt>0</debt>
-                        <status>Paid</status>
-                    </bill>
+                    <bills>
+                        <bill id="W4">
+                            <renterId>4</renterId>
+                            <currentReading>100</currentReading>
+                            <consumedCubic>10</consumedCubic>
+                            <amount>500</amount>
+                            <overpaid>0</overpaid>
+                            <debt>0</debt>
+                            <status>Paid</status>
+                        </bill>
+                    </bills>
                 </reading>
                 <reading id="5">
                     <readingDate>2025-01-01</readingDate>
@@ -380,15 +399,17 @@
                     <amountPerCubicM>50</amountPerCubicM>
                     <totalBill>700</totalBill>
                     <status>Unpaid</status>
-                    <bill id="W5">
-                        <renterId>5</renterId>
-                        <currentReading>140</currentReading>
-                        <consumedCubic>14</consumedCubic>
-                        <amount>700</amount>
-                        <overpaid>0</overpaid>
-                        <debt>0</debt>
-                        <status>Unpaid</status>
-                    </bill>
+                    <bills>
+                        <bill id="W5">
+                            <renterId>2</renterId>
+                            <currentReading>140</currentReading>
+                            <consumedCubic>14</consumedCubic>
+                            <amount>700</amount>
+                            <overpaid>0</overpaid>
+                            <debt>0</debt>
+                            <status>Unpaid</status>
+                        </bill>
+                    </bills>
                 </reading>
             </utility>
         </utilityBills>
@@ -569,7 +590,7 @@
             <password>NewPass#123</password>
             <dateGenerated>2025-05-10</dateGenerated>
             <userRole>renter</userRole>
-            <status>Active</status>
+            <status>Archived</status>
             <lastLogin>2025-05-11</lastLogin>
         </user>
         <user id="2">
