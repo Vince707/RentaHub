@@ -1,8 +1,6 @@
 <?php
-// File path
 $xmlFile = '../apartment.xml';
 
-// Load XML
 if (!file_exists($xmlFile)) {
     die("XML file not found.");
 }
@@ -10,9 +8,7 @@ $xml = simplexml_load_file($xmlFile);
 
 // === Get POST Data ===
 $renterId = $_POST['renter_id'] ?? null;
-$renterName = $_POST['renter_name'] ?? null;
-
-$billType = $_POST['payment_type'] ?? null; // e.g., 'Electric', 'Water', 'Rent', or 'Overdue'
+$billType = $_POST['payment_type'] ?? null; // 'Electric', 'Water', 'Rent', or 'Overdue'
 $billId = $_POST['bill_id'] ?? null;
 $readingId = $_POST['reading_id'] ?? null;
 $amountPaid = floatval($_POST['payment_amount'] ?? 0);
@@ -24,26 +20,25 @@ $paymentAmountType = $_POST['payment_amount_type'] ?? '';
 $paymentRemarks = $_POST['payment_remarks'] ?? '';
 
 if (!$renterId || $amountPaid <= 0) {
-    die("Invalid payment data.");
+    header("Location: ../caretaker-billings.xml?pay=error");
+    exit;
 }
 
-// Helper function to update a bill element (for partial/full payments)
+// Helper: Update a bill (partial/full/over)
 function updateBill(&$bill, $amountPaid) {
     $origAmount = floatval($bill->amount);
-    $origDebt = floatval($bill->debt);
-    $origOverpaid = floatval($bill->overpaid);
+    $origDebt = isset($bill->debt) ? floatval($bill->debt) : 0;
+    $origOverpaid = isset($bill->overpaid) ? floatval($bill->overpaid) : 0;
 
-    // If bill is already paid, skip
     if ((string)$bill->status === 'Paid') return 0;
 
-    // Determine how much is left to pay
     $toPay = $origDebt > 0 ? $origDebt : $origAmount;
 
     if ($amountPaid < $toPay) {
         // Partial payment
         $bill->debt = $toPay - $amountPaid;
         $bill->status = 'Partial';
-        $bill->amount = $origAmount; // Always keep original amount
+        $bill->amount = $origAmount;
         $bill->overpaid = 0;
         return $amountPaid;
     } else {
@@ -57,21 +52,35 @@ function updateBill(&$bill, $amountPaid) {
     }
 }
 
-// Helper to find a bill by ID in readings (works for both <bills><bill> and direct <bill>)
-function &findBillInUtility($utility, $billId) {
+// Helper: Update reading status based on all child bills
+function updateReadingStatus($reading) {
+    $allPaid = true;
+    $anyPartial = false;
+    if (isset($reading->bills)) {
+        foreach ($reading->bills->bill as $bill) {
+            if ((string)$bill->status === 'Partial') $anyPartial = true;
+            if ((string)$bill->status !== 'Paid') $allPaid = false;
+        }
+        if ($allPaid) {
+            $reading->status = 'Paid';
+        } elseif ($anyPartial) {
+            $reading->status = 'Partial';
+        } else {
+            $reading->status = 'Unpaid';
+        }
+    }
+}
+
+// Find utility bill by ID and return [bill, reading]
+function &findUtilityBill($utility, $billId) {
     foreach ($utility->reading as $reading) {
-        // Check <bills><bill>
         if (isset($reading->bills)) {
             foreach ($reading->bills->bill as $bill) {
                 if ((string)$bill['id'] === $billId) {
-                    return $bill;
+                    // Return both bill and reading as array
+                    $result = ['bill' => $bill, 'reading' => $reading];
+                    return $result;
                 }
-            }
-        }
-        // Check direct <bill>
-        foreach ($reading->bill as $bill) {
-            if ((string)$bill['id'] === $billId) {
-                return $bill;
             }
         }
     }
@@ -79,7 +88,7 @@ function &findBillInUtility($utility, $billId) {
     return $null;
 }
 
-// Helper to find a rent bill by ID
+// Find rent bill by ID
 function &findRentBill(&$xml, $billId) {
     foreach ($xml->billing->rentBills->bill as $bill) {
         if ((string)$bill['id'] === $billId) {
@@ -95,18 +104,19 @@ $totalPaid = 0;
 $paidBills = [];
 
 if ($billType === 'Overdue' && !empty($overdueBillIds)) {
-    // Handle multiple bills (overdue)
     foreach ($overdueBillIds as $oid) {
         $oid = trim($oid);
         $found = false;
+
         // Electric
         foreach ($xml->billing->utilityBills->utility as $utility) {
             if ((string)$utility['type'] === 'Electricity') {
-                $bill = &findBillInUtility($utility, $oid);
-                if ($bill) {
-                    $paid = updateBill($bill, $amountPaid); // You might want to split amountPaid per bill
+                $result = &findUtilityBill($utility, $oid);
+                if ($result && isset($result['bill'])) {
+                    $paid = updateBill($result['bill'], $amountPaid); // You may want to split amountPaid
                     $totalPaid += $paid;
                     $paidBills[] = $oid;
+                    updateReadingStatus($result['reading']);
                     $found = true;
                     break;
                 }
@@ -116,11 +126,12 @@ if ($billType === 'Overdue' && !empty($overdueBillIds)) {
         if (!$found) {
             foreach ($xml->billing->utilityBills->utility as $utility) {
                 if ((string)$utility['type'] === 'Water') {
-                    $bill = &findBillInUtility($utility, $oid);
-                    if ($bill) {
-                        $paid = updateBill($bill, $amountPaid);
+                    $result = &findUtilityBill($utility, $oid);
+                    if ($result && isset($result['bill'])) {
+                        $paid = updateBill($result['bill'], $amountPaid);
                         $totalPaid += $paid;
                         $paidBills[] = $oid;
+                        updateReadingStatus($result['reading']);
                         $found = true;
                         break;
                     }
@@ -138,15 +149,16 @@ if ($billType === 'Overdue' && !empty($overdueBillIds)) {
         }
     }
 } else {
-    // Single bill (Electric, Water, Rent)
+    // Single bill
     if ($billType === 'Electric' || $billType === 'Water') {
         foreach ($xml->billing->utilityBills->utility as $utility) {
             if ((string)$utility['type'] === $billType) {
-                $bill = &findBillInUtility($utility, $billId);
-                if ($bill) {
-                    $paid = updateBill($bill, $amountPaid);
+                $result = &findUtilityBill($utility, $billId);
+                if ($result && isset($result['bill'])) {
+                    $paid = updateBill($result['bill'], $amountPaid);
                     $totalPaid += $paid;
                     $paidBills[] = $billId;
+                    updateReadingStatus($result['reading']);
                     break;
                 }
             }
@@ -161,28 +173,25 @@ if ($billType === 'Overdue' && !empty($overdueBillIds)) {
     }
 }
 
-// === Record Payment (optional, if you have a <payments> section) ===
+// === Record Payment ===
 if (!isset($xml->payments)) {
     $xml->addChild('payments');
 }
 $payment = $xml->payments->addChild('payment');
 $payment->addChild('renterId', $renterId);
-$payment->addChild('date', $paymentDate);
+$payment->addChild('paymentType', $billType);
+$payment->addChild('paymentAmountType', htmlspecialchars($paymentAmountType));
+$payment->addChild('paymentDate', $paymentDate);
 $payment->addChild('amount', $amountPaid);
-$payment->addChild('receiptNumber', htmlspecialchars($receiptNumber));
-$payment->addChild('billType', $billType);
+$payment->addChild('paymentMethod', htmlspecialchars($paymentMethod));
+$payment->addChild('remarks', htmlspecialchars($paymentRemarks));
 $payment->addChild('billIds', implode(',', $paidBills));
+$payment->addChild('receiptNumber', htmlspecialchars($receiptNumber));
 
 // === Save changes ===
 $xml->asXML($xmlFile);
 
-// === Response ===
-header('Content-Type: application/json');
-echo json_encode([
-    'success' => true,
-    'paidBills' => $paidBills,
-    'totalPaid' => $totalPaid,
-    'message' => 'Payment recorded successfully.'
-]);
+// === Redirect to billing page with success flag ===
+header("Location: ../caretaker-billings.xml?pay=recorded");
 exit;
 ?>

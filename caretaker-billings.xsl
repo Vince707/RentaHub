@@ -2071,8 +2071,8 @@
             <p id="confirm-record-receipt-number" class="font-red"></p>
           </div>
           <div class="d-flex flex-row">
-            <p class="h5 font-red-gradient me-2">Renter Name:</p>
-            <p id="confirm-record-renter-name" class="font-red"></p>
+            <p class="h5 font-red-gradient me-2">Renter ID:</p>
+            <p id="confirm-record-renter-id" class="font-red"></p>
           </div>
           <div class="d-flex flex-row">
             <p class="h5 font-red-gradient me-2">Payment Type:</p>
@@ -2106,9 +2106,11 @@
         <div class="modal-footer d-flex align-items-center justify-content-center">
           <button type="button" class="btn-red" data-bs-dismiss="modal">Cancel</button>
             <form id="hidden-payment-form" method="post" action="functions/pay.php">
+              <input type="hidden" id="hidden-record-bill-id" name="bill_id" />
+              <input type="hidden" id="hidden-record-reading-id" name="reading_id" />
+              <input type="hidden" id="hidden-record-overdue-bill-ids" name="overdue_bill_ids" />
               <input type="hidden" id="hidden-record-receipt-number" name="receipt_number" />
               <input type="hidden" id="hidden-record-renter-id" name="renter_id" />
-              <input type="hidden" id="hidden-record-renter-name" name="renter_name" />
               <input type="hidden" id="hidden-record-payment-type" name="payment_type" />
               <input type="hidden" id="hidden-record-payment-date" name="payment_date" />
               <input type="hidden" id="hidden-record-payment-amount" name="payment_amount" />

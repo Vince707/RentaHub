@@ -34,7 +34,7 @@
                     <surname>Taniegra</surname>
                     <firstName>Ron</firstName>
                     <middleName>Diego</middleName>
-                    <extension/>
+                    <extension />
                 </name>
                 <contact>09090925793</contact>
                 <birthDate>2004-01-22</birthDate>
@@ -48,7 +48,7 @@
                 <leaseStart>2025-05-27</leaseStart>
                 <leaseEnd>2026-05-27</leaseEnd>
                 <contractTermInMonths>12</contractTermInMonths>
-                <leavingReason/>
+                <leavingReason />
             </rentalInfo>
         </renter>
         <renter id="3">
@@ -58,8 +58,8 @@
                 <name>
                     <surname>Fea</surname>
                     <firstName>Fea</firstName>
-                    <middleName/>
-                    <extension/>
+                    <middleName />
+                    <extension />
                 </name>
                 <contact>09090925793</contact>
                 <birthDate>2002-05-21</birthDate>
@@ -73,7 +73,7 @@
                 <leaseStart>2025-05-26</leaseStart>
                 <leaseEnd>2025-09-26</leaseEnd>
                 <contractTermInMonths>4</contractTermInMonths>
-                <leavingReason/>
+                <leavingReason />
             </rentalInfo>
         </renter>
         <renter id="4">
@@ -83,8 +83,8 @@
                 <name>
                     <surname>Surname</surname>
                     <firstName>Firstname</firstName>
-                    <middleName/>
-                    <extension/>
+                    <middleName />
+                    <extension />
                 </name>
                 <contact>09090925794</contact>
                 <birthDate>1990-05-14</birthDate>
@@ -109,7 +109,7 @@
                     <surname>Santos</surname>
                     <firstName>Ana</firstName>
                     <middleName>Maria</middleName>
-                    <extension/>
+                    <extension />
                 </name>
                 <contact>09181234567</contact>
                 <birthDate>1998-10-10</birthDate>
@@ -123,7 +123,7 @@
                 <leaseStart>2025-06-01</leaseStart>
                 <leaseEnd>2026-06-01</leaseEnd>
                 <contractTermInMonths>12</contractTermInMonths>
-                <leavingReason/>
+                <leavingReason />
             </rentalInfo>
         </renter>
     </renters>
@@ -135,7 +135,7 @@
             <sizeSQM>20</sizeSQM>
             <rentPrice>3500</rentPrice>
             <status>Occupied</status>
-            <deleteReason/>
+            <deleteReason />
         </room>
         <room id="2">
             <roomNo>2A</roomNo>
@@ -144,7 +144,7 @@
             <sizeSQM>22</sizeSQM>
             <rentPrice>3700</rentPrice>
             <status>Occupied</status>
-            <deleteReason/>
+            <deleteReason />
         </room>
         <room id="3">
             <roomNo>3A</roomNo>
@@ -153,7 +153,7 @@
             <sizeSQM>28</sizeSQM>
             <rentPrice>4200</rentPrice>
             <status>Vacant</status>
-            <deleteReason/>
+            <deleteReason />
         </room>
         <room id="4">
             <roomNo>4A</roomNo>
@@ -162,7 +162,7 @@
             <sizeSQM>35</sizeSQM>
             <rentPrice>5000</rentPrice>
             <status>Occupied</status>
-            <deleteReason/>
+            <deleteReason />
         </room>
         <room id="5">
             <roomNo>5A</roomNo>
@@ -171,7 +171,7 @@
             <sizeSQM>25</sizeSQM>
             <rentPrice>3900</rentPrice>
             <status>Vacant</status>
-            <deleteReason/>
+            <deleteReason />
         </room>
     </rooms>
     <billing>
@@ -415,28 +415,30 @@
         </utilityBills>
         <rentBills>
             <bill id="101">
-            <renterId>1</renterId>
-            <amount>3500</amount>
-            <dueDate>2025-04-10</dueDate>
-            <overpaid>0</overpaid>
-            <debt>500</debt> <!-- Partial payment, 500 still owed -->
-            <status>Partial</status> 
+                <renterId>1</renterId>
+                <amount>3500</amount>
+                <dueDate>2025-04-10</dueDate>
+                <overpaid>0</overpaid>
+                <debt>500</debt>
+                <!-- Partial payment, 500 still owed -->
+                <status>Partial</status>
             </bill>
             <bill id="102">
-            <renterId>2</renterId>
-            <amount>3700</amount>
-            <dueDate>2025-04-15</dueDate>
-            <overpaid>0</overpaid>
-            <debt>0</debt>
-            <status>Paid</status>
+                <renterId>2</renterId>
+                <amount>3700</amount>
+                <dueDate>2025-04-15</dueDate>
+                <overpaid>0</overpaid>
+                <debt>0</debt>
+                <status>Paid</status>
             </bill>
             <bill id="103">
-            <renterId>3</renterId>
-            <amount>4200</amount>
-            <dueDate>2025-05-01</dueDate>
-            <overpaid>0</overpaid>
-            <debt>2100</debt> <!-- Half paid -->
-            <status>Partial</status>
+                <renterId>3</renterId>
+                <amount>4200</amount>
+                <dueDate>2025-05-01</dueDate>
+                <overpaid>0</overpaid>
+                <debt>2100</debt>
+                <!-- Half paid -->
+                <status>Partial</status>
             </bill>
             <bill id="104">
                 <renterId>4</renterId>
@@ -457,7 +459,7 @@
         </rentBills>
     </billing>
     <payments>
-       <payment id="R25000001">
+        <payment id="R25000001">
             <renterId>1</renterId>
             <paymentType>Rent</paymentType>
             <paymentAmountType>Full</paymentAmountType>
@@ -502,7 +504,17 @@
             <paymentMethod>Cash</paymentMethod>
             <remarks>Water bill</remarks>
         </payment>
-
+        <payment>
+            <renterId>1</renterId>
+            <paymentType>Electric</paymentType>
+            <paymentAmountType>full</paymentAmountType>
+            <paymentDate>2025-05-24</paymentDate>
+            <amount>1000</amount>
+            <paymentMethod>cash</paymentMethod>
+            <remarks />
+            <billIds />
+            <receiptNumber>R25000006</receiptNumber>
+        </payment>
     </payments>
     <tasks>
         <task id="301">
@@ -512,7 +524,7 @@
             <amountPaid>1200</amountPaid>
             <dueDate>2025-04-15</dueDate>
             <status>Pending</status>
-            <deleteReason/>
+            <deleteReason />
         </task>
         <task id="302">
             <title>Remind Juan Dela Cruz to pay rent</title>
@@ -527,7 +539,7 @@
             <amountPaid>0</amountPaid>
             <dueDate>2025-05-10</dueDate>
             <status>Pending</status>
-            <deleteReason/>
+            <deleteReason />
         </task>
         <task id="304">
             <title>Schedule Room Cleaning</title>
@@ -549,7 +561,7 @@
             <dateGenerated>2025-04-01</dateGenerated>
             <status>Open</status>
             <response>Sent via email</response>
-            <deleteReason/>
+            <deleteReason />
         </inquiry>
         <inquiry id="402">
             <renterId>2</renterId>
@@ -557,7 +569,7 @@
             <dateGenerated>2025-04-02</dateGenerated>
             <status>Closed</status>
             <response>Instructions sent</response>
-            <deleteReason/>
+            <deleteReason />
         </inquiry>
         <inquiry id="403">
             <renterId>3</renterId>
@@ -565,23 +577,23 @@
             <dateGenerated>2025-04-03</dateGenerated>
             <status>Open</status>
             <response>Scheduled</response>
-            <deleteReason/>
+            <deleteReason />
         </inquiry>
         <inquiry id="404">
             <renterId>4</renterId>
             <inquiryContent>Can I extend my lease?</inquiryContent>
             <dateGenerated>2025-04-04</dateGenerated>
             <status>Pending</status>
-            <response/>
-            <deleteReason/>
+            <response />
+            <deleteReason />
         </inquiry>
         <inquiry id="405">
             <renterId>5</renterId>
             <inquiryContent>Request for room transfer</inquiryContent>
             <dateGenerated>2025-04-05</dateGenerated>
             <status>Open</status>
-            <response/>
-            <deleteReason/>
+            <response />
+            <deleteReason />
         </inquiry>
     </inquiries>
     <users>
@@ -634,7 +646,7 @@
                     <surname>Reyes</surname>
                     <firstName>Maria</firstName>
                     <middleName>Luisa</middleName>
-                    <extension/>
+                    <extension />
                 </name>
             </personalInfo>
         </caretaker>
@@ -644,8 +656,8 @@
                 <name>
                     <surname>Delos Santos</surname>
                     <firstName>Jose</firstName>
-                    <middleName/>
-                    <extension/>
+                    <middleName />
+                    <extension />
                 </name>
             </personalInfo>
         </caretaker>
@@ -655,8 +667,8 @@
                 <name>
                     <surname>Lim</surname>
                     <firstName>Anna</firstName>
-                    <middleName/>
-                    <extension/>
+                    <middleName />
+                    <extension />
                 </name>
             </personalInfo>
         </caretaker>
@@ -666,8 +678,8 @@
                 <name>
                     <surname>Tan</surname>
                     <firstName>Michael</firstName>
-                    <middleName/>
-                    <extension/>
+                    <middleName />
+                    <extension />
                 </name>
             </personalInfo>
         </caretaker>
@@ -677,8 +689,8 @@
                 <name>
                     <surname>Ocampo</surname>
                     <firstName>Grace</firstName>
-                    <middleName/>
-                    <extension/>
+                    <middleName />
+                    <extension />
                 </name>
             </personalInfo>
         </caretaker>

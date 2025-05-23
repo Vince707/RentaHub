@@ -406,7 +406,7 @@
           <div class="d-flex flex-row mb-3 flex-wrap">
            <div class="me-2 mb-3 flex-fill">
             <select class="form-select custom-select" id="add-renter-room-number" required="required" style="height: 3.5rem;">
-            <option selected="selected" disabled="disabled" hidden="hidden">Room Number *</option>
+            <option selected="selected" disabled="disabled" hidden="hidden" value="">Room Number *</option>
 
             <xsl:for-each select="$data/apartmentManagement/rooms/room[roomNo != '']">
                 <xsl:variable name="roomNo" select="roomNo"/>

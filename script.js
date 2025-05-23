@@ -1040,6 +1040,11 @@ function getNextReceiptNumber() {
   return "R" + String(nextNum).padStart(8, '0');
 }
 
+let selectedBillId = null;          // e.g., "E1" or "W3" or "101"
+let selectedReadingId = null;       // e.g., "1" (reading id for utilities)
+let overdueBillIdsArray = [];       // e.g., ["E1", "W1", "101"]
+let isOverduePayment = false;       // true if paying multiple bills (overdue)
+
 $(document).on('click', '.pay-btn', function() {
   const type = $(this).attr('data-type');
   const billId = $(this).attr('data-bill-id');
@@ -1110,17 +1115,28 @@ $(document).on('click', '.pay-btn', function() {
     return;
   }
 
+  // === SET YOUR GLOBAL VARIABLES HERE ===
+  if (type === 'Overdue') {
+    isOverduePayment = true;
+    overdueBillIdsArray = billsToPay.map(b => b.id);
+    selectedBillId = null;
+    selectedReadingId = null;
+  } else {
+    isOverduePayment = false;
+    selectedBillId = billId || null;
+    selectedReadingId = readingId || null;
+    overdueBillIdsArray = [];
+  }
+
   // Set modal fields
   $('#record-payment-renter').val(renterId);
 
   // --- CHECKBOX LOGIC ---
   if (type === 'Overdue') {
-    // Reset all checkboxes
     $('#record-payment-electric-checkbox').prop('checked', false);
     $('#record-payment-water-checkbox').prop('checked', false);
     $('#record-payment-rent-checkbox').prop('checked', false);
 
-    // Check checkboxes for present types
     const typesPresent = new Set(billsToPay.map(b => b.type || 
       (b.id && b.id.startsWith('E') ? 'Electric' : 
        b.id && b.id.startsWith('W') ? 'Water' : 
@@ -1183,8 +1199,6 @@ $(document).on('click', '.pay-btn', function() {
 
 
 
-
-
   }
 });
 
@@ -1198,41 +1212,47 @@ function displaySuccessModal(){
   const urlParams = url.searchParams;
   const renterAction = urlParams.get('renter');
 
-    switch (renterAction) {
-      case 'modified':
-        $('#modalModifyRenterSuccess').modal('show');
-        break;
+  switch (renterAction) {
+    case 'modified':
+      $('#modalModifyRenterSuccess').modal('show');
+      break;
 
-      case 'added':
-        $('#modalAddRenterSuccess').modal('show');
-        break;
+    case 'added':
+      $('#modalAddRenterSuccess').modal('show');
+      break;
 
-      case 'archived':
-        $('#modalRemoveRenterSuccess').modal('show');
-        break;
+    case 'archived':
+      $('#modalRemoveRenterSuccess').modal('show');
+      break;
 
-      default:
-        // Do nothing or handle unknown action
-        break;
-    }
+    default:
+      // Do nothing or handle unknown action
+      break;
+  }
+
   const loginAction = urlParams.get('login');
   switch (loginAction) {
-      case 'changePassSuccess':
-        $('#login-div').addClass("d-none");
-        $('#success-change-pass-div').removeClass("d-none").addClass("d-block");
+    case 'changePassSuccess':
+      $('#login-div').addClass("d-none");
+      $('#success-change-pass-div').removeClass("d-none").addClass("d-block");
+      break;
 
-        break;
+    default:
+      // Do nothing or handle unknown action
+      break;
+  }
 
-      default:
-        // Do nothing or handle unknown action
-        break;
-    }
-  
+  // NEW: Check for payment success
+  const payStatus = urlParams.get('pay');
+  if (payStatus === 'recorded') {
+    $('#modalRecordPaymentSuccess').modal('show');
+  }
 
-   // Clean URL (remove all search parameters)
-    url.search = '';
-    window.history.replaceState({}, document.title, url.toString());
+  // Clean URL (remove all search parameters)
+  url.search = '';
+  window.history.replaceState({}, document.title, url.toString());
 }
+
 
 $(document).ready(function () {
   displaySuccessModal();
@@ -1677,15 +1697,20 @@ function getNextReceiptNumber() {
   return "R" + String(nextNum).padStart(8, '0');
 }
 
-  $('#button-record-payment').on("click", function () {
-    const renterId = $(this).data('renter-id');
-     // Collect input values
+let selectedBillId = null;          // e.g., "E1" or "W3" or "101"
+let selectedReadingId = null;       // e.g., "1" (reading id for utilities)
+let overdueBillIdsArray = [];       // e.g., ["E1", "W1", "101"]
+let isOverduePayment = false;       // true if paying multiple bills (overdue)
+
+  // Main handler for record payment button
+$('#button-record-payment').on("click", function () {
+    // Collect input values
     const receiptID = getNextReceiptNumber();
-    const renterName = $("#record-payment-renter").val();
+    const renterId = $("#record-payment-renter").val();
     const paymentTypes = [];
-    if ($("#record-payment-electric-checkbox").is(":checked")) paymentTypes.push("electric");
-    if ($("#record-payment-water-checkbox").is(":checked")) paymentTypes.push("water");
-    if ($("#record-payment-rent-checkbox").is(":checked")) paymentTypes.push("rent");
+    if ($("#record-payment-electric-checkbox").is(":checked")) paymentTypes.push("Electric");
+    if ($("#record-payment-water-checkbox").is(":checked")) paymentTypes.push("Water");
+    if ($("#record-payment-rent-checkbox").is(":checked")) paymentTypes.push("Rent");
 
     const paymentDate = $("#record-payment-payment-date").val().trim();
     const paymentAmount = $("#record-payment-payment-amount").val().trim();
@@ -1694,27 +1719,23 @@ function getNextReceiptNumber() {
     const remarks = $("#record-payment-remarks").val().trim();
 
     // VALIDATIONS
-    if (!renterName || !paymentTypes || !paymentDate || !paymentAmount || !paymentMethod || !paymentAmountType) {
+    if (!renterId || !paymentTypes.length || !paymentDate || !paymentAmount || !paymentMethod || !paymentAmountType) {
       return showError("All required fields must be filled.", "#error-box-record-payment", "#error-text-record-payment");
     }    
 
-    // Check for whitespace-only inputs
-    if ([renterName, paymentTypes, paymentDate, paymentAmount, paymentMethod, paymentAmountType].some(isWhitespaceOnly)) {
+    if ([renterId, paymentTypes, paymentDate, paymentAmount, paymentMethod, paymentAmountType].some(isWhitespaceOnly)) {
       return showError("Whitespace-only fields are not allowed.", "#error-box-record-payment", "#error-text-record-payment");
     }
-  
-    // Length validation
-    if ([renterName, paymentTypes, paymentDate, paymentAmount, paymentMethod, paymentAmountType, remarks].some(f => exceedsLengthLimit(f))) {
+    if ([renterId, paymentTypes, paymentDate, paymentAmount, paymentMethod, paymentAmountType, remarks].some(f => exceedsLengthLimit(f))) {
       return showError("One or more fields exceed the length limit.", "#error-box-record-payment", "#error-text-record-payment");
     }
-
     if (!isNumber(paymentAmount)) {
       return showError("Payment amount must be numeric only.", "#error-box-record-payment", "#error-text-record-payment");
     }
 
     // Fill confirmation modal
     $("#confirm-record-receipt-number").text(receiptID);
-    $("#confirm-record-renter-name").text(renterName);
+    $("#confirm-record-renter-id").text(renterId);
     $("#confirm-record-payment-type").text(paymentTypes.join(", "));
     $("#confirm-record-payment-date").text(paymentDate);
     $("#confirm-record-payment-amount").text(paymentAmount);
@@ -1724,8 +1745,7 @@ function getNextReceiptNumber() {
 
     // FILL Hidden form for PHP (for payment confirmation)
     $("#hidden-record-receipt-number").val(receiptID);
-    $("#hidden-record-renter-id").val(receiptID);
-    $("#hidden-record-renter-name").val(renterName);
+    $("#hidden-record-renter-id").val(renterId);
     $("#hidden-record-payment-type").val(paymentTypes.join(", "));
     $("#hidden-record-payment-date").val(paymentDate);
     $("#hidden-record-payment-amount").val(paymentAmount);
@@ -1733,11 +1753,21 @@ function getNextReceiptNumber() {
     $("#hidden-record-payment-amount-type").val(paymentAmountType);
     $("#hidden-record-payment-remarks").val(remarks);
 
+    // Set bill_id, reading_id, overdue_bill_ids
+    if (isOverduePayment) {
+        $("#hidden-record-bill-id").val("");
+        $("#hidden-record-reading-id").val("");
+        $("#hidden-record-overdue-bill-ids").val(overdueBillIdsArray.join(","));
+    } else {
+        $("#hidden-record-bill-id").val(selectedBillId || "");
+        $("#hidden-record-reading-id").val(selectedReadingId || "");
+        $("#hidden-record-overdue-bill-ids").val("");
+    }
 
     $('#modalRecordPayment').modal('hide');
     $('#modalRecordPaymentConfirmation').modal('show');
     hideError("#error-box-record-payment", "#error-text-record-payment");
-  });
+});
 
    $('#button-confirm-record-payment').on("click", function () {
     // TODO: XML Write Save
