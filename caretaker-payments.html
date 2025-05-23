@@ -594,14 +594,21 @@
                   </div>
 
                   <!-- Modal footer -->
-                  <div
-                    class="modal-footer d-flex align-items-center justify-content-center">
-                    <button type="button" class="btn-red"
-                      data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn-green-fill"
-                      data-bs-dismiss="modal" data-bs-toggle="modal"
-                      data-bs-target="#modalRecordPaymentSuccess"
-                      id="button-confirm-record-payment">Confirm</button>
+                   <!-- Modal footer -->
+                  <div class="modal-footer d-flex align-items-center justify-content-center">
+                    <button type="button" class="btn-red" data-bs-dismiss="modal">Cancel</button>
+                      <form id="hidden-payment-form" method="post" action="pay.php" style="display:none;">
+                        <input type="hidden" id="hidden-record-receipt-number" name="receipt_number" />
+                        <input type="hidden" id="hidden-record-renter-name" name="renter_name" />
+                        <input type="hidden" id="hidden-record-payment-type" name="payment_type" />
+                        <input type="hidden" id="hidden-record-payment-date" name="payment_date" />
+                        <input type="hidden" id="hidden-record-payment-amount" name="payment_amount" />
+                        <input type="hidden" id="hidden-record-payment-method" name="payment_method" />
+                        <input type="hidden" id="hidden-record-payment-amount-type" name="payment_amount_type" />
+                        <input type="hidden" id="hidden-record-payment-remarks" name="payment_remarks" />
+                        <button type="button" class="btn-green-fill" data-bs-dismiss="modal" data-bs-toggle="modal"
+                        data-bs-target="#modalRecordPaymentSuccess" id="button-confirm-record-payment">Confirm</button>
+                      </form>
                   </div>
                 </div>
               </div>

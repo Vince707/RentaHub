@@ -54,7 +54,8 @@
                     <amountPerKwh></amountPerKwh>
                     <totalBill></totalBill>
                     <status>Unpaid</status>
-                    <bill id="">
+                    <bills>
+                        <bill id="">
                         <renterId></renterId>
                         <currentReading></currentReading>
                         <consumedKwh></consumedKwh>
@@ -63,6 +64,7 @@
                         <debt></debt>
                         <status>Unpaid</status>
                     </bill>
+                    </bills>
                 </reading>
             </utility>
             <utility type="Water">
@@ -80,7 +82,8 @@
                     <amountPerCubicM></amountPerCubicM>
                     <totalBill></totalBill>
                     <status>Unpaid</status>
-                    <bill id="">
+                    <bills>
+                        <bill id="">
                         <renterId></renterId>
                         <currentReading></currentReading>
                         <consumedCubic></consumedCubic>
@@ -89,6 +92,7 @@
                         <debt></debt>
                         <status>Unpaid</status>
                     </bill>
+                    </bills>
                 </reading>
             </utility>
         </utilityBills>

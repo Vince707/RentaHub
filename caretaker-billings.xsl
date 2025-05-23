@@ -618,6 +618,8 @@
                         <p class="h6 font-white me-2">End Date:</p>
                         <p class="font-white" id="rent-end-date"></p>
                       </div>
+                      <div id="record-payment-breakdown" style="margin-top: 0.5em;"></div>
+
                       <div class="d-flex flex-row justify-content-between w-100 rent-pay-button">
                         <div class="d-flex flex-row">
                           <p class="h4 font-white me-2">Your Bill:</p>
@@ -679,12 +681,12 @@
                         </div>
                       </div>
 
-                      <div class="d-flex flex-row justify-content-between w-100">
+                      <div class="d-flex flex-row justify-content-between w-100 overdue-pay-button">
                         <div class="d-flex flex-row">
                           <p class="h4 font-white me-2">Your Bill:</p>
                           <p class="font-white" id="overdue-total"></p>
                         </div>
-                        <button type="button"
+                        <!-- <button type="button"
                           class="btn-white pay-btn d-flex align-items-center px-3 py-1"
                           data-type="Overdue"  
                           data-reading-id="1"
@@ -692,7 +694,7 @@
                           data-bs-toggle="modal"
                           data-bs-target="#modalRecordPayment">
                           Pay
-                        </button>
+                        </button> -->
                       </div>
 
                     </div>
@@ -2012,13 +2014,13 @@
                 Amount *</label>
             </div>
             <select class="form-select custom-select select-sort me-1 col-1 mt-3" id="record-payment-method">
-              <option selected="selected" disabled="disabled" hidden="hidden">Payment Method
+              <option selected="selected" disabled="disabled" hidden="hidden" value="">Payment Method
                 *</option>
               <option value="cash">Cash</option>
               <option value="gcash">GCash</option>
             </select>
             <select class="form-select custom-select select-sort me-1 col-1 mt-3" id="record-payment-amount-type">
-              <option selected="selected" disabled="disabled" hidden="hidden">Payment Amount Type
+              <option selected="selected" disabled="disabled" hidden="hidden" value="">Payment Amount Type
                 *</option>
               <option value="full">Full Payment</option>
               <option value="partial">Partial Payment</option>
@@ -2103,8 +2105,19 @@
         <!-- Modal footer -->
         <div class="modal-footer d-flex align-items-center justify-content-center">
           <button type="button" class="btn-red" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn-green-fill" data-bs-dismiss="modal" data-bs-toggle="modal"
-            data-bs-target="#modalRecordPaymentSuccess" id="button-confirm-record-payment">Confirm</button>
+            <form id="hidden-payment-form" method="post" action="functions/pay.php">
+              <input type="hidden" id="hidden-record-receipt-number" name="receipt_number" />
+              <input type="hidden" id="hidden-record-renter-id" name="renter_id" />
+              <input type="hidden" id="hidden-record-renter-name" name="renter_name" />
+              <input type="hidden" id="hidden-record-payment-type" name="payment_type" />
+              <input type="hidden" id="hidden-record-payment-date" name="payment_date" />
+              <input type="hidden" id="hidden-record-payment-amount" name="payment_amount" />
+              <input type="hidden" id="hidden-record-payment-method" name="payment_method" />
+              <input type="hidden" id="hidden-record-payment-amount-type" name="payment_amount_type" />
+              <input type="hidden" id="hidden-record-payment-remarks" name="payment_remarks" />
+              <button type="submit" class="btn-green-fill" data-bs-dismiss="modal" data-bs-toggle="modal"
+               data-bs-target="#modalRecordPaymentSuccess" id="button-confirm-record-payment">Confirm</button>
+            </form>
         </div>
       </div>
     </div>

@@ -3,7 +3,7 @@
     <renters>
         <renter id="1">
             <userId>1</userId>
-            <status>Archived</status>
+            <status>Active</status>
             <personalInfo>
                 <name>
                     <surname>Garcia</surname>
