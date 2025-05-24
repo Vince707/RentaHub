@@ -586,7 +586,7 @@
 
 
 
-                  <div class="col-12 col-sm-6 col-lg-5 mt-5">
+                  <div class="col-12 col-sm-6 col-lg-5 mt-5 rent-bill-card">
                     <div class="gradient-red-bg d-flex flex-column align-items-start rounded-4 p-4 px-4">
                       <div class="d-flex justify-content-between align-items-start w-100">
                         <div class="d-flex align-items-start">
@@ -632,7 +632,7 @@
                   </div>
 
 
-                  <div class="col-12 col-sm-6 col-lg-5 mt-5">
+                  <div class="col-12 col-sm-6 col-lg-5 mt-5 overdue-bill-card">
                     <div class="gradient-red-bg d-flex flex-column align-items-start rounded-4 p-4 px-4">
                       <div class="d-flex justify-content-between align-items-start w-100">
                         <div class="d-flex align-items-start">
@@ -1985,7 +1985,7 @@
             <div class="d-flex flex-row">
               <label class="custom-checkbox-container me-2">
                 <input type="checkbox" class="custom-checkbox" id="record-payment-electric-checkbox"/>
-                Electric
+                Electricity
               </label>
               <label class="custom-checkbox-container me-2">
                 <input type="checkbox" class="custom-checkbox" id="record-payment-water-checkbox"/>

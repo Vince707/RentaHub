@@ -1,3 +1,41 @@
+class PaymentContext {
+  #selectedBillId = null;
+  #selectedReadingId = null;
+  #overdueBillIdsArray = [];
+  #isOverduePayment = false;
+
+  get selectedBillId() {
+    return this.#selectedBillId;
+  }
+  set selectedBillId(value) {
+    this.#selectedBillId = value;
+  }
+
+  get selectedReadingId() {
+    return this.#selectedReadingId;
+  }
+  set selectedReadingId(value) {
+    this.#selectedReadingId = value;
+  }
+
+  get overdueBillIdsArray() {
+    return [...this.#overdueBillIdsArray];
+  }
+  set overdueBillIdsArray(value) {
+    this.#overdueBillIdsArray = [...value];
+  }
+
+  get isOverduePayment() {
+    return this.#isOverduePayment;
+  }
+  set isOverduePayment(value) {
+    this.#isOverduePayment = value;
+  }
+}
+
+const paymentContext = new PaymentContext();
+
+
 $(window).on('load', function () {
   // Fade out the loading screen
   $('#loading-screen').fadeOut('slow', function () {
@@ -120,6 +158,7 @@ $.ajax({
     $(xml).find('billing > rentBills > bill').each(function () {
       const id = $(this).attr('id').trim();
       rentBillsMap[id] = {
+        id: $(this).attr('id').trim(),
         renterId: $(this).find('renterId').text().trim(),
         amount: $(this).find('amount').text().trim(),
         dueDate: $(this).find('dueDate').text().trim(),
@@ -131,7 +170,7 @@ $.ajax({
 
     // --- payments ---
     $(xml).find('payments > payment').each(function () {
-      const id = $(this).attr('id').trim();
+      const id = $(this).attr('id');
       paymentsMap[id] = {
         renterId: $(this).find('renterId').text().trim(),
         paymentType: $(this).find('paymentType').text().trim(),
@@ -321,152 +360,120 @@ $.ajax({
       };
     }
 
-    let today = new Date();
-    let yearMonth = today.toISOString().slice(0, 7); // 'YYYY-MM'
-    let monthDueText = getMonthNameYear(yearMonth);
+let today = new Date();
+let yearMonth = today.toISOString().slice(0, 7); // 'YYYY-MM'
 
-    let rowsHtml = '';
+function formatPHP(amount) {
+  return Number(amount).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
 
-    Object.keys(renterDataMap).forEach(renterId => {
-      const renter = renterDataMap[renterId];
-      if (!renter.unitId) return; // Skip if no unit assigned
+let rowsHtml = '';
 
-      const room = roomsDataMap[renter.unitId] || {};
-      const roomNo = room.roomNo || '';
+Object.keys(renterDataMap).forEach(renterId => {
+  const renter = renterDataMap[renterId];
+  if (!renter.unitId) return; // Skip if no unit assigned
+  const room = roomsDataMap[renter.unitId] || {};
+  const roomNo = room.roomNo || '';
+  const fullName = [renter.firstName, renter.middleName, renter.surname, renter.extension].filter(Boolean).join(' ');
 
-      const fullName = [renter.firstName, renter.middleName, renter.surname, renter.extension].filter(Boolean).join(' ');
+  // --- Step 1: Collect all bills by due date (month) for this renter ---
+  const billsByDueMonth = {};
 
-      // --- Electric Bill (current month) ---
-      let electricBill = 0, electricStatus = '';
-      if (utilityBillsMap['Electricity']) {
-        utilityBillsMap['Electricity'].readings.forEach(reading => {
-          if (reading.dueDate && reading.dueDate.startsWith(yearMonth)) {
-            reading.bills.forEach(bill => {
-              if (bill.renterId === renterId) {
-                electricBill += parseFloat(bill.amount) || 0;
-                electricStatus = bill.status;
-              }
-            });
-          }
-        });
-      }
-      let electricInfo = getBadgeAndClass(electricStatus, electricBill);
-
-      // --- Water Bill (current month) ---
-      let waterBill = 0, waterStatus = '';
-      if (utilityBillsMap['Water']) {
-        utilityBillsMap['Water'].readings.forEach(reading => {
-          if (reading.dueDate && reading.dueDate.startsWith(yearMonth)) {
-            reading.bills.forEach(bill => {
-              if (bill.renterId === renterId) {
-                waterBill += parseFloat(bill.amount) || 0;
-                waterStatus = bill.status;
-              }
-            });
-          }
-        });
-      }
-      let waterInfo = getBadgeAndClass(waterStatus, waterBill);
-
-      // --- Rent Bill (current month) ---
-      let rentBill = 0, rentStatus = '';
-      Object.values(rentBillsMap).forEach(bill => {
-        if (bill.renterId === renterId && bill.dueDate && bill.dueDate.startsWith(yearMonth)) {
-          rentBill += parseFloat(bill.amount) || 0;
-          rentStatus = bill.status;
-        }
-      });
-      let rentInfo = getBadgeAndClass(rentStatus, rentBill);
-
-      // --- Overdue: all unpaid bills with dueDate < today ---
-      let overdue = 0, overdueStatus = '';
-      Object.values(rentBillsMap).forEach(bill => {
-        if (bill.renterId === renterId && bill.status === 'Unpaid' && bill.dueDate && new Date(bill.dueDate) < today) {
-          overdue += parseFloat(bill.amount) || 0;
-          overdueStatus = bill.status;
-        }
-      });
-      ['Electricity', 'Water'].forEach(type => {
-        if (utilityBillsMap[type]) {
-          utilityBillsMap[type].readings.forEach(reading => {
-            if (reading.dueDate && new Date(reading.dueDate) < today) {
-              reading.bills.forEach(bill => {
-                if (bill.renterId === renterId && bill.status === 'Unpaid') {
-                  overdue += parseFloat(bill.amount) || 0;
-                  overdueStatus = bill.status;
-                }
-              });
+  // --- Utility Bills (Electricity & Water) ---
+  ['Electricity', 'Water'].forEach(type => {
+    if (utilityBillsMap[type]) {
+      utilityBillsMap[type].readings.forEach(reading => {
+        if (reading.dueDate) {
+          const dueMonth = reading.dueDate.slice(0, 7); // 'YYYY-MM'
+          if (!billsByDueMonth[dueMonth]) billsByDueMonth[dueMonth] = { electric: 0, water: 0, rent: 0, electricStatus: '', waterStatus: '', rentStatus: '' };
+          reading.bills.forEach(bill => {
+            if (bill.renterId === renterId) {
+              let amount = parseFloat(bill.amount) || 0;
+              // Do not change paid bills to 0, just add to the sum
+              billsByDueMonth[dueMonth][type.toLowerCase()] += amount;
+              billsByDueMonth[dueMonth][`${type.toLowerCase()}Status`] = bill.status;
             }
           });
         }
       });
-      let overdueInfo = getBadgeAndClass(overdueStatus, overdue);
-
-      // --- Total (current month) ---
-      let total = electricBill + waterBill + rentBill + overdue;
-      let totalStatus = (electricStatus === 'Unpaid' || waterStatus === 'Unpaid' || rentStatus === 'Unpaid') ? 'Unpaid'
-        : (electricStatus === 'Partial' || waterStatus === 'Partial' || rentStatus === 'Partial') ? 'Partial'
-        : 'Paid';
-      let totalInfo = getBadgeAndClass(totalStatus, total);
-
-      // --- Total Unpaid: all unpaid bills for this renter ---
-      let totalUnpaid = 0, unpaidStatus = '';
-
-      // Rent Bills
-      Object.values(rentBillsMap).forEach(bill => {
-        if (bill.renterId === renterId) {
-          if (bill.status === 'Unpaid') {
-            totalUnpaid += parseFloat(bill.amount) || 0;
-            unpaidStatus = bill.status;
-          } else if (bill.status === 'Partial') {
-            totalUnpaid += parseFloat(bill.debt) || 0;
-            unpaidStatus = bill.status;
-          }
-        }
-      });
-
-      // Utility Bills (Electricity & Water)
-      ['Electricity', 'Water'].forEach(type => {
-        if (utilityBillsMap[type]) {
-          utilityBillsMap[type].readings.forEach(reading => {
-            reading.bills.forEach(bill => {
-              if (bill.renterId === renterId) {
-                if (bill.status === 'Unpaid') {
-                  totalUnpaid += parseFloat(bill.amount) || 0;
-                  unpaidStatus = bill.status;
-                } else if (bill.status === 'Partial') {
-                  totalUnpaid += parseFloat(bill.debt) || 0;
-                  unpaidStatus = bill.status;
-                }
-              }
-            });
-          });
-        }
-      });
-
-      let unpaidInfo = getBadgeAndClass(unpaidStatus, totalUnpaid);
-
-      rowsHtml += `
-        <tr>
-          <td>${roomNo}</td>
-          <td>${fullName}</td>
-          <td>${monthDueText}</td>
-          <td class="${electricInfo.cls}">${formatPHP(electricBill)}${electricInfo.badge}</td>
-          <td class="${waterInfo.cls}">${formatPHP(waterBill)}${waterInfo.badge}</td>
-          <td class="${rentInfo.cls}">${formatPHP(rentBill)}${rentInfo.badge}</td>
-          <td class="${overdueInfo.cls}">${formatPHP(overdue)}${overdueInfo.badge}</td>
-          <td class="${totalInfo.cls}">${formatPHP(total)}${totalInfo.badge}</td>
-          <td class="${unpaidInfo.cls}">${formatPHP(totalUnpaid)}${unpaidInfo.badge}</td>
-        </tr>
-      `;
-    });
-
-    $('#billings-summary tbody').html(rowsHtml);
-
-
-    function formatPHP(amount) {
-      return Number(amount).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
+  });
+
+  // --- Rent Bills ---
+  Object.values(rentBillsMap).forEach(bill => {
+    if (bill.renterId === renterId && bill.dueDate) {
+      const dueMonth = bill.dueDate.slice(0, 7); // 'YYYY-MM'
+      if (!billsByDueMonth[dueMonth]) billsByDueMonth[dueMonth] = { electric: 0, water: 0, rent: 0, electricStatus: '', waterStatus: '', rentStatus: '' };
+      let amount = parseFloat(bill.amount) || 0;
+      // Do not change paid bills to 0, just add to the sum
+      billsByDueMonth[dueMonth].rent += amount;
+      billsByDueMonth[dueMonth].rentStatus = bill.status;
+    }
+  });
+
+  // --- Step 2: Generate one row per due date (month) for this renter ---
+  Object.keys(billsByDueMonth).forEach(dueMonth => {
+    const { electric, water, rent, electricStatus, waterStatus, rentStatus } = billsByDueMonth[dueMonth];
+    const monthDueText = dueMonth; // 'YYYY-MM'
+
+    // --- Skip if all bill amounts are 0 ---
+  if (electric === 0 && water === 0 && rent === 0) {
+    return; // Skip this row
+  }
+
+    // --- Overdue: only if due date is in the past and bill is unpaid ---
+    let overdue = 0, overdueStatus = '';
+    if (new Date(dueMonth + '-01') < today) {
+      if (electricStatus === 'Unpaid') overdue += electric;
+      if (waterStatus === 'Unpaid') overdue += water;
+      if (rentStatus === 'Unpaid') overdue += rent;
+      if (overdue > 0) overdueStatus = 'Unpaid';
+    }
+
+    // --- Total (for this due date) ---
+    let total = electric + water + rent;
+    let totalStatus = (electricStatus === 'Unpaid' || waterStatus === 'Unpaid' || rentStatus === 'Unpaid') ? 'Unpaid'
+      : (electricStatus === 'Partial' || waterStatus === 'Partial' || rentStatus === 'Partial') ? 'Partial'
+      : 'Paid';
+
+    // --- Total Unpaid: only for this due date (if you want all unpaid, you need to collect globally) ---
+    let totalUnpaid = 0, unpaidStatus = '';
+    if (electricStatus === 'Unpaid') totalUnpaid += electric;
+    else if (electricStatus === 'Partial') totalUnpaid +=
+      parseFloat(utilityBillsMap['Electricity']?.readings.find(r => r.dueDate?.slice(0,7) === dueMonth)?.bills.find(b => b.renterId === renterId)?.debt || 0);
+    if (waterStatus === 'Unpaid') totalUnpaid += water;
+    else if (waterStatus === 'Partial') totalUnpaid +=
+      parseFloat(utilityBillsMap['Water']?.readings.find(r => r.dueDate?.slice(0,7) === dueMonth)?.bills.find(b => b.renterId === renterId)?.debt || 0);
+    if (rentStatus === 'Unpaid') totalUnpaid += rent;
+    else if (rentStatus === 'Partial') totalUnpaid +=
+      parseFloat(Object.values(rentBillsMap).find(b => b.renterId === renterId && b.dueDate?.slice(0,7) === dueMonth)?.debt || 0);
+    if (totalUnpaid > 0) unpaidStatus = 'Unpaid';
+
+    // --- Get badge and class for each ---
+    let electricInfo = getBadgeAndClass(electricStatus, electric);
+    let waterInfo = getBadgeAndClass(waterStatus, water);
+    let rentInfo = getBadgeAndClass(rentStatus, rent);
+    let overdueInfo = getBadgeAndClass(overdueStatus, overdue);
+    let totalInfo = getBadgeAndClass(totalStatus, total);
+    let unpaidInfo = getBadgeAndClass(unpaidStatus, totalUnpaid);
+
+    rowsHtml += `
+      <tr>
+        <td>${roomNo}</td>
+        <td>${fullName}</td>
+        <td>${monthDueText}</td>
+        <td class="${electricInfo.cls}">${formatPHP(electric)}${electricInfo.badge}</td>
+        <td class="${waterInfo.cls}">${formatPHP(water)}${waterInfo.badge}</td>
+        <td class="${rentInfo.cls}">${formatPHP(rent)}${rentInfo.badge}</td>
+        <td class="${overdueInfo.cls}">${formatPHP(overdue)}${overdueInfo.badge}</td>
+        <td class="${totalInfo.cls}">${formatPHP(total)}${totalInfo.badge}</td>
+        <td class="${unpaidInfo.cls}">${formatPHP(totalUnpaid)}${unpaidInfo.badge}</td>
+      </tr>
+    `;
+  });
+});
+
+$('#billings-summary tbody').html(rowsHtml);
 
     function updateIndividualMetrics(renterId, selectedMonth) {
       let totalUnpaid = 0;
@@ -594,6 +601,9 @@ $.ajax({
         Paid
       </div>`
     );
+
+    // Remove the notification button (if it exists)
+    $('.electric-bill-card .btn-white[data-bs-target="#modalSendNotificationConfirmation"]').remove();
   }
 }
 
@@ -720,6 +730,9 @@ function updateWaterBillCard(bill, reading, renterId) {
         Paid
       </div>`
     );
+
+    // Remove the notification button (if it exists)
+    $('.water-bill-card .btn-white[data-bs-target="#modalSendNotificationConfirmation"]').remove();
   }
 }
 
@@ -810,6 +823,9 @@ function updateRentBillCard(bill, renterId) {
         Paid
       </div>`
     );
+
+    // Remove the notification button (if it exists)
+    $('.rent-bill-card .btn-white[data-bs-target="#modalSendNotificationConfirmation"]').remove();
   }
 }
 
@@ -856,6 +872,7 @@ $('#select-billings-renter, #individual-month-due').on('change input', function(
 });
 
 function updateOverdueBillCard(overdueBills, renterId) {
+  console.log("UPDATE OVERDUE BILL: ", overdueBills);
   // Remove any existing Pay or Paid button
   $('.overdue-pay-button .pay-btn, .overdue-pay-button .paid-btn').remove();
 
@@ -901,6 +918,9 @@ function updateOverdueBillCard(overdueBills, renterId) {
         No Overdue
       </div>`
     );
+
+    // Remove the notification button (if it exists)
+    $('.overdue-bill-card .btn-white[data-bs-target="#modalSendNotificationConfirmation"]').remove();
   }
 }
 
@@ -934,87 +954,203 @@ function getOverdueBillsForRenter(renterId) {
 
   return overdueBills;
 }
+function getTrulyOverdueBillIds(renterId) {
+  const today = new Date();
+  const overdueBillIds = [];
 
+  // Electricity
+  if (utilityBillsMap['Electricity']) {
+    utilityBillsMap['Electricity'].readings.forEach(reading => {
+      if (
+        reading.dueDate &&
+        new Date(reading.dueDate) < today &&
+        reading.bills.some(bill => bill.status === 'Unpaid' || bill.status === 'Partial')
+      ) {
+        reading.bills.forEach(bill => {
+          if (
+            bill.renterId === renterId &&
+            (bill.status === 'Unpaid' || bill.status === 'Partial') &&
+            (bill.status === 'Unpaid' ? parseFloat(bill.amount) : parseFloat(bill.debt)) > 0
+          ) {
+            overdueBillIds.push(bill.id);
+          }
+        });
+      }
+    });
+  }
+
+  // Water
+  if (utilityBillsMap['Water']) {
+    utilityBillsMap['Water'].readings.forEach(reading => {
+      if (
+        reading.dueDate &&
+        new Date(reading.dueDate) < today &&
+        reading.bills.some(bill => bill.status === 'Unpaid' || bill.status === 'Partial')
+      ) {
+        reading.bills.forEach(bill => {
+          if (
+            bill.renterId === renterId &&
+            (bill.status === 'Unpaid' || bill.status === 'Partial') &&
+            (bill.status === 'Unpaid' ? parseFloat(bill.amount) : parseFloat(bill.debt)) > 0
+          ) {
+            overdueBillIds.push(bill.id);
+          }
+        });
+      }
+    });
+  }
+
+  // Rent (use key as fallback if id is missing)
+  Object.entries(rentBillsMap).forEach(([key, bill]) => {
+    if (
+      bill.renterId === renterId &&
+      bill.dueDate &&
+      new Date(bill.dueDate) < today &&
+      (bill.status === 'Unpaid' || bill.status === 'Partial') &&
+      (bill.status === 'Unpaid' ? parseFloat(bill.amount) : parseFloat(bill.debt)) > 0
+    ) {
+      overdueBillIds.push(key);
+      console.log("ADDED KEY: " + key);
+    }
+  });
+
+  return overdueBillIds;
+}
 
 
 function populateOverdueBillsCard(renterId) {
+  console.log("--- populateOverdueBillsCard ---");
+  console.log("renterId:", renterId);
+
   let today = new Date();
+  console.log("Today:", today.toISOString().split('T')[0]);
+
   let electricOverdue = 0, waterOverdue = 0, rentOverdue = 0;
   let electricDueDate = '', waterDueDate = '', rentDueDate = '';
 
   // --- Electric Overdue ---
   if (utilityBillsMap['Electricity']) {
+    console.log("Checking overdue Electricity bills...");
     utilityBillsMap['Electricity'].readings.forEach(reading => {
-      if (reading.dueDate && new Date(reading.dueDate) < today) {
+      if (
+        reading.dueDate &&
+        new Date(reading.dueDate) < today &&
+        // Skip if all bills are paid (for any renter)
+        reading.bills.some(bill => bill.status === 'Unpaid' || bill.status === 'Partial')
+      ) {
+        console.log("Found overdue reading with unpaid bills (Electricity):", reading);
         reading.bills.forEach(bill => {
           if (bill.renterId === renterId && (bill.status === 'Unpaid' || bill.status === 'Partial')) {
-            electricOverdue += parseFloat(bill.debt || bill.amount) || 0;
+            // For 'Unpaid', use bill.amount; for 'Partial', use bill.debt
+            const amount = bill.status === 'Unpaid' ? parseFloat(bill.amount) : parseFloat(bill.debt);
+            console.log("Found overdue bill (Electricity):", bill, "Amount:", amount);
+            electricOverdue += amount;
             electricDueDate = reading.dueDate; // Use the latest found
           }
         });
       }
     });
+    console.log("Total Electric overdue:", electricOverdue, "Due date:", electricDueDate);
+  } else {
+    console.log("No Electricity bills map found");
   }
 
   // --- Water Overdue ---
   if (utilityBillsMap['Water']) {
+    console.log("Checking overdue Water bills...");
     utilityBillsMap['Water'].readings.forEach(reading => {
-      if (reading.dueDate && new Date(reading.dueDate) < today) {
+      if (
+        reading.dueDate &&
+        new Date(reading.dueDate) < today &&
+        // Skip if all bills are paid (for any renter)
+        reading.bills.some(bill => bill.status === 'Unpaid' || bill.status === 'Partial')
+      ) {
+        console.log("Found overdue reading with unpaid bills (Water):", reading);
         reading.bills.forEach(bill => {
           if (bill.renterId === renterId && (bill.status === 'Unpaid' || bill.status === 'Partial')) {
-            waterOverdue += parseFloat(bill.debt || bill.amount) || 0;
+            // For 'Unpaid', use bill.amount; for 'Partial', use bill.debt
+            const amount = bill.status === 'Unpaid' ? parseFloat(bill.amount) : parseFloat(bill.debt);
+            console.log("Found overdue bill (Water):", bill, "Amount:", amount);
+            waterOverdue += amount;
             waterDueDate = reading.dueDate;
           }
         });
       }
     });
+    console.log("Total Water overdue:", waterOverdue, "Due date:", waterDueDate);
+  } else {
+    console.log("No Water bills map found");
   }
 
   // --- Rent Overdue ---
+  console.log("Checking overdue Rent bills...");
   Object.values(rentBillsMap).forEach(bill => {
-    if (bill.renterId === renterId && bill.dueDate && new Date(bill.dueDate) < today &&
-        (bill.status === 'Unpaid' || bill.status === 'Partial')) {
-      rentOverdue += parseFloat(bill.debt || bill.amount) || 0;
+    if (
+      bill.renterId === renterId &&
+      bill.dueDate &&
+      new Date(bill.dueDate) < today &&
+      (bill.status === 'Unpaid' || bill.status === 'Partial')
+    ) {
+      // For 'Unpaid', use bill.amount; for 'Partial', use bill.debt
+      const amount = bill.status === 'Unpaid' ? parseFloat(bill.amount) : parseFloat(bill.debt);
+      console.log("Found overdue bill (Rent):", bill, "Amount:", amount);
+      rentOverdue += amount;
       rentDueDate = bill.dueDate;
     }
   });
+  console.log("Total Rent overdue:", rentOverdue, "Due date:", rentDueDate);
 
   const overdueBills = getOverdueBillsForRenter(renterId);
+  console.log("getOverdueBillsForRenter result:", overdueBills);
   updateOverdueBillCard(overdueBills, renterId);
-
+  console.log("updateOverdueBillCard called");
 
   // --- Update the UI ---
   $('#overdue-electric').text('PHP ' + Number(electricOverdue).toLocaleString('en-PH', {minimumFractionDigits:2}));
   $('#overdue-water').text('PHP ' + Number(waterOverdue).toLocaleString('en-PH', {minimumFractionDigits:2}));
   $('#overdue-rent').text('PHP ' + Number(rentOverdue).toLocaleString('en-PH', {minimumFractionDigits:2}));
+  console.log("Updated overdue amounts in UI");
 
   // Electric Due Date
   if (electricOverdue > 0 && electricDueDate) {
     $('#overdue-electric-due-date').text(electricDueDate);
     $('#overdue-electric-due-date-container').show();
+    console.log("Set Electric due date:", electricDueDate);
   } else {
     $('#overdue-electric-due-date').text('');
     $('#overdue-electric-due-date-container').hide();
+    console.log("No Electric due date to display");
   }
 
   // Water Due Date
   if (waterOverdue > 0 && waterDueDate) {
     $('#overdue-water-due-date').text(waterDueDate);
     $('#overdue-water-due-date-container').show();
+    console.log("Set Water due date:", waterDueDate);
   } else {
     $('#overdue-water-due-date').text('');
     $('#overdue-water-due-date-container').hide();
+    console.log("No Water due date to display");
   }
 
   // Rent Due Date
   if (rentOverdue > 0 && rentDueDate) {
     $('#overdue-rent-due-date').text(rentDueDate);
     $('#overdue-rent-due-date-container').show();
+    console.log("Set Rent due date:", rentDueDate);
   } else {
     $('#overdue-rent-due-date').text('');
     $('#overdue-rent-due-date-container').hide();
+    console.log("No Rent due date to display");
   }
+
+  // --- Set Overdue Bill IDs on the Overdue Payment Button ---
+  const overdueBillIds = getTrulyOverdueBillIds(renterId);
+  console.log("Set overdue bill IDs for pay-btn.overdue:", overdueBillIds);
+  $('.pay-btn.overdue[data-renter-id="' + renterId + '"]').attr('data-bill-ids', overdueBillIds.join(','));
 }
+
+
 
 $('#select-billings-renter, #individual-month-due').on('change input', function() {
   const renterId = $('#select-billings-renter').val();
@@ -1040,40 +1176,65 @@ function getNextReceiptNumber() {
   return "R" + String(nextNum).padStart(8, '0');
 }
 
-let selectedBillId = null;          // e.g., "E1" or "W3" or "101"
-let selectedReadingId = null;       // e.g., "1" (reading id for utilities)
-let overdueBillIdsArray = [];       // e.g., ["E1", "W1", "101"]
-let isOverduePayment = false;       // true if paying multiple bills (overdue)
+// let selectedBillId = null;          // e.g., "E1" or "W3" or "101"
+// let selectedReadingId = null;       // e.g., "1" (reading id for utilities)
+// let overdueBillIdsArray = [];       // e.g., ["E1", "W1", "101"]
+// let isOverduePayment = false;       // true if paying multiple bills (overdue)
 
 $(document).on('click', '.pay-btn', function() {
+  console.log("--- .pay-btn clicked ---");
   const type = $(this).attr('data-type');
+  // If your HTML uses 'Electric', consider mapping it here:
+  // const mappedType = type === 'Electric' ? 'Electricity' : type;
+  // For now, we use type as-is, but in logic, we use 'Electricity'
   const billId = $(this).attr('data-bill-id');
   const readingId = $(this).attr('data-reading-id');
   const renterId = $(this).attr('data-renter-id');
+  console.log("type:", type, "billId:", billId, "readingId:", readingId, "renterId:", renterId);
 
   let bill = null;
   let reading = null;
   let billsToPay = [];
 
-  if (type === 'Electric' && utilityBillsMap['Electricity']) {
+  if (type === 'Electricity' && utilityBillsMap['Electricity']) {
+    console.log("Looking for Electricity bill...");
     reading = utilityBillsMap['Electricity'].readings.find(r => r.id == readingId);
-    if (reading) bill = reading.bills.find(b => b.id == billId);
-
+    if (reading) {
+      console.log("Found reading:", reading);
+      bill = reading.bills.find(b => b.id == billId);
+      if (bill) console.log("Found bill:", bill);
+      else console.log("Bill not found in reading");
+    } else {
+      console.log("Reading not found");
+    }
   } else if (type === 'Water' && utilityBillsMap['Water']) {
+    console.log("Looking for Water bill...");
     reading = utilityBillsMap['Water'].readings.find(r => r.id == readingId);
-    if (reading) bill = reading.bills.find(b => b.id == billId);
-
+    if (reading) {
+      console.log("Found reading:", reading);
+      bill = reading.bills.find(b => b.id == billId);
+      if (bill) console.log("Found bill:", bill);
+      else console.log("Bill not found in reading");
+    } else {
+      console.log("Reading not found");
+    }
   } else if (type === 'Rent') {
+    console.log("Looking for Rent bill...");
     bill = rentBillsMap[billId];
-
+    if (bill) console.log("Found bill:", bill);
+    else console.log("Rent bill not found");
   } else if (type === 'Overdue') {
+    console.log("Looking for Overdue bills...");
     const billIdsStr = $(this).attr('data-bill-ids') || '';
+    console.log("BillIdsStr", billIdsStr);
     const billIds = billIdsStr.split(',').map(id => id.trim()).filter(id => id);
+    console.log("Overdue bill IDs:", billIds);
 
     billIds.forEach(id => {
       let foundBill = null;
-      // Electric
+      // Electricity
       if (!foundBill && utilityBillsMap['Electricity']) {
+        console.log("Checking Electricity for bill ID:", id);
         for (const reading of utilityBillsMap['Electricity'].readings) {
           if (Array.isArray(reading.bills)) {
             foundBill = reading.bills.find(b => b.id === id);
@@ -1081,11 +1242,15 @@ $(document).on('click', '.pay-btn', function() {
             const billsArr = Array.isArray(reading.bill) ? reading.bill : [reading.bill];
             foundBill = billsArr.find(b => b.id === id);
           }
-          if (foundBill) break;
+          if (foundBill) {
+            console.log("Found bill in Electricity:", foundBill);
+            break;
+          }
         }
       }
       // Water
       if (!foundBill && utilityBillsMap['Water']) {
+        console.log("Checking Water for bill ID:", id);
         for (const reading of utilityBillsMap['Water'].readings) {
           if (Array.isArray(reading.bills)) {
             foundBill = reading.bills.find(b => b.id === id);
@@ -1093,87 +1258,129 @@ $(document).on('click', '.pay-btn', function() {
             const billsArr = Array.isArray(reading.bill) ? reading.bill : [reading.bill];
             foundBill = billsArr.find(b => b.id === id);
           }
-          if (foundBill) break;
+          if (foundBill) {
+            console.log("Found bill in Water:", foundBill);
+            break;
+          }
         }
       }
       // Rent
       if (!foundBill && rentBillsMap[id]) {
+        console.log("Checking Rent for bill ID:", id);
         foundBill = rentBillsMap[id];
+        if (foundBill) console.log("Found bill in Rent:", foundBill);
       }
-      if (foundBill) billsToPay.push(foundBill);
+      if (foundBill) {
+        billsToPay.push(foundBill);
+        console.log("Added bill to billsToPay:", foundBill);
+      } else {
+        console.log("Bill ID not found:", id);
+      }
     });
 
     if (billsToPay.length === 0) {
+      console.log("No overdue bills found");
       alert("No overdue bills found. Please check the data attributes.");
       return;
     }
+    console.log("billsToPay:", billsToPay);
   }
 
   // If not overdue type, check if bill found
   if (type !== 'Overdue' && !bill) {
+    console.log("Bill not found");
     alert("Bill not found. Please check the data attributes.");
     return;
   }
 
-  // === SET YOUR GLOBAL VARIABLES HERE ===
+  // === SET PAYMENT CONTEXT ===
   if (type === 'Overdue') {
-    isOverduePayment = true;
-    overdueBillIdsArray = billsToPay.map(b => b.id);
-    selectedBillId = null;
-    selectedReadingId = null;
+    console.log("Setting context for overdue payment");
+    paymentContext.isOverduePayment = true;
+    paymentContext.overdueBillIdsArray = billsToPay.map(b => b.id);
+    paymentContext.selectedBillId = null;
+    paymentContext.selectedReadingId = null;
   } else {
-    isOverduePayment = false;
-    selectedBillId = billId || null;
-    selectedReadingId = readingId || null;
-    overdueBillIdsArray = [];
+    console.log("Setting context for single bill payment");
+    paymentContext.isOverduePayment = false;
+    paymentContext.selectedBillId = billId || null;
+    paymentContext.selectedReadingId = readingId || null;
+    paymentContext.overdueBillIdsArray = [];
   }
+  console.log("paymentContext:", {
+    isOverduePayment: paymentContext.isOverduePayment,
+    overdueBillIdsArray: paymentContext.overdueBillIdsArray,
+    selectedBillId: paymentContext.selectedBillId,
+    selectedReadingId: paymentContext.selectedReadingId
+  });
 
   // Set modal fields
   $('#record-payment-renter').val(renterId);
+  console.log("Set renter ID:", renterId);
 
   // --- CHECKBOX LOGIC ---
   if (type === 'Overdue') {
+    console.log("Setting checkboxes for overdue payment");
     $('#record-payment-electric-checkbox').prop('checked', false);
     $('#record-payment-water-checkbox').prop('checked', false);
     $('#record-payment-rent-checkbox').prop('checked', false);
 
     const typesPresent = new Set(billsToPay.map(b => b.type || 
-      (b.id && b.id.startsWith('E') ? 'Electric' : 
+      (b.id && b.id.startsWith('E') ? 'Electricity' : 
        b.id && b.id.startsWith('W') ? 'Water' : 
        b.id && b.id.startsWith('R') ? 'Rent' : null)
     ));
-    if (typesPresent.has('Electric')) $('#record-payment-electric-checkbox').prop('checked', true);
-    if (typesPresent.has('Water')) $('#record-payment-water-checkbox').prop('checked', true);
-    if (typesPresent.has('Rent')) $('#record-payment-rent-checkbox').prop('checked', true);
+    if (typesPresent.has('Electricity')) {
+      $('#record-payment-electric-checkbox').prop('checked', true);
+      console.log("Checked Electricity");
+    }
+    if (typesPresent.has('Water')) {
+      $('#record-payment-water-checkbox').prop('checked', true);
+      console.log("Checked Water");
+    }
+    if (typesPresent.has('Rent')) {
+      $('#record-payment-rent-checkbox').prop('checked', true);
+      console.log("Checked Rent");
+    }
   } else {
-    $('#record-payment-electric-checkbox').prop('checked', type === 'Electric');
+    console.log("Setting checkboxes for single bill payment");
+    $('#record-payment-electric-checkbox').prop('checked', type === 'Electricity');
     $('#record-payment-water-checkbox').prop('checked', type === 'Water');
     $('#record-payment-rent-checkbox').prop('checked', type === 'Rent');
+    console.log("Electricity:", type === 'Electricity', "Water:", type === 'Water', "Rent:", type === 'Rent');
   }
 
   // --- AMOUNT LOGIC ---
-  let amount = 0;
-  if (type === 'Overdue') {
-    amount = billsToPay.reduce((sum, b) => {
-      if (b.status === 'Partial') {
-        return sum + Number(b.debt || b.amount || 0);
-      }
-      return sum + Number(b.amount || 0);
-    }, 0);
+let amount = 0;
+if (type === 'Overdue') {
+  console.log("Calculating amount for overdue bills");
+  amount = billsToPay.reduce((sum, b) => {
+    return sum + (b.status === 'Unpaid' ? Number(b.amount) : Number(b.debt));
+  }, 0);
+  console.log("Total amount for overdue bills:", amount);
+} else {
+  console.log("Calculating amount for single bill");
+  if (bill.status === 'Partial') {
+    amount = Number(bill.debt);
+    console.log("Partial bill, amount:", amount);
   } else {
-    if (bill.status === 'Partial') {
-      amount = Number(bill.debt);
-    } else {
-      amount = Number(bill.amount);
-    }
+    amount = Number(bill.amount);
+    console.log("Full bill, amount:", amount);
   }
+}
+
 
   $('#record-payment-payment-amount').val(amount);
+  console.log("Set payment amount:", amount);
 
   $('#record-payment-payment-date').val(formatDateToYYYYMMDD(new Date()));
+  console.log("Set payment date");
+
   $('#record-payment-receipt-number').text(getNextReceiptNumber());
+  console.log("Set receipt number");
 
   $('#modalRecordPayment').modal('show');
+  console.log("Showed modal");
 });
 
 
@@ -1537,6 +1744,101 @@ $(document).ready(function () {
     sendNotification(renterID);
   });
 
+  
+  function populateElectricBillTable() {
+  const $tbody = $('#modalGenerateElectricBill table.custom-table tbody');
+  $tbody.empty();
+
+  Object.keys(renterDataMap).forEach(renterId => {
+    const renter = renterDataMap[renterId];
+    if (!renter.unitId) return; // Skip if no unit assigned
+
+    const room = roomsDataMap[renter.unitId] || {};
+    const roomNo = room.roomNo || '';
+    const fullName = [renter.firstName, renter.middleName, renter.surname, renter.extension].filter(Boolean).join(' ');
+
+    // Get previous reading (from latest reading in billings)
+    let previousReading = 'N/A';
+    // TODO: Replace with your logic to fetch the latest reading for this renter
+    // Example (pseudo-code):
+    // previousReading = getLatestReadingForRenter(renterId, 'Electricity') || 'N/A';
+
+    $tbody.append(`
+      <tr>
+        <td>${roomNo}</td>
+        <td>${fullName}</td>
+        <td>
+          <div class="form-floating me-2 col-12 mt-3">
+            <input type="text" class="form-control current-reading" data-renter-id="${renterId}" placeholder="" required="required"/>
+            <label>Current Reading *</label>
+          </div>
+        </td>
+        <td>${previousReading}</td>
+        <td class="consumed-kwh">0</td>
+        <td class="amount-per-kwh">0</td>
+        <td class="total">0</td>
+      </tr>
+    `);
+  });
+
+  // Add a summary row
+  $tbody.append(`
+    <tr class="fw-bolder">
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td class="total-consumed-kwh">0</td>
+      <td></td>
+      <td class="grand-total">0</td>
+    </tr>
+  `);
+}
+$('#modalGenerateElectricBill').on('shown.bs.modal', function() {
+  populateElectricBillTable();
+});
+$(document).on('input', '.current-reading', function() {
+  const $row = $(this).closest('tr');
+  const currentReading = parseFloat($(this).val()) || 0;
+  const previousReading = parseFloat($row.find('td:eq(3)').text()) || 0;
+  const consumedKwh = currentReading - previousReading;
+  $row.find('.consumed-kwh').text(consumedKwh);
+
+  // Get amount per kwh (from total bill / total consumed kwh)
+  const totalBill = parseFloat($('#add-billings-electric-total-bill').val()) || 0;
+  let totalConsumedKwh = 0;
+  $('.consumed-kwh').each(function() {
+    totalConsumedKwh += parseFloat($(this).text()) || 0;
+  });
+  $('.total-consumed-kwh').text(totalConsumedKwh);
+
+  const amountPerKwh = totalConsumedKwh > 0 ? (totalBill / totalConsumedKwh) : 0;
+  $('.amount-per-kwh').text('PHP ' + formatPHP(amountPerKwh));
+
+  // Compute total for each renter
+  $('.consumed-kwh').each(function() {
+    const consumed = parseFloat($(this).text()) || 0;
+    const total = consumed * amountPerKwh;
+    $(this).closest('tr').find('.total').text('PHP ' + formatPHP(total));
+  });
+
+  // Update grand total
+  let grandTotal = 0;
+  $('.total').each(function() {
+    grandTotal += parseFloat($(this).text().replace('PHP ', '').replace(/,/g, '')) || 0;
+  });
+  $('.grand-total').text('PHP ' + formatPHP(grandTotal));
+});
+
+// Also trigger computation when total bill changes
+$('#add-billings-electric-total-bill').on('input', function() {
+  $('.current-reading').trigger('input');
+});
+
+function formatPHP(amount) {
+  return Number(amount).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
   $('#button-generate-electric').on("click", function () {
     // TODO: PROCESS
     $('#modalGenerateElectricBill').modal('hide');
@@ -1551,6 +1853,8 @@ $(document).ready(function () {
     if (!monthDue || !totalBill) {
       return showError("All required fields must be filled.", "#error-box-modify-renter", "#error-text-modify-renter");
     }
+
+    
 
     
 
@@ -1708,7 +2012,7 @@ $('#button-record-payment').on("click", function () {
     const receiptID = getNextReceiptNumber();
     const renterId = $("#record-payment-renter").val();
     const paymentTypes = [];
-    if ($("#record-payment-electric-checkbox").is(":checked")) paymentTypes.push("Electric");
+    if ($("#record-payment-electric-checkbox").is(":checked")) paymentTypes.push("Electricity");
     if ($("#record-payment-water-checkbox").is(":checked")) paymentTypes.push("Water");
     if ($("#record-payment-rent-checkbox").is(":checked")) paymentTypes.push("Rent");
 
@@ -1753,14 +2057,14 @@ $('#button-record-payment').on("click", function () {
     $("#hidden-record-payment-amount-type").val(paymentAmountType);
     $("#hidden-record-payment-remarks").val(remarks);
 
-    // Set bill_id, reading_id, overdue_bill_ids
-    if (isOverduePayment) {
+    // Set bill_id, reading_id, overdue_bill_ids using paymentContext class
+    if (paymentContext.isOverduePayment) {
         $("#hidden-record-bill-id").val("");
         $("#hidden-record-reading-id").val("");
-        $("#hidden-record-overdue-bill-ids").val(overdueBillIdsArray.join(","));
+        $("#hidden-record-overdue-bill-ids").val(paymentContext.overdueBillIdsArray.join(","));
     } else {
-        $("#hidden-record-bill-id").val(selectedBillId || "");
-        $("#hidden-record-reading-id").val(selectedReadingId || "");
+        $("#hidden-record-bill-id").val(paymentContext.selectedBillId || "");
+        $("#hidden-record-reading-id").val(paymentContext.selectedReadingId || "");
         $("#hidden-record-overdue-bill-ids").val("");
     }
 
@@ -1768,6 +2072,7 @@ $('#button-record-payment').on("click", function () {
     $('#modalRecordPaymentConfirmation').modal('show');
     hideError("#error-box-record-payment", "#error-text-record-payment");
 });
+
 
    $('#button-confirm-record-payment').on("click", function () {
     // TODO: XML Write Save
@@ -1823,6 +2128,12 @@ $('#record-payment-rent-checkbox').prop('checked', false);
     $('#modalModifyElectricMetadataConfirmation').modal('show');
     hideError("#error-box-modify-electric-metadata", "#error-text-electric-metadata");
   });
+
+
+
+
+
+
 
 
 
