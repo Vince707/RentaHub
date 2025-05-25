@@ -591,3 +591,4 @@ input.search-input::placeholder {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+

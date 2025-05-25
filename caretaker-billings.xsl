@@ -365,7 +365,7 @@
             <div class="d-flex flex-column align-items-start">
               <div class="d-flex flex-row mt-3">
                 <select class="form-select custom-select select-sort me-1 col-1" id="select-billings-renter">
-                  <option selected="selected" disabled="disabled" hidden="hidden">Renter</option>
+                  <option selected="selected" disabled="disabled" hidden="hidden">Select Renter...</option>
                   <xsl:for-each select="$data//apartmentManagement/renters/renter[status='Active']">
                     <option value="{userId}">
                       <xsl:value-of select="personalInfo/name/firstName"/>
@@ -761,18 +761,6 @@
                     <td>PHP 209.44</td>
 
                   </tr>
-                  <tfoot>
-                    <tr class="fw-bolder">
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>200</td>
-                    <td></td>
-                    <td>PHP 209.44</td>
-
-                  </tr>
-                  </tfoot>
                 </tbody>
               </table>
               <div class="d-flex flex-row">
@@ -1196,8 +1184,18 @@
 
                 <!-- Modal footer -->
                 <div class="modal-footer d-flex align-items-end">
+                <div id="error-box-generate-electric" class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-10 col-lg-6" style="color:white; background-color: #a6192e;">
+                  <i class="bi bi-exclamation-triangle-fill fs-3"></i>
+                  <div>
+                    <strong class="fs-5">Warning!</strong><br/>
+                    <span class="small" id="error-text-generate-electric"></span>
+                  </div>
+                </div>
+                <div class="ms-auto">
                   <button type="button" class="btn-red" data-bs-dismiss="modal">Cancel</button>
                   <button type="button" class="btn-green-fill" id="button-generate-electric">Generate</button>
+                  </div>
+                  
                 </div>
               </div>
             </div>
@@ -1221,10 +1219,17 @@
 
                 <!-- Modal footer -->
                 <div class="modal-footer d-flex align-items-center justify-content-center">
-                  <button type="button" class="btn-red" data-bs-dismiss="modal">Cancel</button>
-                  <button type="button" class="btn-green-fill" data-bs-dismiss="modal" data-bs-toggle="modal"
-                    data-bs-target="#modalGenerateElectricBillSuccess"
-                    id="button-confirm-generate-electric">Confirm</button>
+                  <button type="button" class="btn-red" data-bs-toggle="modal" data-bs-target="#modalGenerateElectricBill">Cancel</button>
+                  <form id="form-generate-electric" method="POST" action="functions/generate-electric-bill.php">
+                    <!-- Other form fields like month due, total bill, etc. -->
+                    
+                    <!-- Hidden inputs for renters will be appended here dynamically -->
+                    
+                    <button type="submit" class="btn-green-fill" data-bs-dismiss="modal" 
+                            id="button-confirm-generate-electric">Confirm</button>
+                  </form>
+                  
+                 
                 </div>
               </div>
             </div>
@@ -1338,8 +1343,18 @@
 
                 <!-- Modal footer -->
                 <div class="modal-footer d-flex align-items-end">
+                <div id="error-box-generate-water" class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-10 col-lg-6" style="color:white; background-color: #a6192e;">
+                  <i class="bi bi-exclamation-triangle-fill fs-3"></i>
+                  <div>
+                    <strong class="fs-5">Warning!</strong><br/>
+                    <span class="small" id="error-text-generate-water"></span>
+                  </div>
+                </div>
+                <div class="ms-auto">
                   <button type="button" class="btn-red" data-bs-dismiss="modal">Cancel</button>
                   <button type="button" class="btn-green-fill" id="button-generate-water">Generate</button>
+                </div>
+                 
                 </div>
               </div>
             </div>
@@ -1363,8 +1378,14 @@
                 <!-- Modal footer -->
                 <div class="modal-footer d-flex align-items-center justify-content-center">
                   <button type="button" class="btn-red" data-bs-dismiss="modal">Cancel</button>
-                  <button type="button" class="btn-green-fill" data-bs-dismiss="modal" data-bs-toggle="modal"
-                    data-bs-target="#modalGenerateWaterBillSuccess" id="button-confirm-generate-water">Confirm</button>
+                <form id="form-generate-water" method="POST" action="functions/generate-water-bill.php">
+                  <!-- Other form fields like month due, total bill, etc. -->
+                  
+                  <!-- Hidden inputs for renters will be appended here dynamically -->
+                  
+                  <button type="button" class="btn-green-fill" data-bs-dismiss="modal" id="button-confirm-generate-water">Confirm</button>
+                </form>
+                 
                 </div>
               </div>
             </div>
@@ -1427,9 +1448,9 @@
                         </label>
                       </div>
                       <div class="form-floating ms-2 col-12 col-sm-6 col-lg-3 mt-3">
-                        <input type="text" class="form-control" id="add-billings-electric-total-bill" placeholder=""
+                        <input type="text" class="form-control" id="modify-billings-electric-total-bill" placeholder=""
                           required="required"/>
-                        <label for="add-billings-electric-total-bill">Total Electric Bill *</label>
+                        <label for="modify-billings-electric-total-bill">Total Electric Bill *</label>
                       </div>
                     </div>
                     <!-- TABLE -->
@@ -1506,10 +1527,17 @@
 
                 <!-- Modal footer -->
                 <div class="modal-footer d-flex align-items-center justify-content-center">
-                  <button type="button" class="btn-red" data-bs-dismiss="modal">Cancel</button>
-                  <button type="button" class="btn-green-fill" data-bs-dismiss="modal" data-bs-toggle="modal"
-                    data-bs-target="#modalModifyElectricBillSuccess"
-                    id="button-confirm-modify-electric">Confirm</button>
+                  <button type="button" class="btn-red" data-bs-toggle="modal"
+                  data-bs-target="#modalModifyElectricBill">Cancel</button>
+                <form id="form-modify-electric" method="POST" action="functions/modify-electric-bill.php">
+                  <!-- Other form fields like month due, total bill, etc. -->
+                  
+                  <!-- Hidden inputs for renters will be appended here dynamically -->
+                  
+                  <button type="button" class="btn-green-fill" data-bs-dismiss="modal" 
+                          id="button-confirm-modify-electric">Confirm</button>
+                </form>
+                  
                 </div>
               </div>
             </div>
@@ -1573,9 +1601,9 @@
                         </label>
                       </div>
                       <div class="form-floating ms-2 col-12 col-sm-6 col-lg-3 mt-3">
-                        <input type="text" class="form-control" id="add-billings-water-total-bill" placeholder=""
+                        <input type="text" class="form-control" id="modify-billings-water-total-bill" placeholder=""
                           required="required"/>
-                        <label for="add-billings-water-total-bill">Total Water Bill *</label>
+                        <label for="modify-billings-water-total-bill">Total Water Bill *</label>
                       </div>
                     </div>
                     <!-- TABLE -->
@@ -1652,9 +1680,17 @@
 
                 <!-- Modal footer -->
                 <div class="modal-footer d-flex align-items-center justify-content-center">
-                  <button type="button" class="btn-red" data-bs-dismiss="modal">Cancel</button>
-                  <button type="button" class="btn-green-fill" data-bs-dismiss="modal" data-bs-toggle="modal"
-                    data-bs-target="#modalModifyWaterBillSuccess" id="button-confirm-modify-water">Confirm</button>
+                  <button type="button" class="btn-red" data-bs-toggle="modal"
+                  data-bs-target="#modalModifyWaterBill">Cancel</button>
+                <form id="form-modify-water" method="POST" action="functions/modify-water-bill.php">
+                  <!-- Other form fields like month due, total bill, etc. -->
+                  
+                  <!-- Hidden inputs for renters will be appended here dynamically -->
+                  
+                  <button type="submit" class="btn-green-fill" data-bs-dismiss="modal" data-bs-toggle="modal"
+                          data-bs-target="#modalModifyWaterBillSuccess" id="button-confirm-modify-water">Confirm</button>
+                </form>
+                  
                 </div>
               </div>
             </div>

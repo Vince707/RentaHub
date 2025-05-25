@@ -360,120 +360,166 @@ $.ajax({
       };
     }
 
-let today = new Date();
-let yearMonth = today.toISOString().slice(0, 7); // 'YYYY-MM'
-
 function formatPHP(amount) {
   return Number(amount).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
+// 1. Collect all due months from all readings and rent bills
+let monthsSet = new Set();
+
+Object.values(utilityBillsMap).forEach(utility => {
+  utility.readings.forEach(reading => {
+    if (reading.dueDate) monthsSet.add(reading.dueDate.slice(0, 7));
+  });
+});
+Object.values(rentBillsMap).forEach(bill => {
+  if (bill.dueDate) monthsSet.add(bill.dueDate.slice(0, 7));
+});
+
+let allMonths = Array.from(monthsSet).sort(); // Sort for display
 let rowsHtml = '';
 
 Object.keys(renterDataMap).forEach(renterId => {
   const renter = renterDataMap[renterId];
-  if (!renter.unitId) return; // Skip if no unit assigned
+  if (!renter.unitId) return;
+
   const room = roomsDataMap[renter.unitId] || {};
   const roomNo = room.roomNo || '';
   const fullName = [renter.firstName, renter.middleName, renter.surname, renter.extension].filter(Boolean).join(' ');
 
-  // --- Step 1: Collect all bills by due date (month) for this renter ---
-  const billsByDueMonth = {};
-
-  // --- Utility Bills (Electricity & Water) ---
-  ['Electricity', 'Water'].forEach(type => {
-    if (utilityBillsMap[type]) {
-      utilityBillsMap[type].readings.forEach(reading => {
-        if (reading.dueDate) {
-          const dueMonth = reading.dueDate.slice(0, 7); // 'YYYY-MM'
-          if (!billsByDueMonth[dueMonth]) billsByDueMonth[dueMonth] = { electric: 0, water: 0, rent: 0, electricStatus: '', waterStatus: '', rentStatus: '' };
+  allMonths.forEach(monthStr => {
+    // --- Electric Bill ---
+    let electricBill = 0, electricStatus = '';
+    if (utilityBillsMap['Electricity']) {
+      utilityBillsMap['Electricity'].readings.forEach(reading => {
+        if (reading.dueDate && reading.dueDate.slice(0, 7) === monthStr) {
           reading.bills.forEach(bill => {
-            if (bill.renterId === renterId) {
-              let amount = parseFloat(bill.amount) || 0;
-              // Do not change paid bills to 0, just add to the sum
-              billsByDueMonth[dueMonth][type.toLowerCase()] += amount;
-              billsByDueMonth[dueMonth][`${type.toLowerCase()}Status`] = bill.status;
+            if (String(bill.renterId) === String(renterId)) {
+              electricBill += parseFloat(bill.amount) || 0;
+              electricStatus = bill.status;
             }
           });
         }
       });
     }
-  });
+    let electricInfo = getBadgeAndClass(electricStatus, electricBill);
 
-  // --- Rent Bills ---
-  Object.values(rentBillsMap).forEach(bill => {
-    if (bill.renterId === renterId && bill.dueDate) {
-      const dueMonth = bill.dueDate.slice(0, 7); // 'YYYY-MM'
-      if (!billsByDueMonth[dueMonth]) billsByDueMonth[dueMonth] = { electric: 0, water: 0, rent: 0, electricStatus: '', waterStatus: '', rentStatus: '' };
-      let amount = parseFloat(bill.amount) || 0;
-      // Do not change paid bills to 0, just add to the sum
-      billsByDueMonth[dueMonth].rent += amount;
-      billsByDueMonth[dueMonth].rentStatus = bill.status;
+    // --- Water Bill ---
+    let waterBill = 0, waterStatus = '';
+    if (utilityBillsMap['Water']) {
+      utilityBillsMap['Water'].readings.forEach(reading => {
+        if (reading.dueDate && reading.dueDate.slice(0, 7) === monthStr) {
+          reading.bills.forEach(bill => {
+            if (String(bill.renterId) === String(renterId)) {
+              waterBill += parseFloat(bill.amount) || 0;
+              waterStatus = bill.status;
+            }
+          });
+        }
+      });
     }
-  });
+    let waterInfo = getBadgeAndClass(waterStatus, waterBill);
 
-  // --- Step 2: Generate one row per due date (month) for this renter ---
-  Object.keys(billsByDueMonth).forEach(dueMonth => {
-    const { electric, water, rent, electricStatus, waterStatus, rentStatus } = billsByDueMonth[dueMonth];
-    const monthDueText = dueMonth; // 'YYYY-MM'
+    // --- Rent Bill ---
+    let rentBill = 0, rentStatus = '';
+    Object.values(rentBillsMap).forEach(bill => {
+      if (String(bill.renterId) === String(renterId) && bill.dueDate && bill.dueDate.slice(0, 7) === monthStr) {
+        rentBill += parseFloat(bill.amount) || 0;
+        rentStatus = bill.status;
+      }
+    });
+    let rentInfo = getBadgeAndClass(rentStatus, rentBill);
 
-    // --- Skip if all bill amounts are 0 ---
-  if (electric === 0 && water === 0 && rent === 0) {
-    return; // Skip this row
-  }
-
-    // --- Overdue: only if due date is in the past and bill is unpaid ---
+    // --- Overdue: all unpaid bills with dueDate < today ---
+    let today = new Date();
     let overdue = 0, overdueStatus = '';
-    if (new Date(dueMonth + '-01') < today) {
-      if (electricStatus === 'Unpaid') overdue += electric;
-      if (waterStatus === 'Unpaid') overdue += water;
-      if (rentStatus === 'Unpaid') overdue += rent;
-      if (overdue > 0) overdueStatus = 'Unpaid';
-    }
+    Object.values(rentBillsMap).forEach(bill => {
+      if (String(bill.renterId) === String(renterId) && bill.status === 'Unpaid' && bill.dueDate && new Date(bill.dueDate) < today) {
+        overdue += parseFloat(bill.amount) || 0;
+        overdueStatus = bill.status;
+      }
+    });
+    ['Electricity', 'Water'].forEach(type => {
+      if (utilityBillsMap[type]) {
+        utilityBillsMap[type].readings.forEach(reading => {
+          if (reading.dueDate && new Date(reading.dueDate) < today) {
+            reading.bills.forEach(bill => {
+              if (String(bill.renterId) === String(renterId) && bill.status === 'Unpaid') {
+                overdue += parseFloat(bill.amount) || 0;
+                overdueStatus = bill.status;
+              }
+            });
+          }
+        });
+      }
+    });
+    let overdueInfo = getBadgeAndClass(overdueStatus, overdue);
 
-    // --- Total (for this due date) ---
-    let total = electric + water + rent;
+    // --- Total (for this month) ---
+    let total = electricBill + waterBill + rentBill + overdue;
     let totalStatus = (electricStatus === 'Unpaid' || waterStatus === 'Unpaid' || rentStatus === 'Unpaid') ? 'Unpaid'
       : (electricStatus === 'Partial' || waterStatus === 'Partial' || rentStatus === 'Partial') ? 'Partial'
       : 'Paid';
-
-    // --- Total Unpaid: only for this due date (if you want all unpaid, you need to collect globally) ---
-    let totalUnpaid = 0, unpaidStatus = '';
-    if (electricStatus === 'Unpaid') totalUnpaid += electric;
-    else if (electricStatus === 'Partial') totalUnpaid +=
-      parseFloat(utilityBillsMap['Electricity']?.readings.find(r => r.dueDate?.slice(0,7) === dueMonth)?.bills.find(b => b.renterId === renterId)?.debt || 0);
-    if (waterStatus === 'Unpaid') totalUnpaid += water;
-    else if (waterStatus === 'Partial') totalUnpaid +=
-      parseFloat(utilityBillsMap['Water']?.readings.find(r => r.dueDate?.slice(0,7) === dueMonth)?.bills.find(b => b.renterId === renterId)?.debt || 0);
-    if (rentStatus === 'Unpaid') totalUnpaid += rent;
-    else if (rentStatus === 'Partial') totalUnpaid +=
-      parseFloat(Object.values(rentBillsMap).find(b => b.renterId === renterId && b.dueDate?.slice(0,7) === dueMonth)?.debt || 0);
-    if (totalUnpaid > 0) unpaidStatus = 'Unpaid';
-
-    // --- Get badge and class for each ---
-    let electricInfo = getBadgeAndClass(electricStatus, electric);
-    let waterInfo = getBadgeAndClass(waterStatus, water);
-    let rentInfo = getBadgeAndClass(rentStatus, rent);
-    let overdueInfo = getBadgeAndClass(overdueStatus, overdue);
     let totalInfo = getBadgeAndClass(totalStatus, total);
+
+    // --- Total Unpaid: all unpaid bills for this renter ---
+    let totalUnpaid = 0, unpaidStatus = '';
+    // Rent Bills
+    Object.values(rentBillsMap).forEach(bill => {
+      if (String(bill.renterId) === String(renterId)) {
+        if (bill.status === 'Unpaid') {
+          totalUnpaid += parseFloat(bill.amount) || 0;
+          unpaidStatus = bill.status;
+        } else if (bill.status === 'Partial') {
+          totalUnpaid += parseFloat(bill.debt) || 0;
+          unpaidStatus = bill.status;
+        }
+      }
+    });
+    // Utility Bills (Electricity & Water)
+    ['Electricity', 'Water'].forEach(type => {
+      if (utilityBillsMap[type]) {
+        utilityBillsMap[type].readings.forEach(reading => {
+          reading.bills.forEach(bill => {
+            if (String(bill.renterId) === String(renterId)) {
+              if (bill.status === 'Unpaid') {
+                totalUnpaid += parseFloat(bill.amount) || 0;
+                unpaidStatus = bill.status;
+              } else if (bill.status === 'Partial') {
+                totalUnpaid += parseFloat(bill.debt) || 0;
+                unpaidStatus = bill.status;
+              }
+            }
+          });
+        });
+      }
+    });
     let unpaidInfo = getBadgeAndClass(unpaidStatus, totalUnpaid);
 
-    rowsHtml += `
-      <tr>
-        <td>${roomNo}</td>
-        <td>${fullName}</td>
-        <td>${monthDueText}</td>
-        <td class="${electricInfo.cls}">${formatPHP(electric)}${electricInfo.badge}</td>
-        <td class="${waterInfo.cls}">${formatPHP(water)}${waterInfo.badge}</td>
-        <td class="${rentInfo.cls}">${formatPHP(rent)}${rentInfo.badge}</td>
-        <td class="${overdueInfo.cls}">${formatPHP(overdue)}${overdueInfo.badge}</td>
-        <td class="${totalInfo.cls}">${formatPHP(total)}${totalInfo.badge}</td>
-        <td class="${unpaidInfo.cls}">${formatPHP(totalUnpaid)}${unpaidInfo.badge}</td>
-      </tr>
-    `;
+    // Only display row if there is any bill for this month
+    if (electricBill || waterBill || rentBill) {
+      let monthDueText = monthStr; // <-- formatted as YYYY-MM
+      rowsHtml += `
+        <tr>
+          <td>${roomNo}</td>
+          <td>${fullName}</td>
+          <td>${monthDueText}</td>
+          <td class="${electricInfo.cls}">${formatPHP(electricBill)}${electricInfo.badge}</td>
+          <td class="${waterInfo.cls}">${formatPHP(waterBill)}${waterInfo.badge}</td>
+          <td class="${rentInfo.cls}">${formatPHP(rentBill)}${rentInfo.badge}</td>
+          <td class="${overdueInfo.cls}">${formatPHP(overdue)}${overdueInfo.badge}</td>
+          <td class="${totalInfo.cls}">${formatPHP(total)}${totalInfo.badge}</td>
+          <td class="${unpaidInfo.cls}">${formatPHP(totalUnpaid)}${unpaidInfo.badge}</td>
+        </tr>
+      `;
+    }
   });
 });
 
 $('#billings-summary tbody').html(rowsHtml);
+
+
+
 
     function updateIndividualMetrics(renterId, selectedMonth) {
       let totalUnpaid = 0;
@@ -1414,51 +1460,69 @@ if (type === 'Overdue') {
    
 
 
-function displaySuccessModal(){
+function displaySuccessModal() {
   const url = new URL(window.location.href);
   const urlParams = url.searchParams;
-  const renterAction = urlParams.get('renter');
 
+  // Handle renter actions
+  const renterAction = urlParams.get('renter');
   switch (renterAction) {
     case 'modified':
       $('#modalModifyRenterSuccess').modal('show');
       break;
-
     case 'added':
       $('#modalAddRenterSuccess').modal('show');
       break;
-
     case 'archived':
       $('#modalRemoveRenterSuccess').modal('show');
       break;
-
     default:
       // Do nothing or handle unknown action
       break;
   }
 
+  // Handle login actions
   const loginAction = urlParams.get('login');
   switch (loginAction) {
     case 'changePassSuccess':
       $('#login-div').addClass("d-none");
       $('#success-change-pass-div').removeClass("d-none").addClass("d-block");
       break;
-
     default:
       // Do nothing or handle unknown action
       break;
   }
 
-  // NEW: Check for payment success
+  // Handle payment success
   const payStatus = urlParams.get('pay');
   if (payStatus === 'recorded') {
     $('#modalRecordPaymentSuccess').modal('show');
+  }
+
+  // Handle electric bill added success
+  const electricBillStatus = urlParams.get('electricbill');
+  if (electricBillStatus === 'added') {
+    $('#modalGenerateElectricBillSuccess').modal('show');
+  }
+
+  // NEW: Handle electric bill modified success
+  if (electricBillStatus === 'modified') {
+    $('#modalModifyElectricBillSuccess').modal('show');
+  }
+
+  // Handle water bill added success
+  const waterBillStatus = urlParams.get('waterbill');
+  if (waterBillStatus === 'added') {
+    $('#modalGenerateWaterBillSuccess').modal('show');
   }
 
   // Clean URL (remove all search parameters)
   url.search = '';
   window.history.replaceState({}, document.title, url.toString());
 }
+
+
+
 
 
 $(document).ready(function () {
@@ -1743,9 +1807,32 @@ $(document).ready(function () {
     // TODO: Renter ID
     sendNotification(renterID);
   });
-
   
-  function populateElectricBillTable() {
+function getPreviousWaterReading(renterId, selectedMonth) {
+  const waterUtility = utilityBillsMap['Water'];
+  if (!waterUtility) return '';
+
+  // Sort readings by dueDate ascending
+  const readings = waterUtility.readings
+    .filter(r => r.dueDate)
+    .sort((a, b) => a.dueDate.localeCompare(b.dueDate));
+
+  // Find the index of the current reading for the selected month
+  const currentIndex = readings.findIndex(r => r.dueDate.startsWith(selectedMonth));
+  if (currentIndex === -1) return '';
+
+  // Find the previous reading (if any)
+  for (let i = currentIndex - 1; i >= 0; i--) {
+    // Find the bill for this renter in the previous reading
+    const prevBill = readings[i].bills.find(b => b.renterId === renterId);
+    if (prevBill && prevBill.currentReading) {
+      return prevBill.currentReading;
+    }
+  }
+  return '';
+}
+  
+function populateElectricBillTable() {
   const $tbody = $('#modalGenerateElectricBill table.custom-table tbody');
   $tbody.empty();
 
@@ -1753,15 +1840,17 @@ $(document).ready(function () {
     const renter = renterDataMap[renterId];
     if (!renter.unitId) return; // Skip if no unit assigned
 
+    // Skip archived renters
+    if (renter.status && renter.status.toLowerCase() === 'archived') return;
+
     const room = roomsDataMap[renter.unitId] || {};
     const roomNo = room.roomNo || '';
     const fullName = [renter.firstName, renter.middleName, renter.surname, renter.extension].filter(Boolean).join(' ');
 
-    // Get previous reading (from latest reading in billings)
-    let previousReading = 'N/A';
-    // TODO: Replace with your logic to fetch the latest reading for this renter
-    // Example (pseudo-code):
-    // previousReading = getLatestReadingForRenter(renterId, 'Electricity') || 'N/A';
+    const today = new Date();
+    const currentMonth = today.toISOString().slice(0, 7); // e.g., '2025-05'
+
+    let previousReading = getPreviousWaterReading(renterId, currentMonth);
 
     $tbody.append(`
       <tr>
@@ -1769,6 +1858,7 @@ $(document).ready(function () {
         <td>${fullName}</td>
         <td>
           <div class="form-floating me-2 col-12 mt-3">
+            <input type="hidden" class="renter-id" value="${renterId}" />
             <input type="text" class="form-control current-reading" data-renter-id="${renterId}" placeholder="" required="required"/>
             <label>Current Reading *</label>
           </div>
@@ -1794,6 +1884,7 @@ $(document).ready(function () {
     </tr>
   `);
 }
+
 $('#modalGenerateElectricBill').on('shown.bs.modal', function() {
   populateElectricBillTable();
 });
@@ -1839,43 +1930,875 @@ function formatPHP(amount) {
   return Number(amount).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-  $('#button-generate-electric').on("click", function () {
-    // TODO: PROCESS
-    $('#modalGenerateElectricBill').modal('hide');
-    $('#modalGenerateElectricBillConfirmation').modal('show');
+function formatPHP(amount) {
+  return Number(amount).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
 
-    // Collect input values
-    const monthDue = $("#generate-electric-bill-month-due").val().trim();
-    const totalBill = $("#add-billings-electric-total-bill").val().trim();
-    // TODO: 05/11-12 Sunday Night: NOT YET DONE KASI CONNECT MUNA DAPAT
+function isNumber(val) {
+  return !isNaN(parseFloat(val)) && isFinite(val);
+}
 
-    // VALIDATIONS
-    if (!monthDue || !totalBill) {
-      return showError("All required fields must be filled.", "#error-box-modify-renter", "#error-text-modify-renter");
+function isDecimal(val) {
+  return /^(\d+(\.\d{1,2})?)$/.test(val.replace(/,/g, ''));
+}
+
+function showError(msg, boxSelector, textSelector) {
+  $(boxSelector).show();
+  $(textSelector).text(msg);
+}
+
+
+// When the modal opens, set due date and populate table and total bill
+$('#modalModifyElectricBill').on('shown.bs.modal', function() {
+  const monthStr = $('#electric-bill-month-due').val();
+  if (!monthStr) return;
+
+  let dueDate = '';
+  if (utilityBillsMap['Electricity']) {
+    const reading = utilityBillsMap['Electricity'].readings.find(r => 
+      r.dueDate && r.dueDate.startsWith(monthStr));
+    if (reading) {
+      dueDate = reading.dueDate;
+    }
+  }
+
+  $('#modify-electric-bill-month-due').val(dueDate);
+  populateModifyElectricBillTable(dueDate);
+});
+
+// Populates the Modify Electric Bill table
+function populateModifyElectricBillTable(dueDate) {
+  const $tbody = $('#modalModifyElectricBill table.custom-table tbody');
+  $tbody.empty();
+
+  let totalConsumedKwh = 0;
+  let grandTotal = 0;
+  let totalBillFromXML = 0;
+  let readingId = '';
+
+  let reading = null;
+  if (utilityBillsMap['Electricity']) {
+    reading = utilityBillsMap['Electricity'].readings.find(r => r.dueDate && r.dueDate === dueDate);
+    if (reading) {
+      readingId = reading.id || '';
+      totalBillFromXML = parseFloat(reading.totalBill) || 0;
+    }
+  }
+
+  // Store reading ID for form submission
+  $('#form-modify-electric').data('readingId', readingId);
+
+  $('#modify-billings-electric-total-bill').val(totalBillFromXML ? formatPHP(totalBillFromXML) : '');
+
+  Object.keys(renterDataMap).forEach(renterId => {
+    const renter = renterDataMap[renterId];
+    if (!renter.unitId) return;
+    if (renter.status && renter.status.toLowerCase() === 'archived') return;
+
+    const room = roomsDataMap[renter.unitId] || {};
+    const roomNo = room.roomNo || '';
+    const fullName = [renter.firstName, renter.middleName, renter.surname, renter.extension].filter(Boolean).join(' ');
+
+    let bill = null, previousReading = 0, currentReading = '', consumedKwh = 0, amountPerKwh = 0, total = 0, billId = '';
+    if (reading && reading.bills) {
+      bill = reading.bills.find(b => String(b.renterId) === String(renterId));
+      if (bill) {
+        billId = bill.id || '';
+        previousReading = parseFloat(bill.previousReading) || 0;
+        currentReading = bill.currentReading || '';
+        consumedKwh = parseFloat(bill.consumedKwh) || (parseFloat(currentReading) - previousReading);
+        amountPerKwh = parseFloat(reading.amountPerKwh || bill.amountPerKwh) || 0;
+        total = parseFloat(bill.amount) || (consumedKwh * amountPerKwh);
+      }
     }
 
-    
+    totalConsumedKwh += consumedKwh;
+    grandTotal += total;
 
-    
-
-
+    $tbody.append(`
+      <tr>
+        <td>${roomNo}</td>
+        <td>${fullName}</td>
+        <td>
+          <div class="form-floating me-2 col-12 mt-3">
+            <input type="hidden" class="renter-id" value="${renterId}" />
+            <input type="hidden" class="bill-id" value="${billId}" />
+            <input type="text" class="form-control current-reading" data-renter-id="${renterId}" value="${currentReading}" placeholder="" required="required"/>
+            <label>Current Reading *</label>
+          </div>
+        </td>
+        <td>${previousReading}</td>
+        <td class="consumed-kwh">${consumedKwh}</td>
+        <td class="amount-per-kwh">PHP ${formatPHP(amountPerKwh)}</td>
+        <td class="total">PHP ${formatPHP(total)}</td>
+      </tr>
+    `);
   });
 
-  $('#button-confirm-generate-electric').on("click", function () {
-    // TODO: XML Write Save
-    // TODO: Clear
+  $tbody.append(`
+    <tr class="fw-bolder">
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td class="total-consumed-kwh">${totalConsumedKwh}</td>
+      <td></td>
+      <td class="grand-total">PHP ${formatPHP(grandTotal)}</td>
+    </tr>
+  `);
+
+  recalculateModifyElectricBillTable();
+}
+
+// Recalculate all rows and summary when readings or total bill change
+function recalculateModifyElectricBillTable() {
+  let totalConsumedKwh = 0;
+  $('#modalModifyElectricBill .consumed-kwh').each(function() {
+    if (!$(this).closest('tr').hasClass('fw-bolder')) {
+      totalConsumedKwh += parseFloat($(this).text()) || 0;
+    }
+  });
+  $('.total-consumed-kwh').text(totalConsumedKwh);
+
+  const totalBill = parseFloat($('#modify-billings-electric-total-bill').val().replace(/,/g, '')) || 0;
+  const amountPerKwh = totalConsumedKwh > 0 ? (totalBill / totalConsumedKwh) : 0;
+
+  $('#modalModifyElectricBill .amount-per-kwh').each(function() {
+    if (!$(this).closest('tr').hasClass('fw-bolder')) {
+      $(this).text('PHP ' + formatPHP(amountPerKwh));
+    }
   });
 
-  $('#button-generate-water').on("click", function () {
-    // TODO: PROCESS
-    $('#modalGenerateWaterBill').modal('hide');
-    $('#modalGenerateWaterBillConfirmation').modal('show');
+  $('#modalModifyElectricBill .consumed-kwh').each(function() {
+    if (!$(this).closest('tr').hasClass('fw-bolder')) {
+      const consumed = parseFloat($(this).text()) || 0;
+      const total = consumed * amountPerKwh;
+      $(this).closest('tr').find('.total').text('PHP ' + formatPHP(total));
+    }
   });
 
-  $('#button-confirm-generate-water').on("click", function () {
-    // TODO: XML Write Save
-    // TODO: Clear
+  let grandTotal = 0;
+  $('#modalModifyElectricBill .total').each(function() {
+    if (!$(this).closest('tr').hasClass('fw-bolder')) {
+      grandTotal += parseFloat($(this).text().replace('PHP ', '').replace(/,/g, '')) || 0;
+    }
   });
+  $('.grand-total').text('PHP ' + formatPHP(grandTotal));
+}
+
+$(document).on('input', '#modalModifyElectricBill .current-reading', function() {
+  const $row = $(this).closest('tr');
+  const currentReading = parseFloat($(this).val()) || 0;
+  const previousReading = parseFloat($row.find('td:eq(3)').text()) || 0;
+  const consumedKwh = currentReading - previousReading;
+  $row.find('.consumed-kwh').text(consumedKwh);
+
+  recalculateModifyElectricBillTable();
+});
+
+$('#modify-billings-electric-total-bill').on('input', function() {
+  recalculateModifyElectricBillTable();
+});
+
+$('#modify-electric-bill-month-due').on('change', function() {
+  populateModifyElectricBillTable($(this).val());
+});
+
+$('#button-modify-electric').on("click", function () {
+  const monthDue = $("#modify-electric-bill-month-due").val().trim();
+  const totalBill = $("#modify-billings-electric-total-bill").val().trim();
+
+  if (!monthDue || !totalBill) {
+    return showError("All required fields must be filled.", "#error-box-modify-electric", "#error-text-modify-electric");
+  }
+  if (!isDecimal(totalBill)) {
+    return showError("Total bill must be decimal.", "#error-box-modify-electric", "#error-text-modify-electric");
+  }
+
+  let isValid = true;
+  let errorMessage = "";
+
+  $('#form-modify-electric').find('input[type="hidden"]').remove();
+
+  // Add reading ID as hidden input
+  $('<input>').attr({
+    type: 'hidden',
+    name: 'readingId',
+    value: $('#form-modify-electric').data('readingId')
+  }).appendTo('#form-modify-electric');
+
+  $('<input>').attr({
+    type: 'hidden',
+    name: 'monthDue',
+    value: monthDue
+  }).appendTo('#form-modify-electric');
+
+  $('<input>').attr({
+    type: 'hidden',
+    name: 'totalBill',
+    value: totalBill.replace(/,/g, '')
+  }).appendTo('#form-modify-electric');
+
+  $('#modalModifyElectricBill table.custom-table tbody tr').each(function() {
+    if ($(this).hasClass('fw-bolder')) return;
+
+    const $row = $(this);
+    const renterId = $row.find('input.renter-id').val();
+    const billId = $row.find('input.bill-id').val();
+    const roomNo = $row.find('td:eq(0)').text().trim();
+    const currentReading = $row.find('.current-reading').val();
+    const previousReading = $row.find('td:eq(3)').text().trim();
+    const consumedKwh = $row.find('.consumed-kwh').text().trim();
+    const amountPerKwh = $row.find('.amount-per-kwh').text().replace('PHP ', '').replace(/,/g, '').trim();
+    const total = $row.find('.total').text().replace('PHP ', '').replace(/,/g, '').trim();
+
+    if (currentReading === "") {
+      isValid = false;
+      errorMessage = `Current reading for ${$row.find('td:eq(1)').text().trim()} is required.`;
+      $row.find('.current-reading').focus();
+      return false;
+    }
+    if (!isNumber(currentReading)) {
+      isValid = false;
+      errorMessage = `Current reading for ${$row.find('td:eq(1)').text().trim()} must be a valid number.`;
+      $row.find('.current-reading').focus();
+      return false;
+    }
+    if (parseFloat(currentReading) <= parseFloat(previousReading)) {
+      isValid = false;
+      errorMessage = `Current reading for ${$row.find('td:eq(1)').text().trim()} must be greater than previous reading (${previousReading}).`;
+      $row.find('.current-reading').focus();
+      return false;
+    }
+
+    $('<input>').attr({
+      type: 'hidden',
+      name: `renters[${renterId}][billId]`,
+      value: billId
+    }).appendTo('#form-modify-electric');
+    $('<input>').attr({
+      type: 'hidden',
+      name: `renters[${renterId}][roomNo]`,
+      value: roomNo
+    }).appendTo('#form-modify-electric');
+    $('<input>').attr({
+      type: 'hidden',
+      name: `renters[${renterId}][currentReading]`,
+      value: currentReading
+    }).appendTo('#form-modify-electric');
+    $('<input>').attr({
+      type: 'hidden',
+      name: `renters[${renterId}][previousReading]`,
+      value: previousReading
+    }).appendTo('#form-modify-electric');
+    $('<input>').attr({
+      type: 'hidden',
+      name: `renters[${renterId}][consumedKwh]`,
+      value: consumedKwh
+    }).appendTo('#form-modify-electric');
+    $('<input>').attr({
+      type: 'hidden',
+      name: `renters[${renterId}][amountPerKwh]`,
+      value: amountPerKwh
+    }).appendTo('#form-modify-electric');
+    $('<input>').attr({
+      type: 'hidden',
+      name: `renters[${renterId}][total]`,
+      value: total
+    }).appendTo('#form-modify-electric');
+  });
+
+  if (!isValid) {
+    return showError(errorMessage, "#error-box-modify-electric", "#error-text-modify-electric");
+  }
+
+  $('#modalModifyElectricBill').modal('hide');
+  $('#modalModifyElectricBillConfirmation').modal('show');
+});
+
+$('#button-confirm-modify-electric').on("click", function (e) {
+  e.preventDefault();
+  $('#form-modify-electric')[0].submit();
+  clearModifyElectricBillForm();
+});
+
+function clearModifyElectricBillForm() {
+  $('#modify-electric-bill-month-due').val('');
+  $('#modify-billings-electric-total-bill').val('');
+  $('#error-box-modify-electric').hide();
+  $('#error-text-modify-electric').text('');
+  const $tbody = $('#modalModifyElectricBill table.custom-table tbody');
+  $tbody.find('tr').each(function() {
+    if ($(this).hasClass('fw-bolder')) {
+      $(this).find('.total-consumed-kwh').text('0');
+      $(this).find('.grand-total').text('0');
+    } else {
+      $(this).find('.current-reading').val('');
+      $(this).find('.consumed-kwh').text('0');
+      $(this).find('.amount-per-kwh').text('0');
+      $(this).find('.total').text('0');
+    }
+  });
+  $('#form-modify-electric').find('input[type="hidden"]').remove();
+}
+
+
+
+
+
+
+
+
+
+function formatPHP(amount) {
+  return Number(amount).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+// When the Water Bill Modify modal is shown
+$('#modalModifyWaterBill').on('shown.bs.modal', function() {
+  const monthStr = $('#water-bill-month-due').val();
+  if (!monthStr) return;
+
+  let dueDate = '';
+  if (utilityBillsMap['Water']) {
+    const reading = utilityBillsMap['Water'].readings.find(r => 
+      r.dueDate && r.dueDate.startsWith(monthStr));
+    if (reading) {
+      dueDate = reading.dueDate;
+    }
+  }
+
+  $('#modify-water-bill-month-due').val(dueDate);
+  populateModifyWaterBillTable(dueDate);
+});
+
+// Populate the Modify Water Bill table
+function populateModifyWaterBillTable(dueDate) {
+  const $tbody = $('#modalModifyWaterBill table.custom-table tbody');
+  $tbody.empty();
+
+  let totalConsumedM3 = 0;
+  let grandTotal = 0;
+  let totalBillFromXML = 0;
+  let readingId = '';
+
+  let reading = null;
+  if (utilityBillsMap['Water']) {
+    reading = utilityBillsMap['Water'].readings.find(r => r.dueDate && r.dueDate === dueDate);
+    if (reading) {
+      readingId = reading.id || '';
+      totalBillFromXML = parseFloat(reading.totalBill) || 0;
+    }
+  }
+
+  // Store reading ID for form submission
+  $('#form-modify-water').data('readingId', readingId);
+
+  $('#modify-billings-water-total-bill').val(totalBillFromXML ? formatPHP(totalBillFromXML) : '');
+
+  Object.keys(renterDataMap).forEach(renterId => {
+    const renter = renterDataMap[renterId];
+    if (!renter.unitId) return;
+    if (renter.status && renter.status.toLowerCase() === 'archived') return;
+
+    const room = roomsDataMap[renter.unitId] || {};
+    const roomNo = room.roomNo || '';
+    const fullName = [renter.firstName, renter.middleName, renter.surname, renter.extension].filter(Boolean).join(' ');
+
+    let bill = null, previousReading = 0, currentReading = '', consumedM3 = 0, amountPerM3 = 0, total = 0, billId = '';
+    if (reading && reading.bills) {
+      bill = reading.bills.find(b => String(b.renterId) === String(renterId));
+      if (bill) {
+        billId = bill.id || '';
+        previousReading = parseFloat(bill.previousReading) || 0;
+        currentReading = bill.currentReading || '';
+        consumedM3 = parseFloat(bill.consumedM3) || (parseFloat(currentReading) - previousReading);
+        amountPerM3 = parseFloat(reading.amountPerM3 || bill.amountPerM3) || 0;
+        total = parseFloat(bill.amount) || (consumedM3 * amountPerM3);
+      }
+    }
+
+    totalConsumedM3 += consumedM3;
+    grandTotal += total;
+
+    $tbody.append(`
+      <tr>
+        <td>${roomNo}</td>
+        <td>${fullName}</td>
+        <td>
+          <div class="form-floating me-2 col-12 mt-3">
+            <input type="hidden" class="renter-id" value="${renterId}" />
+            <input type="hidden" class="bill-id" value="${billId}" />
+            <input type="text" class="form-control current-reading" data-renter-id="${renterId}" value="${currentReading}" placeholder="" required="required"/>
+            <label>Current Reading *</label>
+          </div>
+        </td>
+        <td>${previousReading}</td>
+        <td class="consumed-m3">${consumedM3}</td>
+        <td class="amount-per-m3">PHP ${formatPHP(amountPerM3)}</td>
+        <td class="total">PHP ${formatPHP(total)}</td>
+      </tr>
+    `);
+  });
+
+  $tbody.append(`
+    <tr class="fw-bolder">
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td class="total-consumed-m3">${totalConsumedM3}</td>
+      <td></td>
+      <td class="grand-total">PHP ${formatPHP(grandTotal)}</td>
+    </tr>
+  `);
+
+  recalculateModifyWaterBillTable();
+}
+
+// Recalculate all rows and summary when readings or total bill change
+function recalculateModifyWaterBillTable() {
+  let totalConsumedM3 = 0;
+  $('#modalModifyWaterBill .consumed-m3').each(function() {
+    if (!$(this).closest('tr').hasClass('fw-bolder')) {
+      totalConsumedM3 += parseFloat($(this).text()) || 0;
+    }
+  });
+  $('.total-consumed-m3').text(totalConsumedM3);
+
+  const totalBill = parseFloat($('#modify-billings-water-total-bill').val().replace(/,/g, '')) || 0;
+  const amountPerM3 = totalConsumedM3 > 0 ? (totalBill / totalConsumedM3) : 0;
+
+  $('#modalModifyWaterBill .amount-per-m3').each(function() {
+    if (!$(this).closest('tr').hasClass('fw-bolder')) {
+      $(this).text('PHP ' + formatPHP(amountPerM3));
+    }
+  });
+
+  $('#modalModifyWaterBill .consumed-m3').each(function() {
+    if (!$(this).closest('tr').hasClass('fw-bolder')) {
+      const consumed = parseFloat($(this).text()) || 0;
+      const total = consumed * amountPerM3;
+      $(this).closest('tr').find('.total').text('PHP ' + formatPHP(total));
+    }
+  });
+
+  let grandTotal = 0;
+  $('#modalModifyWaterBill .total').each(function() {
+    if (!$(this).closest('tr').hasClass('fw-bolder')) {
+      grandTotal += parseFloat($(this).text().replace('PHP ', '').replace(/,/g, '')) || 0;
+    }
+  });
+  $('.grand-total').text('PHP ' + formatPHP(grandTotal));
+}
+
+// When any current reading changes, update row and recalculate
+$(document).on('input', '#modalModifyWaterBill .current-reading', function() {
+  const $row = $(this).closest('tr');
+  const currentReading = parseFloat($(this).val()) || 0;
+  const previousReading = parseFloat($row.find('td:eq(3)').text()) || 0;
+  const consumedM3 = currentReading - previousReading;
+  $row.find('.consumed-m3').text(consumedM3);
+
+  recalculateModifyWaterBillTable();
+});
+
+// When total bill changes, recalculate all rows instantly
+$('#modify-billings-water-total-bill').on('input', function() {
+  recalculateModifyWaterBillTable();
+});
+
+// If you want to allow changing the due date inside the modal, repopulate table on change
+$('#modify-water-bill-month-due').on('change', function() {
+  populateModifyWaterBillTable($(this).val());
+});
+
+// Clear form function
+function clearModifyWaterBillForm() {
+  $('#modify-water-bill-month-due').val('');
+  $('#modify-billings-water-total-bill').val('');
+  $('#error-box-modify-water').hide();
+  $('#error-text-modify-water').text('');
+  const $tbody = $('#modalModifyWaterBill table.custom-table tbody');
+  $tbody.find('tr').each(function() {
+    if ($(this).hasClass('fw-bolder')) {
+      $(this).find('.total-consumed-m3').text('0');
+      $(this).find('.grand-total').text('0');
+    } else {
+      $(this).find('.current-reading').val('');
+      $(this).find('.consumed-m3').text('0');
+      $(this).find('.amount-per-m3').text('0');
+      $(this).find('.total').text('0');
+    }
+  });
+  $('#form-modify-water').find('input[type="hidden"]').remove();
+}
+
+
+
+
+
+
+
+
+// --- Populate Water Bill Table ---
+function populateWaterBillTable() {
+  const $tbody = $('#modalGenerateWaterBill table.custom-table tbody');
+  $tbody.empty();
+
+  Object.keys(renterDataMap).forEach(renterId => {
+    const renter = renterDataMap[renterId];
+    if (!renter.unitId) return;
+    if (renter.status && renter.status.toLowerCase() === 'archived') return;
+
+    const room = roomsDataMap[renter.unitId] || {};
+    const roomNo = room.roomNo || '';
+    const fullName = [renter.firstName, renter.middleName, renter.surname, renter.extension].filter(Boolean).join(' ');
+
+    const today = new Date();
+    const currentMonth = today.toISOString().slice(0, 7);
+
+    let previousReading = getPreviousWaterReading(renterId, currentMonth);
+
+    $tbody.append(`
+      <tr>
+        <td>${roomNo}</td>
+        <td>${fullName}</td>
+        <td>
+          <div class="form-floating me-2 col-12 mt-3">
+            <input type="hidden" class="renter-id" value="${renterId}" />
+            <input type="text" class="form-control current-reading" data-renter-id="${renterId}" placeholder="" required="required"/>
+            <label>Current Reading *</label>
+          </div>
+        </td>
+        <td>${previousReading}</td>
+        <td class="consumed-m3">0</td>
+        <td class="amount-per-m3">0</td>
+        <td class="total">0</td>
+      </tr>
+    `);
+  });
+
+  // Add summary row
+  $tbody.append(`
+    <tr class="fw-bolder">
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td class="total-consumed-m3">0</td>
+      <td></td>
+      <td class="grand-total">0</td>
+    </tr>
+  `);
+}
+
+// --- Show Modal and Populate Table ---
+$('#modalGenerateWaterBill').on('shown.bs.modal', function() {
+  populateWaterBillTable();
+});
+
+// --- Handle Current Reading Input ---
+$(document).on('input', '#modalGenerateWaterBill .current-reading', function() {
+  const $row = $(this).closest('tr');
+  const currentReading = parseFloat($(this).val()) || 0;
+  const previousReading = parseFloat($row.find('td:eq(3)').text()) || 0;
+  const consumedM3 = currentReading - previousReading;
+  $row.find('.consumed-m3').text(consumedM3);
+
+  // Get amount per m3 (from total bill / total consumed m3)
+  const totalBill = parseFloat($('#add-billings-water-total-bill').val()) || 0;
+  let totalConsumedM3 = 0;
+  $('#modalGenerateWaterBill .consumed-m3').each(function() {
+    totalConsumedM3 += parseFloat($(this).text()) || 0;
+  });
+  $('.total-consumed-m3').text(totalConsumedM3);
+
+  const amountPerM3 = totalConsumedM3 > 0 ? (totalBill / totalConsumedM3) : 0;
+  $('.amount-per-m3').text('PHP ' + formatPHP(amountPerM3));
+
+  // Compute total for each renter
+  $('#modalGenerateWaterBill .consumed-m3').each(function() {
+    const consumed = parseFloat($(this).text()) || 0;
+    const total = consumed * amountPerM3;
+    $(this).closest('tr').find('.total').text('PHP ' + formatPHP(total));
+  });
+
+  // Update grand total
+  let grandTotal = 0;
+  $('#modalGenerateWaterBill .total').each(function() {
+    grandTotal += parseFloat($(this).text().replace('PHP ', '').replace(/,/g, '')) || 0;
+  });
+  $('.grand-total').text('PHP ' + formatPHP(grandTotal));
+});
+
+// --- Recompute on Total Bill Change ---
+$('#add-billings-water-total-bill').on('input', function() {
+  $('#modalGenerateWaterBill .current-reading').trigger('input');
+});
+
+// --- Generate Water Bill Button ---
+$('#button-generate-water').on("click", function () {
+  const monthDue = $("#generate-water-bill-month-due").val().trim();
+  const totalBill = $("#add-billings-water-total-bill").val().trim();
+
+  if (!monthDue || !totalBill) {
+    return showError("All required fields must be filled.", "#error-box-generate-water", "#error-text-generate-water");
+  }
+  if (!isDecimal(totalBill)) {
+    return showError("Total bill must be decimal.", "#error-box-generate-water", "#error-text-generate-water");
+  }
+
+  let isValid = true;
+  let errorMessage = "";
+
+  // Clear previous hidden inputs
+  $('#form-generate-water').find('input[type="hidden"]').remove();
+
+  // Validate each row
+  $('#modalGenerateWaterBill table.custom-table tbody tr').each(function() {
+    if ($(this).hasClass('fw-bolder')) return;
+
+    const $row = $(this);
+    const renterName = $row.find('td:eq(1)').text().trim();
+    const $currentReadingInput = $row.find('.current-reading');
+    const currentReadingStr = $currentReadingInput.val().trim();
+    const previousReadingStr = $row.find('td:eq(3)').text().trim();
+
+    if (currentReadingStr === "") {
+      isValid = false;
+      errorMessage = `Current reading for ${renterName} is required.`;
+      $currentReadingInput.focus();
+      return false;
+    }
+    if (!isNumber(currentReadingStr)) {
+      isValid = false;
+      errorMessage = `Current reading for ${renterName} must be a valid number.`;
+      $currentReadingInput.focus();
+      return false;
+    }
+    const currentReading = parseFloat(currentReadingStr);
+    const previousReading = parseFloat(previousReadingStr);
+    if (currentReading <= previousReading) {
+      isValid = false;
+      errorMessage = `Current reading for ${renterName} must be greater than previous reading (${previousReading}).`;
+      $currentReadingInput.focus();
+      return false;
+    }
+  });
+
+  if (!isValid) {
+    return showError(errorMessage, "#error-box-generate-water", "#error-text-generate-water");
+  }
+
+  // Append hidden inputs for each renter
+  $('#form-generate-water').find('input[type="hidden"]').remove();
+  $('#modalGenerateWaterBill table.custom-table tbody tr').each(function() {
+    if ($(this).hasClass('fw-bolder')) return;
+
+    const $row = $(this);
+    const renterId = $row.find('input.renter-id').val();
+    const roomNo = $row.find('td:eq(0)').text().trim();
+    const currentReading = $row.find('.current-reading').val();
+    const previousReading = $row.find('td:eq(3)').text().trim();
+    const consumedM3 = $row.find('.consumed-m3').text().trim();
+    const amountPerM3 = $row.find('.amount-per-m3').text().replace('PHP ', '').trim();
+    const total = $row.find('.total').text().replace('PHP ', '').trim();
+
+    $('<input>').attr({
+      type: 'hidden',
+      name: `renters[${renterId}][roomNo]`,
+      value: roomNo
+    }).appendTo('#form-generate-water');
+    $('<input>').attr({
+      type: 'hidden',
+      name: `renters[${renterId}][currentReading]`,
+      value: currentReading
+    }).appendTo('#form-generate-water');
+    $('<input>').attr({
+      type: 'hidden',
+      name: `renters[${renterId}][previousReading]`,
+      value: previousReading
+    }).appendTo('#form-generate-water');
+    $('<input>').attr({
+      type: 'hidden',
+      name: `renters[${renterId}][consumedM3]`,
+      value: consumedM3
+    }).appendTo('#form-generate-water');
+    $('<input>').attr({
+      type: 'hidden',
+      name: `renters[${renterId}][amountPerM3]`,
+      value: amountPerM3
+    }).appendTo('#form-generate-water');
+    $('<input>').attr({
+      type: 'hidden',
+      name: `renters[${renterId}][total]`,
+      value: total
+    }).appendTo('#form-generate-water');
+  });
+
+  // Optionally show confirmation modal or submit
+  $('#modalGenerateWaterBill').modal('hide');
+  $('#modalGenerateWaterBillConfirmation').modal('show');
+});
+
+// --- Confirm Generate Water Bill ---
+$('#button-confirm-generate-water').on("click", function (e) {
+  e.preventDefault();
+  $('#form-generate-water')[0].submit();
+  clearGenerateWaterBillForm();
+});
+
+// --- Clear Water Bill Form ---
+function clearGenerateWaterBillForm() {
+  $('#generate-water-bill-month-due').val('');
+  $('#add-billings-water-total-bill').val('');
+  $('#error-box-generate-water').hide();
+  $('#error-text-generate-water').text('');
+  const $tbody = $('#modalGenerateWaterBill table.custom-table tbody');
+  $tbody.find('tr').each(function() {
+    if ($(this).hasClass('fw-bolder')) {
+      $(this).find('.total-consumed-m3').text('0');
+      $(this).find('.grand-total').text('0');
+    } else {
+      $(this).find('.current-reading').val('');
+      $(this).find('.consumed-m3').text('0');
+      $(this).find('.amount-per-m3').text('0');
+      $(this).find('.total').text('0');
+    }
+  });
+  $('#form-generate-water').find('input[type="hidden"]').remove();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function getPreviousElectricReading(renterId, selectedMonth) {
+      const electricUtility = utilityBillsMap['Electricity'];
+      if (!electricUtility) return '';
+
+      // Sort readings by dueDate ascending
+      const readings = electricUtility.readings
+        .filter(r => r.dueDate)
+        .sort((a, b) => a.dueDate.localeCompare(b.dueDate));
+
+      // Find the index of the current reading for the selected month
+      const currentIndex = readings.findIndex(r => r.dueDate.startsWith(selectedMonth));
+      if (currentIndex === -1) return '';
+
+      // Find the previous reading (if any)
+      for (let i = currentIndex - 1; i >= 0; i--) {
+        // Find the bill for this renter in the previous reading
+        const prevBill = readings[i].bills.find(b => b.renterId === renterId);
+        if (prevBill && prevBill.currentReading) {
+          return prevBill.currentReading;
+        }
+      }
+      return '';
+    }
+
+
+function populateElectricBillAllocation(monthYear) {
+  const $tbody = $('#electric-bill-allocation tbody');
+  $tbody.empty();
+
+  let totalConsumedKwh = 0;
+  let grandTotal = 0;
+
+  Object.keys(renterDataMap).forEach(renterId => {
+    const renter = renterDataMap[renterId];
+    if (!renter.unitId) return;
+    if (renter.status && renter.status.toLowerCase() === 'archived') return;
+
+    const room = roomsDataMap[renter.unitId] || {};
+    const roomNo = room.roomNo || '';
+    const fullName = [renter.firstName, renter.middleName, renter.surname, renter.extension].filter(Boolean).join(' ');
+
+    // Find the reading for this renter for the given monthYear (YYYY-MM)
+    // Assuming you have a data structure similar to utilityBillsMap['Electricity'].readings
+    let readingForMonth = null;
+    if (utilityBillsMap['Electricity']) {
+      readingForMonth = utilityBillsMap['Electricity'].readings.find(r =>
+        r.dueDate && r.dueDate.startsWith(monthYear) &&
+        r.bills.some(bill => String(bill.renterId) === String(renterId))
+      );
+    }
+    if (!readingForMonth) return; // No reading for this month for this renter
+
+    // Get the bill for this renter
+    const bill = readingForMonth.bills.find(b => String(b.renterId) === String(renterId));
+    if (!bill) return;
+
+    const currentReading = parseFloat(bill.currentReading) || 0;
+    const previousReading = getPreviousElectricReading(renterId, monthYear);
+    const consumedKwh = parseFloat(bill.consumedKwh) || (currentReading - previousReading);
+    const amountPerKwh = parseFloat(bill.amountPerKwh) || 0;
+    const total = parseFloat(bill.amount) || (consumedKwh * amountPerKwh);
+
+    totalConsumedKwh += consumedKwh;
+    grandTotal += total;
+
+    $tbody.append(`
+      <tr>
+        <td>${roomNo}</td>
+        <td>${fullName}</td>
+        <td>${currentReading}</td>
+        <td>${previousReading}</td>
+        <td>${consumedKwh}</td>
+        <td>PHP ${formatPHP(amountPerKwh)}</td>
+        <td>PHP ${formatPHP(total)}</td>
+      </tr>
+    `);
+  });
+
+  // Add footer row
+  $tbody.append(`
+    <tr class="fw-bolder">
+      <td colspan="4"></td>
+      <td>${totalConsumedKwh}</td>
+      <td></td>
+      <td>PHP ${formatPHP(grandTotal)}</td>
+    </tr>
+  `);
+}
+
+// Example usage: populate for May 2025
+$(document).ready(function() {
+  const today = new Date();
+  const yearMonth = today.toISOString().slice(0, 7); // e.g. "2025-05"
+  $('#electric-bill-month-due').val(yearMonth); // Set date input to current month
+  populateElectricBillAllocation(yearMonth);
+
+  // Optional: add event listener to update table when month changes
+  $('#electric-bill-month-due').on('change', function() {
+    const selectedMonth = $(this).val();
+    populateElectricBillAllocation(selectedMonth);
+  });
+});
+
+
+
+
+
 
   $('#button-modify-electric').on("click", function () {
     // TODO: PROCESS
@@ -1887,6 +2810,111 @@ function formatPHP(amount) {
     // TODO: XML Write Save
     // TODO: Clear
   });
+
+
+
+
+
+
+
+function getPreviousWaterReading(renterId, selectedMonth) {
+  const waterUtility = utilityBillsMap['Water'];
+  if (!waterUtility) return '';
+
+  // Sort readings by dueDate ascending
+  const readings = waterUtility.readings
+    .filter(r => r.dueDate)
+    .sort((a, b) => a.dueDate.localeCompare(b.dueDate));
+
+  // Find the index of the current reading for the selected month
+  const currentIndex = readings.findIndex(r => r.dueDate.startsWith(selectedMonth));
+  if (currentIndex === -1) return '';
+
+  // Find the previous reading (if any)
+  for (let i = currentIndex - 1; i >= 0; i--) {
+    // Find the bill for this renter in the previous reading
+    const prevBill = readings[i].bills.find(b => b.renterId === renterId);
+    if (prevBill && prevBill.currentReading) {
+      return prevBill.currentReading;
+    }
+  }
+  return '';
+}
+
+  function populateWaterBillAllocation(monthYear) {
+  const $tbody = $('#water-bill-allocation tbody');
+  $tbody.empty();
+
+  let totalConsumedM3 = 0;
+  let grandTotal = 0;
+
+  Object.keys(renterDataMap).forEach(renterId => {
+    const renter = renterDataMap[renterId];
+    if (!renter.unitId) return;
+    if (renter.status && renter.status.toLowerCase() === 'archived') return;
+
+    const room = roomsDataMap[renter.unitId] || {};
+    const roomNo = room.roomNo || '';
+    const fullName = [renter.firstName, renter.middleName, renter.surname, renter.extension].filter(Boolean).join(' ');
+
+    // Find the water reading for this renter for the selected month
+    let readingForMonth = null;
+    if (utilityBillsMap['Water']) {
+      readingForMonth = utilityBillsMap['Water'].readings.find(r =>
+        r.dueDate && r.dueDate.startsWith(monthYear) &&
+        r.bills.some(bill => String(bill.renterId) === String(renterId))
+      );
+    }
+    if (!readingForMonth) return; // No water reading for this renter for this month
+
+    const bill = readingForMonth.bills.find(b => String(b.renterId) === String(renterId));
+    if (!bill) return;
+
+    const currentReading = parseFloat(bill.currentReading) || 0;
+    const previousReading = getPreviousWaterReading(renterId, monthYear);
+    const consumedM3 = parseFloat(bill.consumedM3) || (currentReading - previousReading);
+    const amountPerM3 = parseFloat(bill.amountPerM3) || 0;
+    const total = parseFloat(bill.amount) || (consumedM3 * amountPerM3);
+
+    totalConsumedM3 += consumedM3;
+    grandTotal += total;
+
+    $tbody.append(`
+      <tr>
+        <td>${roomNo}</td>
+        <td>${fullName}</td>
+        <td>${currentReading}</td>
+        <td>${previousReading}</td>
+        <td>${consumedM3}</td>
+        <td>PHP ${formatPHP(amountPerM3)}</td>
+        <td>PHP ${formatPHP(total)}</td>
+      </tr>
+    `);
+  });
+
+  // Add footer row with totals
+  $tbody.append(`
+    <tr class="fw-bolder">
+      <td colspan="4"></td>
+      <td>${totalConsumedM3}</td>
+      <td></td>
+      <td>PHP ${formatPHP(grandTotal)}</td>
+    </tr>
+  `);
+}
+
+// Usage example: populate on page load and on month change
+$(document).ready(function() {
+  const today = new Date();
+  const yearMonth = today.toISOString().slice(0, 7); // e.g. "2025-05"
+  $('#water-bill-month-due').val(yearMonth);
+  populateWaterBillAllocation(yearMonth);
+
+  $('#water-bill-month-due').on('change', function() {
+    const selectedMonth = $(this).val();
+    populateWaterBillAllocation(selectedMonth);
+  });
+});
 
   $('#button-modify-water').on("click", function () {
     // TODO: PROCESS
@@ -2425,6 +3453,10 @@ function isValidEmailChars(email) {
 
 function isValidPasswordChars(password) {
   return /^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+$/.test(password);
+}
+
+function isDecimal(input) {
+  return /^[+-]?\d+(\.\d+)?$/.test(input);
 }
 
 function isNumber(input) {
