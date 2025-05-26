@@ -47,6 +47,9 @@
   <script src="https://cdn.datatables.net/buttons/3.2.3/js/buttons.html5.min.js"></script>
   <script src="https://cdn.datatables.net/buttons/3.2.3/js/buttons.print.min.js"></script>
 
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+  </script>
+
   <!-- Custom JS -->
   <script src="script.js"></script>
 </head>
@@ -85,6 +88,10 @@
     passwordField.type = isPassword ? 'text' : 'password';
     eyeIcon.className = isPassword ? 'bi bi-eye' : 'bi bi-eye-slash';
   }
+
+   (function () {
+    emailjs.init("0PPn2GEXyW3Nrjq_v"); 
+  })();
 </script>
 
 <body class="h-100">
@@ -715,7 +722,7 @@
             <div class="d-flex flex-column">
               <div class="d-flex flex-row mt-3">
                 <p class="h3 font-red-gradient">Electric Bill Allocation</p>
-                <button type="button" class="ms-2 btn-red d-flex align-items-center px-3 py-1" id="button-edit"
+                <button type="button" class="ms-2 btn-red d-flex align-items-center px-3 py-1" 
                   data-bs-toggle="modal" data-bs-target="#modalModifyElectricBill">
                   <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                     fill="#8f1515">
@@ -773,7 +780,7 @@
 
                       <div class="d-flex flex-row">
                         <button type="button" class="ms-2 btn-white d-flex align-items-center px-3 py-1"
-                          id="button-edit" data-bs-toggle="modal" data-bs-target="#modalModifyElectricMetadata">
+                          data-bs-toggle="modal" data-bs-target="#modalModifyElectricMetadata">
                           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                             fill="#FFFFFF">
                             <path
@@ -783,28 +790,36 @@
 
                       </div>
                     </div>
-                    <div class="d-flex flex-row">
-                      <p class="h6 font-white me-2">Customer Account Name:</p>
-                      <p class="font-white">Cresencia Manlapaz</p>
-                    </div>
-                    <div class="d-flex flex-row">
-                      <p class="h6 font-white me-2">Customer Account Number:</p>
-                      <p class="font-white">1579114793</p>
-                    </div>
-                    <div class="d-flex flex-row">
-                      <p class="h6 font-white me-2">Meter Number:</p>
-                      <p class="font-white">218BCC054792</p>
-
-                    </div>
-                    <div class="d-flex flex-row">
-                      <p class="h6 font-white me-2">Address:</p>
-                      <p class="font-white">#43 Santiago St. Pinagsama Village, Brgy. Rodancia, Taguig City, Metro
-                        Manila
-                      </p>
-                    </div>
+                      <xsl:for-each select="$data//apartmentManagement/billing/utilityBills/utility[@type='Electricity']">
+                        <div class="d-flex flex-row">
+                          <p class="h6 font-white me-2">Customer Account Name:</p>
+                          <p class="font-white">
+                            <xsl:value-of select="accountInfo/accountName"/>
+                          </p>
+                        </div>
+                        <div class="d-flex flex-row">
+                          <p class="h6 font-white me-2">Customer Account Number:</p>
+                          <p class="font-white">
+                            <xsl:value-of select="accountInfo/accountNumber"/>
+                          </p>
+                        </div>
+                        <div class="d-flex flex-row">
+                          <p class="h6 font-white me-2">Meter Number:</p>
+                          <p class="font-white">
+                            <xsl:value-of select="accountInfo/meterNumber"/>
+                          </p>
+                        </div>
+                        <div class="d-flex flex-row">
+                          <p class="h6 font-white me-2">Address:</p>
+                          <p class="font-white">
+                            <xsl:value-of select="accountInfo/address"/>
+                          </p>
+                        </div>
+                      </xsl:for-each>
+                    
                   </div>
                 </div>
-                <!-- Latest Previous Electric Billings -->
+                 <!-- Latest Previous Electric Billings -->
                 <div class="ms-3 col-12 col-sm-6">
                   <div class="d-flex col-12 justify-content-center">
                     <p class="h3 font-red-gradient mt-5">Latest Previous Electric Billings</p>
@@ -818,26 +833,18 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>02/12/2025</td>
-                        <td>125</td>
-                        <td>PHP 4,291.75</td>
-                      </tr>
-                      <tr>
-                        <td>02/12/2025</td>
-                        <td>125</td>
-                        <td>PHP 4,291.75</td>
-                      </tr>
-                      <tr>
-                        <td>02/12/2025</td>
-                        <td>125</td>
-                        <td>PHP 4,291.75</td>
-                      </tr>
+                      <xsl:for-each select="$data//apartmentManagement/billing/utilityBills/utility[@type='Electricity']/reading[position() &lt;= 3]">
+                        <!-- Sort by dueDate (newest first) if you want only latest, add [position() &lt;= 3] to limit -->
+                        <xsl:sort select="dueDate" order="descending"/>
+                        <tr>
+                          <td><xsl:value-of select="dueDate"/></td>
+                          <td><xsl:value-of select="consumedKwhTotal"/></td>
+                          <td>PHP <xsl:value-of select="format-number(totalBill, '#,##0.00')"/></td>
+                        </tr>
+                      </xsl:for-each>
                     </tbody>
                   </table>
-
                 </div>
-
 
 
 
@@ -852,7 +859,7 @@
             <div class="d-flex flex-column">
               <div class="d-flex flex-row mt-3">
                 <p class="h3 font-red-gradient">Water Bill Allocation</p>
-                <button type="button" class="ms-2 btn-red d-flex align-items-center px-3 py-1" id="button-edit"
+                <button type="button" class="ms-2 btn-red d-flex align-items-center px-3 py-1" 
                   data-bs-toggle="modal" data-bs-target="#modalModifyWaterBill">
                   <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                     fill="#8f1515">
@@ -922,7 +929,7 @@
 
                       <div class="d-flex flex-row">
                         <button type="button" class="ms-2 btn-white d-flex align-items-center px-3 py-1"
-                          id="button-edit" data-bs-toggle="modal" data-bs-target="#modalModifyWaterMetadata">
+                          data-bs-toggle="modal" data-bs-target="#modalModifyWaterMetadata">
                           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                             fill="#FFFFFF">
                             <path
@@ -932,25 +939,32 @@
 
                       </div>
                     </div>
-                    <div class="d-flex flex-row">
-                      <p class="h6 font-white me-2">Customer Account Name:</p>
-                      <p class="font-white">Cresencia Manlapaz</p>
-                    </div>
-                    <div class="d-flex flex-row">
-                      <p class="h6 font-white me-2">Customer Account Number:</p>
-                      <p class="font-white">1579114793</p>
-                    </div>
-                    <div class="d-flex flex-row">
-                      <p class="h6 font-white me-2">Meter Number:</p>
-                      <p class="font-white">218BCC054792</p>
-
-                    </div>
-                    <div class="d-flex flex-row">
-                      <p class="h6 font-white me-2">Address:</p>
-                      <p class="font-white">#43 Santiago St. Pinagsama Village, Brgy. Rodancia, Taguig City, Metro
-                        Manila
-                      </p>
-                    </div>
+                    <xsl:for-each select="$data//apartmentManagement/billing/utilityBills/utility[@type='Water']">
+                      <div class="d-flex flex-row">
+                        <p class="h6 font-white me-2">Customer Account Name:</p>
+                        <p class="font-white">
+                          <xsl:value-of select="accountInfo/accountName"/>
+                        </p>
+                      </div>
+                      <div class="d-flex flex-row">
+                        <p class="h6 font-white me-2">Customer Account Number:</p>
+                        <p class="font-white">
+                          <xsl:value-of select="accountInfo/accountNumber"/>
+                        </p>
+                      </div>
+                      <div class="d-flex flex-row">
+                        <p class="h6 font-white me-2">Meter Number:</p>
+                        <p class="font-white">
+                          <xsl:value-of select="accountInfo/meterNumber"/>
+                        </p>
+                      </div>
+                      <div class="d-flex flex-row">
+                        <p class="h6 font-white me-2">Address:</p>
+                        <p class="font-white">
+                          <xsl:value-of select="accountInfo/address"/>
+                        </p>
+                      </div>
+                    </xsl:for-each>
                   </div>
                 </div>
                 <!-- Latest Previous Water Billings -->
@@ -967,21 +981,15 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>02/12/2025</td>
-                        <td>125</td>
-                        <td>PHP 4,291.75</td>
-                      </tr>
-                      <tr>
-                        <td>02/12/2025</td>
-                        <td>125</td>
-                        <td>PHP 4,291.75</td>
-                      </tr>
-                      <tr>
-                        <td>02/12/2025</td>
-                        <td>125</td>
-                        <td>PHP 4,291.75</td>
-                      </tr>
+                      <xsl:for-each select="$data//apartmentManagement/billing/utilityBills/utility[@type='Water']/reading[position() &lt;= 3]">
+                        <!-- Sort by dueDate (newest first) if you want only latest, add [position() &lt;= 3] to limit -->
+                        <xsl:sort select="dueDate" order="descending"/>
+                        <tr>
+                          <td><xsl:value-of select="dueDate"/></td>
+                          <td><xsl:value-of select="consumedCubicMTotal"/></td>
+                          <td>PHP <xsl:value-of select="format-number(totalBill, '#,##0.00')"/></td>
+                        </tr>
+                      </xsl:for-each>
                     </tbody>
                   </table>
                 </div>
@@ -1817,11 +1825,17 @@
 
                 <!-- Modal footer -->
                 <div class="modal-footer d-flex align-items-center justify-content-center">
-                  <button type="button" class="btn-red" data-bs-dismiss="modal"  data-bs-toggle="modal" data-bs-target="#modalModifyElectricMetadata">Return</button>
-                  <button type="button" class="btn-green-fill" data-bs-dismiss="modal" data-bs-toggle="modal"
-                    data-bs-target="#modalModifyElectricMetadataSuccess"
-                    id="button-confirm-modify-electric-metadata">Confirm</button>
+                  <button type="button" class="btn-red me-3" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalModifyElectricMetadata">Return</button>
+                  <form id="form-modify-electric-metadata" method="POST" action="functions/modify-electric-metadata.php">
+                    <input type="hidden" id="hidden-modify-electric-account-name" name="accountName"/>
+                    <input type="hidden" id="hidden-modify-electric-account-number" name="accountNumber"/>
+                    <input type="hidden" id="hidden-modify-electric-meter-number" name="meterNumber"/>
+                    <input type="hidden" id="hidden-modify-electric-address" name="address"/>
+                    <button type="submit" class="btn-green-fill" data-bs-dismiss="modal"
+                        id="button-confirm-modify-electric-metadata">Confirm</button>
+                  </form>
                 </div>
+
               </div>
             </div>
           </div>
@@ -1945,11 +1959,18 @@
 
                 <!-- Modal footer -->
                 <div class="modal-footer d-flex align-items-center justify-content-center">
-                  <button type="button" class="btn-red" data-bs-dismiss="modal">Cancel</button>
-                  <button type="button" class="btn-green-fill" data-bs-dismiss="modal" data-bs-toggle="modal"
-                    data-bs-target="#modalModifyWaterMetadataSuccess"
-                    id="button-confirm-modify-water-metadata">Confirm</button>
-                </div>
+                  <button type="button" class="btn-red me-3" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalModifyWaterMetadata">Return</button>
+                    <form id="form-modify-water-metadata" method="POST" action="functions/modify-water-metadata.php">
+                      <input type="hidden" id="hidden-modify-water-account-name" name="accountName"/>
+                      <input type="hidden" id="hidden-modify-water-account-number" name="accountNumber"/>
+                      <input type="hidden" id="hidden-modify-water-meter-number" name="meterNumber"/>
+                      <input type="hidden" id="hidden-modify-water-address" name="address"/>
+                      <button type="submit" class="btn-green-fill" data-bs-dismiss="modal" data-bs-toggle="modal"
+                          data-bs-target="#modalModifyWaterMetadataSuccess"
+                          id="button-confirm-modify-water-metadata">Confirm</button>
+                    </form>
+                  </div>
+
               </div>
             </div>
           </div>

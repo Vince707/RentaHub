@@ -222,6 +222,14 @@ $.ajax({
       };
     });
 
+    // --- Link renter's email ---
+    Object.keys(renterDataMap).forEach(id => {
+      const userId = renterDataMap[id].userId;
+      if (usersMap[userId]) {
+        renterDataMap[id].email = usersMap[userId].email;
+      }
+    });
+
     // --- caretakers ---
     $(xml).find('caretakers > caretaker').each(function () {
       const id = $(this).attr('id')?.trim() || ''; // id may be empty
@@ -1516,6 +1524,19 @@ function displaySuccessModal() {
     $('#modalGenerateWaterBillSuccess').modal('show');
   }
 
+  // Handle electric metadata modified success
+  const electricMetadataStatus = urlParams.get('electricmetadata');
+  if (electricMetadataStatus === 'modified') {
+    $('#modalModifyElectricMetadataSuccess').modal('show');
+  }
+
+  // Handle water metadata modified success
+  const waterMetadataStatus = urlParams.get('watermetadata');
+  if (waterMetadataStatus === 'modified') {
+    $('#modalModifyWaterMetadataSuccess').modal('show');
+  }
+
+
   // Clean URL (remove all search parameters)
   url.search = '';
   window.history.replaceState({}, document.title, url.toString());
@@ -2249,12 +2270,7 @@ function clearModifyElectricBillForm() {
 
 
 
-
-function formatPHP(amount) {
-  return Number(amount).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-
-// When the Water Bill Modify modal is shown
+// When the modal opens, set due date and populate table and total bill
 $('#modalModifyWaterBill').on('shown.bs.modal', function() {
   const monthStr = $('#water-bill-month-due').val();
   if (!monthStr) return;
@@ -2272,7 +2288,7 @@ $('#modalModifyWaterBill').on('shown.bs.modal', function() {
   populateModifyWaterBillTable(dueDate);
 });
 
-// Populate the Modify Water Bill table
+// Populates the Modify Water Bill table
 function populateModifyWaterBillTable(dueDate) {
   const $tbody = $('#modalModifyWaterBill table.custom-table tbody');
   $tbody.empty();
@@ -2392,7 +2408,6 @@ function recalculateModifyWaterBillTable() {
   $('.grand-total').text('PHP ' + formatPHP(grandTotal));
 }
 
-// When any current reading changes, update row and recalculate
 $(document).on('input', '#modalModifyWaterBill .current-reading', function() {
   const $row = $(this).closest('tr');
   const currentReading = parseFloat($(this).val()) || 0;
@@ -2403,17 +2418,150 @@ $(document).on('input', '#modalModifyWaterBill .current-reading', function() {
   recalculateModifyWaterBillTable();
 });
 
-// When total bill changes, recalculate all rows instantly
 $('#modify-billings-water-total-bill').on('input', function() {
   recalculateModifyWaterBillTable();
 });
 
-// If you want to allow changing the due date inside the modal, repopulate table on change
 $('#modify-water-bill-month-due').on('change', function() {
   populateModifyWaterBillTable($(this).val());
 });
 
-// Clear form function
+$('#button-modify-water').on("click", function () {
+  const monthDue = $("#modify-water-bill-month-due").val().trim();
+  const totalBill = $("#modify-billings-water-total-bill").val().trim();
+
+  if (!monthDue || !totalBill) {
+    return showError("All required fields must be filled.", "#error-box-modify-water", "#error-text-modify-water");
+  }
+  if (!isDecimal(totalBill)) {
+    return showError("Total bill must be decimal.", "#error-box-modify-water", "#error-text-modify-water");
+  }
+
+  let isValid = true;
+  let errorMessage = "";
+
+  $('#form-modify-water').find('input[type="hidden"]').remove();
+
+  // Add reading ID as hidden input
+  $('<input>').attr({
+    type: 'hidden',
+    name: 'readingId',
+    value: $('#form-modify-water').data('readingId')
+  }).appendTo('#form-modify-water');
+
+  $('<input>').attr({
+    type: 'hidden',
+    name: 'monthDue',
+    value: monthDue
+  }).appendTo('#form-modify-water');
+
+  $('<input>').attr({
+    type: 'hidden',
+    name: 'totalBill',
+    value: totalBill.replace(/,/g, '')
+  }).appendTo('#form-modify-water');
+
+  let rentersCount = 0;
+  let rentersDebug = {};
+
+  $('#modalModifyWaterBill table.custom-table tbody tr').each(function() {
+    if ($(this).hasClass('fw-bolder')) return;
+
+    const $row = $(this);
+    const renterId = $row.find('input.renter-id').val();
+    const billId = $row.find('input.bill-id').val();
+    const roomNo = $row.find('td:eq(0)').text().trim();
+    const currentReading = $row.find('.current-reading').val();
+    const previousReading = $row.find('td:eq(3)').text().trim();
+    const consumedM3 = $row.find('.consumed-m3').text().trim();
+    const amountPerM3 = $row.find('.amount-per-m3').text().replace('PHP ', '').replace(/,/g, '').trim();
+    const total = $row.find('.total').text().replace('PHP ', '').replace(/,/g, '').trim();
+
+    // Debug: log each renter's data
+    rentersDebug[renterId] = {
+      billId, roomNo, currentReading, previousReading, consumedM3, amountPerM3, total
+    };
+
+    if (currentReading === "") {
+      isValid = false;
+      errorMessage = `Current reading for ${$row.find('td:eq(1)').text().trim()} is required.`;
+      $row.find('.current-reading').focus();
+      return false;
+    }
+    if (!isNumber(currentReading)) {
+      isValid = false;
+      errorMessage = `Current reading for ${$row.find('td:eq(1)').text().trim()} must be a valid number.`;
+      $row.find('.current-reading').focus();
+      return false;
+    }
+    if (parseFloat(currentReading) <= parseFloat(previousReading)) {
+      isValid = false;
+      errorMessage = `Current reading for ${$row.find('td:eq(1)').text().trim()} must be greater than previous reading (${previousReading}).`;
+      $row.find('.current-reading').focus();
+      return false;
+    }
+
+    $('<input>').attr({
+      type: 'hidden',
+      name: `renters[${renterId}][billId]`,
+      value: billId
+    }).appendTo('#form-modify-water');
+    $('<input>').attr({
+      type: 'hidden',
+      name: `renters[${renterId}][roomNo]`,
+      value: roomNo
+    }).appendTo('#form-modify-water');
+    $('<input>').attr({
+      type: 'hidden',
+      name: `renters[${renterId}][currentReading]`,
+      value: currentReading
+    }).appendTo('#form-modify-water');
+    $('<input>').attr({
+      type: 'hidden',
+      name: `renters[${renterId}][previousReading]`,
+      value: previousReading
+    }).appendTo('#form-modify-water');
+    $('<input>').attr({
+      type: 'hidden',
+      name: `renters[${renterId}][consumedM3]`,
+      value: consumedM3
+    }).appendTo('#form-modify-water');
+    $('<input>').attr({
+      type: 'hidden',
+      name: `renters[${renterId}][amountPerM3]`,
+      value: amountPerM3
+    }).appendTo('#form-modify-water');
+    $('<input>').attr({
+      type: 'hidden',
+      name: `renters[${renterId}][total]`,
+      value: total
+    }).appendTo('#form-modify-water');
+    rentersCount++;
+  });
+
+  console.log("Renters appended:", rentersCount, rentersDebug);
+
+  // Log all hidden inputs that will be submitted
+  let formData = $('#form-modify-water').serializeArray();
+  console.log("Form data to submit:", formData);
+
+  if (!isValid) {
+    return showError(errorMessage, "#error-box-modify-water", "#error-text-modify-water");
+  }
+
+  $('#modalModifyWaterBill').modal('hide');
+  $('#modalModifyWaterBillConfirmation').modal('show');
+});
+
+$('#button-confirm-modify-water').on("click", function (e) {
+  e.preventDefault();
+  // Log final data before submit
+  let formData = $('#form-modify-water').serializeArray();
+  console.log("Submitting form data:", formData);
+  $('#form-modify-water')[0].submit();
+  clearModifyWaterBillForm();
+});
+
 function clearModifyWaterBillForm() {
   $('#modify-water-bill-month-due').val('');
   $('#modify-billings-water-total-bill').val('');
@@ -2433,6 +2581,7 @@ function clearModifyWaterBillForm() {
   });
   $('#form-modify-water').find('input[type="hidden"]').remove();
 }
+
 
 
 
@@ -2927,6 +3076,20 @@ $(document).ready(function() {
     // TODO: Clear
   });
 
+  // When modal is shown, populate fields from XML
+  $('#modalModifyElectricMetadata').on('shown.bs.modal', function() {
+  const utility = utilityBillsMap['Electricity'];
+  if (utility) {
+    $('#modify-electric-customer-account-name').val(utility.accountName || '');
+    $('#modify-electric-customer-account-number').val(utility.accountNumber || '');
+    $('#modify-electric-meter-number').val(utility.meterNumber || '');
+    $('#modify-electric-address').val(utility.address || '');
+  } else {
+    console.error('Electric utility not found in utilityBillsMap.');
+  }
+});
+
+
   $('#button-modify-electric-metadata').on("click", function () {
     // Collect input values
     const customerAccountName = $("#modify-electric-customer-account-name").val().trim();
@@ -2955,6 +3118,12 @@ $(document).ready(function() {
     $("#confirm-modify-electric-metadata-meter-number").text(meterNumber);
     $("#confirm-modify-electric-metadata-address").text(address);
 
+    // Fill hidden form for PHP
+    $("#hidden-modify-electric-account-name").val(customerAccountName);
+    $("#hidden-modify-electric-account-number").val(customerAccountNumber);
+    $("#hidden-modify-electric-meter-number").val(meterNumber);
+    $("#hidden-modify-electric-address").val(address);
+
     // TODO: PROCESS
     $('#modalModifyElectricMetadata').modal('hide');
     $('#modalModifyElectricMetadataConfirmation').modal('show');
@@ -2970,6 +3139,17 @@ $(document).ready(function() {
   "modify-electric-address"
 ]);
   });
+
+  $('#modalModifyWaterMetadata').on('shown.bs.modal', function() {
+  const utility = utilityBillsMap['Water'];
+  if (utility) {
+    $('#modify-water-customer-account-name').val(utility.accountName || '');
+    $('#modify-water-customer-account-number').val(utility.accountNumber || '');
+    $('#modify-water-meter-number').val(utility.meterNumber || '');
+    $('#modify-water-address').val(utility.address || '');
+  }
+});
+
 
   $('#button-modify-water-metadata').on("click", function () {
    // Collect input values
@@ -2992,6 +3172,12 @@ $(document).ready(function() {
     if ([customerAccountName, customerAccountNumber, meterNumber, address].some(f => exceedsLengthLimit(f))) {
       return showError("One or more fields exceed the length limit.", "#error-box-modify-water-metadata", "#error-text-water-metadata");
     }
+
+    // Fill hidden form for PHP
+    $("#hidden-modify-water-account-name").val(customerAccountName);
+    $("#hidden-modify-water-account-number").val(customerAccountNumber);
+    $("#hidden-modify-water-meter-number").val(meterNumber);
+    $("#hidden-modify-water-address").val(address);
 
     // Fill confirmation modal
     $("#confirm-modify-water-metadata-customer-account-name").text(customerAccountName);
@@ -3123,39 +3309,40 @@ $('#record-payment-rent-checkbox').prop('checked', false);
   $('#button-success-record-payment-notify').on("click", function () {
     // TODO: Notify Renter
   });
-
-
-  $('#button-login').on("click", function () {
-    // Collect input values
-    const email = $("#modify-electric-customer-account-name").val().trim();
-    const password = $("#modify-electric-customer-account-number").val().trim();
-
-    // VALIDATIONS
-    if (!email || !password) {
-      return showError("All required fields must be filled.", "#error-box-modify-electric-metadata", "#error-text-electric-metadata");
-    }    
-
-    // Check for whitespace-only inputs
-    if ([email, password].some(isWhitespaceOnly)) {
-      return showError("Whitespace-only fields are not allowed.", "#error-box-modify-electric-metadata", "#error-text-electric-metadata");
-    }
   
-    // Length validation
-    if ([email, password].some(f => exceedsLengthLimit(f))) {
-      return showError("One or more fields exceed the length limit.", "#error-box-modify-electric-metadata", "#error-text-electric-metadata");
-    }
 
-    // Fill confirmation modal
-    $("#confirm-modify-electric-metadata-customer-account-name").text(customerAccountName);
-    $("#confirm-modify-electric-metadata-customer-account-number").text(customerAccountNumber);
-    $("#confirm-modify-electric-metadata-meter-number").text(meterNumber);
-    $("#confirm-modify-electric-metadata-address").text(address);
 
-    // TODO: PROCESS
-    $('#modalModifyElectricMetadata').modal('hide');
-    $('#modalModifyElectricMetadataConfirmation').modal('show');
-    hideError("#error-box-modify-electric-metadata", "#error-text-electric-metadata");
-  });
+  // $('#button-login').on("click", function () {
+  //   // Collect input values
+  //   const email = $("#modify-electric-customer-account-name").val().trim();
+  //   const password = $("#modify-electric-customer-account-number").val().trim();
+
+  //   // VALIDATIONS
+  //   if (!email || !password) {
+  //     return showError("All required fields must be filled.", "#error-box-modify-electric-metadata", "#error-text-electric-metadata");
+  //   }    
+
+  //   // Check for whitespace-only inputs
+  //   if ([email, password].some(isWhitespaceOnly)) {
+  //     return showError("Whitespace-only fields are not allowed.", "#error-box-modify-electric-metadata", "#error-text-electric-metadata");
+  //   }
+  
+  //   // Length validation
+  //   if ([email, password].some(f => exceedsLengthLimit(f))) {
+  //     return showError("One or more fields exceed the length limit.", "#error-box-modify-electric-metadata", "#error-text-electric-metadata");
+  //   }
+
+  //   // Fill confirmation modal
+  //   $("#confirm-modify-electric-metadata-customer-account-name").text(customerAccountName);
+  //   $("#confirm-modify-electric-metadata-customer-account-number").text(customerAccountNumber);
+  //   $("#confirm-modify-electric-metadata-meter-number").text(meterNumber);
+  //   $("#confirm-modify-electric-metadata-address").text(address);
+
+  //   // TODO: PROCESS
+  //   $('#modalModifyElectricMetadata').modal('hide');
+  //   $('#modalModifyElectricMetadataConfirmation').modal('show');
+  //   hideError("#error-box-modify-electric-metadata", "#error-text-electric-metadata");
+  // });
 
 
 
@@ -3305,9 +3492,24 @@ $(document).on("click", ".button-table-view-archive-renter", function () {
 
 
 
-function sendNotification(renterID){
-  // TODO: Send Notification
+function sendNotification(renterID, message = "You have a new notification.") {
+  const renterEmail = renterDataMap[renterID]?.email;
+  if (!renterEmail) {
+    console.error("No email found for renterID:", renterID);
+    return;
+  }
+  const templateParams = {
+    to_email: renterEmail,
+    message: message
+  };
+  emailjs.send('service_8p2cgis', 'YOUR_TEMPLATE_ID', templateParams)
+    .then(function(response) {
+      console.log('Notification email sent!', response.status, response.text);
+    }, function(error) {
+      console.error('Failed to send notification email:', error);
+    });
 }
+
   
 function updateTime() {
   date = new Date(date.getTime() + 1000);
