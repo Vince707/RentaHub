@@ -66,6 +66,63 @@
   </head>
 
   <script>
+    // Allowed roles for this page
+    const allowedRoles = ['admin', 'caretaker'];
+    
+    // Function to sign out user (clear storage and redirect to login)
+    function signOut() {
+    localStorage.removeItem('currentUser');
+    window.location.href = 'login.xml'; // Adjust to your login page URL
+    }
+    
+    // Verify user role function (custom logic)
+    function verifyUserRole(userRole) {
+    // Add any role-specific logic here
+    console.log(`User role verified: ${userRole}`);
+    }
+    
+    // Main check on page load
+    function checkUserAccess() {
+    const currentUserStr = localStorage.getItem('currentUser');
+    if (!currentUserStr) {
+    signOut();
+    return;
+    }
+    
+    let currentUser;
+    try {
+    currentUser = JSON.parse(currentUserStr);
+    } catch (e) {
+    console.error('Failed to parse currentUser from localStorage', e);
+    signOut();
+    return;
+    }
+    
+    const { email, role } = currentUser;
+    
+    if (!email || !role) {
+    signOut();
+    return;
+    }
+    
+    if (!allowedRoles.includes(role)) {
+    signOut();
+    return;
+    }
+    
+    verifyUserRole(role);
+    
+    // User info available for use
+    console.log('Logged in user:', email, 'Role:', role);
+    
+    // You can assign to variables or update UI as needed
+    window.loggedInUsername = email;
+    window.loggedInUserRole = role;
+    }
+    
+    // Call check on page load
+    document.addEventListener('DOMContentLoaded', checkUserAccess);
+        
   $(document).ready(function () {
     $('#renter-information-table').DataTable({
       layout: {
@@ -93,6 +150,18 @@
     passwordField.type = isPassword ? 'text' : 'password';
     eyeIcon.className = isPassword ? 'bi bi-eye' : 'bi bi-eye-slash';
   }
+        
+  $(document).ready(function() {
+    const currentUserStr = localStorage.getItem('currentUser');
+    if (!currentUserStr) return;
+    
+    const currentUser = JSON.parse(currentUserStr);
+    if (currentUser.role === 'admin') {
+    $('#accounts-menu-item').show();
+    } else {
+    $('#accounts-menu-item').hide();
+    }
+    });
 </script>
 
 <body class="h-100">  
@@ -127,7 +196,7 @@
         </div>
         <ul class="nav nav-pills nav-justified flex-column w-100 pt-4">
           <li class="nav-item">
-            <a class="nav-link sidebar-nav mt-1" href="caretaker-dashboard.html">
+            <a class="nav-link sidebar-nav mt-1" href="caretaker-dashboard.xml">
               <svg xmlns="http://www.w3.org/2000/svg" class="me-1" height="24px" viewBox="0 -960 960 960" width="24px"
                 fill="#FFFFFF">
                 <path
@@ -136,8 +205,16 @@
               Dashboard
             </a>
           </li>
+          <li class="nav-item" id="accounts-menu-item" style="display: none;">
+            <a class="nav-link sidebar-nav mt-1 " href="admin-accounts.xml">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
+                    <path d="M400-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM80-160v-112q0-33 17-62t47-44q51-26 115-44t141-18h14q6 0 12 2-8 18-13.5 37.5T404-360h-4q-71 0-127.5 18T180-306q-9 5-14.5 14t-5.5 20v32h252q6 21 16 41.5t22 38.5H80Zm560 40-12-60q-12-5-22.5-10.5T584-204l-58 18-40-68 46-40q-2-14-2-26t2-26l-46-40 40-68 58 18q11-8 21.5-13.5T628-460l12-60h80l12 60q12 5 22.5 11t21.5 15l58-20 40 70-46 40q2 12 2 25t-2 25l46 40-40 68-58-18q-11 8-21.5 13.5T732-180l-12 60h-80Zm40-120q33 0 56.5-23.5T760-320q0-33-23.5-56.5T680-400q-33 0-56.5 23.5T600-320q0 33 23.5 56.5T680-240ZM400-560q33 0 56.5-23.5T480-640q0-33-23.5-56.5T400-720q-33 0-56.5 23.5T320-640q0 33 23.5 56.5T400-560Zm0-80Zm12 400Z"/>
+                </svg>
+                Accounts
+            </a>
+        </li>
           <li class="nav-item">
-            <a class="nav-link sidebar-nav mt-1" href="caretaker-tasks.html">
+            <a class="nav-link sidebar-nav mt-1" href="caretaker-tasks.xml">
               <svg xmlns="http://www.w3.org/2000/svg" class="me-1" height="24px" viewBox="0 -960 960 960" width="24px"
                 fill="#FFFFFF">
                 <path
@@ -147,7 +224,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link sidebar-nav mt-1 active" href="caretaker-renter.html">
+            <a class="nav-link sidebar-nav mt-1 active" href="caretaker-renter.xml">
               <svg xmlns="http://www.w3.org/2000/svg" class="me-1" height="24px" viewBox="0 -960 960 960" width="24px"
                 fill="#FFFFFF">
                 <path
@@ -157,7 +234,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link sidebar-nav mt-1" href="caretaker-room.html">
+            <a class="nav-link sidebar-nav mt-1" href="caretaker-room.xml">
               <svg xmlns="http://www.w3.org/2000/svg" class="me-1" height="24px" viewBox="0 -960 960 960" width="24px"
                 fill="#FFFFFF">
                 <path
@@ -167,7 +244,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link sidebar-nav mt-1" href="caretaker-billings.html">
+            <a class="nav-link sidebar-nav mt-1" href="caretaker-billings.xml">
               <svg xmlns="http://www.w3.org/2000/svg" class="me-1" height="24px" viewBox="0 -960 960 960" width="24px"
                 fill="#FFFFFF">
                 <path
@@ -177,7 +254,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link sidebar-nav mt-1" href="caretaker-payments.html">
+            <a class="nav-link sidebar-nav mt-1" href="caretaker-payments.xml">
               <svg xmlns="http://www.w3.org/2000/svg" class="me-1" height="24px" viewBox="0 -960 960 960" width="24px"
                 fill="#FFFFFF">
                 <path
@@ -187,7 +264,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link sidebar-nav mt-1" href="caretaker-help.html">
+            <a class="nav-link sidebar-nav mt-1" href="caretaker-help.xml">
               <svg xmlns="http://www.w3.org/2000/svg" class="me-1" height="24px" viewBox="0 -960 960 960" width="24px"
                 fill="#FFFFFF">
                 <path
@@ -197,7 +274,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link sidebar-nav mt-1" href="logout.html">
+            <a class="nav-link sidebar-nav mt-1" href="logout.xml">
               <svg xmlns="http://www.w3.org/2000/svg" class="me-1" height="24px" viewBox="0 -960 960 960" width="24px"
                 fill="#FFFFFF">
                 <path

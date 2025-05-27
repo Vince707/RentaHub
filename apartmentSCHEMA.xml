@@ -46,7 +46,7 @@
                     <meterNumber></meterNumber>
                     <address></address>
                 </accountInfo>
-                <reading id="1">
+                <reading id="E1">
                     <readingDate></readingDate>
                     <periodEnd></periodEnd>
                     <dueDate></dueDate>
@@ -74,7 +74,7 @@
                     <meterNumber></meterNumber>
                     <address></address>
                 </accountInfo>
-                <reading id="1">
+                <reading id="W1">
                     <readingDate></readingDate>
                     <periodEnd></periodEnd>
                     <dueDate></dueDate>
@@ -97,7 +97,7 @@
             </utility>
         </utilityBills>
         <rentBills>
-            <bill id="101">
+            <bill id="R1">
                 <renterId>1</renterId>
                 <amount>3500</amount>
                 <dueDate>2025-04-10</dueDate>
@@ -109,7 +109,7 @@
     </billing>
   
     <payments>
-      <payment id="201">
+      <payment id="R25000001">
         <renterId>2</renterId>
         <paymentType></paymentType>
         <paymentAmountType></paymentAmountType>

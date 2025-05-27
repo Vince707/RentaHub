@@ -181,6 +181,10 @@ $.ajax({
         remarks: $(this).find('remarks').text().trim()
       };
     });
+    updateTotalPayments(paymentsMap);
+    updateCollectionRate(utilityBillsMap, rentBillsMap);
+    updateOnTimePaymentRateByStatus(utilityBillsMap, rentBillsMap);
+    // updateTotalCurrentBillsDueThisMonth(utilityBillsMap, rentBillsMap);
 
     // --- tasks ---
     $(xml).find('tasks > task').each(function () {
@@ -221,6 +225,12 @@ $.ajax({
         lastLogin: $(this).find('lastLogin').text().trim()
       };
     });
+    updateTotalRenters(renterDataMap);
+    updateOverdueRenters(renterDataMap);
+    updateNumberOfRenterAccounts(usersMap);
+    updateNumberOfCaretakerAccounts(usersMap);
+    updateNumberOfInactiveAccounts(usersMap);
+    updateNumberOfAccounts(usersMap);
 
     // --- Link renter's email ---
     Object.keys(renterDataMap).forEach(id => {
@@ -294,10 +304,36 @@ $.ajax({
   );
 
 
+  // Usage example:
+  const totalPendingTasks = calculateTotalPendingTasks();
+  $('#total-pending-tasks').text(totalPendingTasks);
+
+  
+// Usage example:
+const totalUrgentTasks = calculateTotalUrgentTasks();
+$('#total-urgent-tasks').text(totalUrgentTasks);
+
+
+function updateNumberOfAccounts(usersMap) {
+  const totalUsers = Object.keys(usersMap).length;
+  $('#total-accounts').text(totalUsers);
+}
+
+// Usage example:
+const totalCompletedTasks = calculateTotalCompletedTasks();
+$('#total-completed-tasks').text(totalCompletedTasks);
+
 
     const totalCurrentBill = calculateTotalCurrentBill();
     const formatted = totalCurrentBill.toLocaleString("en-PH", {minimumFractionDigits: 2, maximumFractionDigits: 2});
     $('#total-current-bill').text(formatted);
+    $('#total-current-bills').text("PHP " + formatted);
+
+    
+// Usage example:
+const totalOverdueTasks = calculateTotalOverdueTasks();
+$('#total-overdue-tasks').text(totalOverdueTasks);
+
 
     const overdueTotal = calculateTotalOverdueBills();
     const formattedOverdue = overdueTotal.toLocaleString("en-PH", {
@@ -1536,6 +1572,13 @@ function displaySuccessModal() {
     $('#modalModifyWaterMetadataSuccess').modal('show');
   }
 
+  // Handle task completion success
+  const completeStatus = urlParams.get('complete');
+  if (completeStatus === 'success') {
+    $('#modalCompleteTaskSuccess').modal('show');
+  }
+
+
 
   // Clean URL (remove all search parameters)
   url.search = '';
@@ -1813,12 +1856,322 @@ $(document).ready(function () {
     clearFieldsRemoveRenter();
     hideError();
   });
+   $(document).ready(function () {
+    const templateData = {
+      'pay-water-bill': {
+        title: 'Pay Water Bill',
+        type: 'Utility' // must match option value in #add-task-type
+      },
+      'pay-electricity-bill': {
+        title: 'Pay Electricity Bill',
+        type: 'Utility'
+      },
+      'send-rent-reminder': {
+        title: 'Send Rent Reminder',
+        type: ''
+      },
+      'collect-rent-payment': {
+        title: 'Collect Rent Payment',
+        type: 'Collection ' // adjust if needed
+      }
+    };
+
+    $('#add-task-common-tasks-templates').on('change', function () {
+      const selectedValue = $(this).val();
+      if (templateData[selectedValue]) {
+        $('#add-task-title').val(templateData[selectedValue].title || '');
+
+        const typeValue = templateData[selectedValue].type || '';
+        const $typeSelect = $('#add-task-type');
+        const $matchingOption = $typeSelect.find('option[value="' + typeValue + '"]');
+        if ($matchingOption.length) {
+          $typeSelect.val(typeValue);
+        } else {
+          $typeSelect.prop('selectedIndex', 0);
+        }
+      } else {
+        $('#add-task-title').val('');
+        $('#add-task-type').prop('selectedIndex', 0);
+      }
+    });
+  });
+  
+
+// Start
+// Listen for clicks on complete buttons
+$(document).on('click', '.button-view-room', function() {
+  const roomId = $(this).data('room-id'); // Make sure your buttons have data-room-id attribute
+
+  if (!roomId || !roomsDataMap[roomId]) {
+    console.error('Room ID not found or room data missing for ID:', roomId);
+    return;
+  }
+
+  const room = roomsDataMap[roomId];
+
+  // Populate modal fields
+  $('#view-room-room-number').text(room.roomNo);
+  $('#view-room-floor-number').text(room.floorNo);
+  $('#view-room-room-type').text(room.roomType);
+  $('#view-room-size').text(room.sizeSQM);
+  $('#view-room-rent-price').text(room.rentPrice);
+  $('#view-room-status').text(room.status);
+
+  // The modal will show automatically if your button has data-bs-toggle="modal" and data-bs-target="#modalViewRoomDetails"
+  // Otherwise, you can manually show modal:
+  // $('#modalViewRoomDetails').modal('show');
+});
+
+// Populate View Room modal
+$(document).on('click', '.button-view-room', function() {
+  const roomId = $(this).data('room-id');
+
+  if (!roomId || !roomsDataMap[roomId]) {
+    console.error('Room ID not found or room data missing for ID:', roomId);
+    return;
+  }
+
+  const room = roomsDataMap[roomId];
+
+  $('#view-room-room-number').text(room.roomNo);
+  $('#view-room-floor-number').text(room.floorNo);
+  $('#view-room-room-type').text(room.roomType);
+  $('#view-room-size').text(room.sizeSQM);
+  $('#view-room-rent-price').text(room.rentPrice);
+  $('#view-room-status').text(room.status);
+});
+
+// Populate Modify Room modal
+$(document).on('click', '.button-edit-room', function() {
+  const roomId = $(this).data('room-id');
+
+  if (!roomId || !roomsDataMap[roomId]) {
+    console.error('Room ID not found or room data missing for ID:', roomId);
+    return;
+  }
+
+  const room = roomsDataMap[roomId];
+
+  // Populate inputs and selects
+  $('#modify-room-room-number').val(room.roomNo);
+
+  // Set floor select by matching option value
+  $('#modify-room-floor-number option').each(function() {
+    if ($(this).val() === room.floorNo) {
+      $(this).prop('selected', true);
+      return false; // break loop
+    }
+  });
+
+  // Set room type select by matching option value
+  $('#modify-room-room-type option').each(function() {
+    if ($(this).val() === room.roomType) {
+      $(this).prop('selected', true);
+      return false;
+    }
+  });
+
+  $('#modify-room-size').val(room.sizeSQM);
+  $('#modify-room-rent-price').val(room.rentPrice);
+});
+
+// Populate Delete Room Confirmation modal
+$(document).on('click', '.button-delete-room', function() {
+  const roomId = $(this).data('room-id');
+
+  if (!roomId || !roomsDataMap[roomId]) {
+    console.error('Room ID not found or room data missing for ID:', roomId);
+    return;
+  }
+
+  const room = roomsDataMap[roomId];
+
+  // Populate modal fields with updated IDs
+  $('#confirm-remove-room-room-number').text(room.roomNo);
+  $('#confirm-remove-room-floor-number').text(room.floorNo);
+  $('#confirm-remove-room-room-type').text(room.roomType);
+  $('#confirm-remove-room-size').text(room.sizeSQM);
+  $('#confirm-remove-room-rent-price').text(room.rentPrice);
+
+  // Reset the delete reason select to default
+  $('#remove-room-reason').val('');
+});
 
 
+  $(document).on('click', '.button-task-complete', function() {
+    const taskId = $(this).data('task-id'); // Assuming your buttons have data-task-id attribute
+
+    if (!taskId || !tasksMap[taskId]) {
+      console.error('Task ID not found or task data missing for ID:', taskId);
+      return;
+    }
+
+    const task = tasksMap[taskId];
+
+    // Populate modal fields
+    $('#confirm-complete-task-task-id').text(taskId);
+    $('#confirm-complete-task-title').text(task.title);
+    $('#confirm-complete-task-type').text(task.type);
+    $('#confirm-complete-task-due-date').text(task.dueDate);
+    $('#confirm-complete-task-concerned-with').text(task.concernedWith);
+
+    // The modal will show automatically if your button has data-bs-toggle="modal" and data-bs-target="#modalCompleteTaskConfirmation"
+    // Otherwise, you can manually show modal:
+    // $('#modalCompleteTaskConfirmation').modal('show');
+  });
+
+
+  $(document).on('click', '.button-task-edit', function() {
+    const taskId = $(this).data('task-id');
+
+    if (!taskId || !tasksMap[taskId]) {
+      console.error('Task ID not found or task data missing for ID:', taskId);
+      return;
+    }
+
+    const task = tasksMap[taskId];
+
+    // Populate the Title input
+    $('#modify-task-title').val(task.title);
+
+    // Populate the Type select (match option value)
+    const $typeSelect = $('#modify-task-type');
+    if (task.type) {
+      const $option = $typeSelect.find(`option[value="${task.type}"]`);
+      if ($option.length) {
+        $typeSelect.val(task.type);
+      } else {
+        $typeSelect.prop('selectedIndex', 0);
+      }
+    } else {
+      $typeSelect.prop('selectedIndex', 0);
+    }
+
+    // Populate the Due Date input (assumes input type="date" accepts yyyy-mm-dd)
+    if (task.dueDate) {
+      // Convert to yyyy-mm-dd if needed, assuming task.dueDate is ISO or similar
+      $('#modify-task-due-date').val(task.dueDate);
+    } else {
+      $('#modify-task-due-date').val('');
+    }
+
+    // Populate Concerned With select
+    const $concernedSelect = $('#modify-task-concerned-with');
+    if (task.concernedWith) {
+      const $concernedOption = $concernedSelect.find(`option[value="${task.concernedWith}"]`);
+      if ($concernedOption.length) {
+        $concernedSelect.val(task.concernedWith);
+      } else {
+        $concernedSelect.prop('selectedIndex', 0);
+      }
+    } else {
+      $concernedSelect.prop('selectedIndex', 0);
+    }
+
+    // Populate the Common Tasks Template select based on title or type if you want
+    const $templateSelect = $('#modify-task-common-tasks-templates');
+    // Example mapping title to template value (adjust as needed)
+    const titleToTemplateMap = {
+      'Pay Water Bill': 'pay-water-bill',
+      'Pay Electricity Bill': 'pay-electricity-bill',
+      'Send Rent Reminder': 'send-rent-reminder',
+      'Collect Rent Payment': 'collect-rent-payment'
+    };
+    const templateValue = titleToTemplateMap[task.title] || '';
+    if (templateValue) {
+      $templateSelect.val(templateValue);
+    } else {
+      $templateSelect.prop('selectedIndex', 0);
+    }
+  });
+
+  $(document).on('click', '.button-task-delete', function() {
+    const taskId = $(this).data('task-id');
+
+    if (!taskId || !tasksMap[taskId]) {
+      console.error('Task ID not found or task data missing for ID:', taskId);
+      return;
+    }
+
+    const task = tasksMap[taskId];
+
+    // Populate modal fields
+    $('#confirm-delete-task-task-id').text(taskId);
+    $('#confirm-delete-task-title').text(task.title);
+    $('#confirm-delete-task-type').text(task.type);
+    $('#confirm-delete-task-due-date').text(task.dueDate);
+    $('#confirm-delete-task-concerned-with').text(task.concernedWith);
+
+    // Reset the delete reason select to default (hidden placeholder)
+    $('#remove-task-reason').val('');
+  });
+
+  document.querySelector('.button-task-complete').addEventListener('click', function() {
+    const taskId = this.dataset.taskId;
+    document.getElementById('completeTaskId').value = taskId;
+  });
+
+  
   $('#button-add-task').on("click", function () {
     $('#modalAddTask').modal('hide');
     $('#modalAddTaskConfirmation').modal('show');
   });
+
+  $('#button-modify-task').on("click", function () {
+    $('#modalModifyTask').modal('hide');
+    $('#modalModifyTaskConfirmation').modal('show');
+  });
+
+$(document).ready(function () {
+  $('#button-check').on("click", function () {
+    $('#modalCompleteTaskConfirmation').modal('show');
+  });
+});
+
+$(document).ready(function () {
+  $('#button-delete').on("click", function () {
+    $('#modalDeleteTaskConfirmation').modal('show');
+  });
+});
+
+$('#button-add-room').on("click", function () {
+    $('#modalAddRoom').modal('hide');
+    $('#modalAddRoomConfirmation').modal('show');
+  });
+
+$(document).ready(function () {
+  $('#button-view').on("click", function () {
+    $('#modalViewRoom').modal('show');
+  });
+});
+
+$('#button-modify-room').on("click", function () {
+    $('#modalModifyRoom').modal('hide');
+    $('#modalModifyRoomConfirmation').modal('show');
+  });
+
+  $(document).ready(function () {
+  $('#button-delete').on("click", function () {
+    $('#modalDeleteRoomConfirmation').modal('show');
+  });
+});
+
+$('#button-add-account').on("click", function () {
+  $('#modalAddAccount').modal('hide'); 
+  $('#modalAddAccountConfirmation').modal('show');
+});
+
+  $('#button-modify-account').on("click", function () {
+    $('#modalModifyAccount').modal('hide');
+    $('#modalModifyAccountConfirmation').modal('show');
+  });
+
+$(document).ready(function () {
+  $('#button-delete').on("click", function () {
+    $('#modalDeleteAccountConfirmation').modal('show');
+  });
+});
+// End
 
   $('#button-confirm-send-notif').on("click", function () {
     const renterID = $('#select-billings-renter').val();
@@ -3492,7 +3845,7 @@ $(document).on("click", ".button-table-view-archive-renter", function () {
 
 
 
-function sendNotification(renterID, message = "You have a new notification.") {
+function sendNotification(renterID) {
   const renterEmail = renterDataMap[renterID]?.email;
   if (!renterEmail) {
     console.error("No email found for renterID:", renterID);
@@ -3500,9 +3853,8 @@ function sendNotification(renterID, message = "You have a new notification.") {
   }
   const templateParams = {
     to_email: renterEmail,
-    message: message
   };
-  emailjs.send('service_8p2cgis', 'YOUR_TEMPLATE_ID', templateParams)
+  emailjs.send('service_8p2cgis', 'template_1glsq68', templateParams)
     .then(function(response) {
       console.log('Notification email sent!', response.status, response.text);
     }, function(error) {
@@ -3565,13 +3917,13 @@ function clearFieldsRemoveRenter() {
 function redirectToDashboard(role) {
   switch (role.toLowerCase()) {
     case "admin":
-      window.location.href = "admin-dashboard.html";
+      window.location.href = "caretaker-dashboard.xml";
       break;
     case "caretaker":
-      window.location.href = "caretaker-dashboard.html";
+      window.location.href = "caretaker-dashboard.xml";
       break;
     case "renter":
-      window.location.href = "renter-dashboard.html";
+      window.location.href = "renter-dashboard.xml";
       break;
     default:
       showError("User role is not recognized.", "#login-error-box", "#login-error-msg");
@@ -3686,6 +4038,360 @@ function isStrongPassword(password) {
 
   return { isValid: errors.length === 0, errors };
 }
+
+function calculateTotalPendingTasks() {
+  let count = 0;
+
+  // Assuming tasksMap is an object with taskId keys and task objects as values
+  for (const taskId in tasksMap) {
+    if (tasksMap.hasOwnProperty(taskId)) {
+      const task = tasksMap[taskId];
+      // Consider tasks with status 'Pending' or 'Overdue' as pending
+      if (task.status && (task.status.toLowerCase() === 'pending' || task.status.toLowerCase() === 'overdue')) {
+        count++;
+      }
+    }
+  }
+
+  return count;
+}
+
+
+function isDateInCurrentWeek(dateStr) {
+  const today = new Date();
+  const date = new Date(dateStr);
+
+  // Get Monday of the current week
+  const dayOfWeek = today.getDay(); // Sunday = 0, Monday = 1, ..., Saturday = 6
+  const diffToMonday = (dayOfWeek + 6) % 7; // Days since Monday
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - diffToMonday);
+  monday.setHours(0, 0, 0, 0);
+
+  // Get Sunday of the current week
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  sunday.setHours(23, 59, 59, 999);
+
+  return date >= monday && date <= sunday;
+}
+
+function calculateTotalUrgentTasks() {
+  let count = 0;
+
+  for (const taskId in tasksMap) {
+    if (tasksMap.hasOwnProperty(taskId)) {
+      const task = tasksMap[taskId];
+      if (task.dueDate && isDateInCurrentWeek(task.dueDate)) {
+        count++;
+      }
+    }
+  }
+
+  return count;
+}
+
+function isDateBeforeToday(dateStr) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Normalize to start of today
+  const date = new Date(dateStr);
+  date.setHours(0, 0, 0, 0);
+  return date < today;
+}
+
+function calculateTotalOverdueTasks() {
+  let count = 0;
+
+  for (const taskId in tasksMap) {
+    if (tasksMap.hasOwnProperty(taskId)) {
+      const task = tasksMap[taskId];
+      if (task.dueDate && isDateBeforeToday(task.dueDate)) {
+        // Optionally, exclude completed tasks if your data has a status
+        if (!task.status || task.status.toLowerCase() !== 'completed') {
+          count++;
+        }
+      }
+    }
+  }
+
+  return count;
+}
+
+
+function updateOnTimePaymentRateByStatus(utilityBillsMap, rentBillsMap) {
+  let totalPayments = 0;
+  let onTimePayments = 0;
+
+  function isPaidOnTime(status) {
+    return status && status.toLowerCase() === 'paid';
+  }
+
+  for (const billId in rentBillsMap) {
+    if (rentBillsMap.hasOwnProperty(billId)) {
+      const bill = rentBillsMap[billId];
+      totalPayments++;
+      if (isPaidOnTime(bill.status)) onTimePayments++;
+    }
+  }
+
+  for (const utilityType in utilityBillsMap) {
+    if (utilityBillsMap.hasOwnProperty(utilityType)) {
+      const utility = utilityBillsMap[utilityType];
+      const readings = utility.readings || [];
+
+      readings.forEach(reading => {
+        const bills = reading.bills || [];
+        bills.forEach(bill => {
+          totalPayments++;
+          if (isPaidOnTime(bill.status)) onTimePayments++;
+        });
+      });
+    }
+  }
+
+  let rate = 0;
+  if (totalPayments > 0) {
+    rate = (onTimePayments / totalPayments) * 100;
+  }
+
+  const formattedRate = rate.toFixed(2) + '%';
+  $('#on-time-payment-rate').text(formattedRate);
+}
+
+
+
+function updateCollectionRate(utilityBillsMap, rentBillsMap) {
+  let totalPaid = 0;
+  let totalDue = 0;
+
+  // Sum rent bills
+  for (const billId in rentBillsMap) {
+    if (rentBillsMap.hasOwnProperty(billId)) {
+      const bill = rentBillsMap[billId];
+
+      const amount = parseFloat(bill.amount.replace(/[^0-9.-]+/g, '')) || 0;
+      const overpaid = parseFloat(bill.overpaid.replace(/[^0-9.-]+/g, '')) || 0;
+      const debt = parseFloat(bill.debt.replace(/[^0-9.-]+/g, '')) || 0;
+
+      totalDue += amount + debt;
+      totalPaid += amount + overpaid;
+    }
+  }
+
+  // Sum utility bills
+  for (const utilityType in utilityBillsMap) {
+    if (utilityBillsMap.hasOwnProperty(utilityType)) {
+      const utility = utilityBillsMap[utilityType];
+      const readings = utility.readings || [];
+
+      readings.forEach(reading => {
+        const bills = reading.bills || [];
+        bills.forEach(bill => {
+          const amount = parseFloat(bill.amount.replace(/[^0-9.-]+/g, '')) || 0;
+          const overpaid = parseFloat(bill.overpaid.replace(/[^0-9.-]+/g, '')) || 0;
+          const debt = parseFloat(bill.debt.replace(/[^0-9.-]+/g, '')) || 0;
+
+          totalDue += amount + debt;
+          totalPaid += amount + overpaid;
+        });
+      });
+    }
+  }
+
+  let rate = 0;
+  if (totalDue > 0) {
+    rate = (totalPaid / totalDue) * 100;
+  }
+
+  const formattedRate = rate.toFixed(2) + '%';
+  $('#collection-rate').text(formattedRate);
+}
+
+
+// function updateTotalCurrentBillsDueThisMonth(utilityBillsMap, rentBillsMap) {
+//   let total = 0;
+
+//   // Helper function to check if a date is in the current month and year
+//   function isDueThisMonth(dateStr) {
+//     if (!dateStr) return false;
+//     const dueDate = new Date(dateStr);
+//     if (isNaN(dueDate)) return false;
+
+//     const now = new Date();
+//     return dueDate.getFullYear() === now.getFullYear() && dueDate.getMonth() === now.getMonth();
+//   }
+
+//   // Sum rent bills due this month
+//   for (const id in rentBillsMap) {
+//     if (rentBillsMap.hasOwnProperty(id)) {
+//       const bill = rentBillsMap[id];
+//       if (isDueThisMonth(bill.dueDate)) {
+//         const amount = parseFloat(bill.amount.replace(/[^0-9.-]+/g, '')) || 0;
+//         total += amount;
+//       }
+//     }
+//   }
+
+//   // Sum utility bills due this month
+//   for (const utilityType in utilityBillsMap) {
+//     if (utilityBillsMap.hasOwnProperty(utilityType)) {
+//       const utility = utilityBillsMap[utilityType];
+//       const readings = utility.readings || [];
+
+//       readings.forEach(reading => {
+//         // Check reading dueDate if needed, but usually bills have their own dueDate
+//         const bills = reading.bills || [];
+//         bills.forEach(bill => {
+//           if (isDueThisMonth(bill.dueDate)) {
+//             const amount = parseFloat(bill.amount.replace(/[^0-9.-]+/g, '')) || 0;
+//             total += amount;
+//           }
+//         });
+//       });
+//     }
+//   }
+
+//   $('#total-current-bills').text("PHP " + formatPHP(total));
+// }
+
+
+
+function updateNumberOfInactiveAccounts(usersMap) {
+  let inactiveCount = 0;
+  for (const userId in usersMap) {
+    if (usersMap.hasOwnProperty(userId)) {
+      const user = usersMap[userId];
+      if (user.status && user.status.toLowerCase() === 'archived') {
+        inactiveCount++;
+      }
+    }
+  }
+  $('#total-inactive-accounts').text(inactiveCount);
+}
+
+
+function formatPHP(amount) {
+  return Number(amount).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function updateTotalPayments(paymentsMap) {
+  let total = 0;
+
+  for (const paymentId in paymentsMap) {
+    if (paymentsMap.hasOwnProperty(paymentId)) {
+      const payment = paymentsMap[paymentId];
+      // Parse amount as float, handle commas or currency symbols if needed
+      let amount = payment.amount;
+
+      // If amount is string with commas or currency, clean it:
+      if (typeof amount === 'string') {
+        amount = amount.replace(/[^0-9.-]+/g, ''); // Remove non-numeric chars except dot and minus
+      }
+
+      amount = parseFloat(amount);
+      if (!isNaN(amount)) {
+        total += amount;
+      }
+    }
+  }
+
+  // // Format total as currency string, e.g., PHP 7,208.28
+  // const formattedTotal = total.toLocaleString('en-PH', {
+  //   style: 'currency',
+  //   currency: 'PHP',
+  //   minimumFractionDigits: 2,
+  //   maximumFractionDigits: 2
+  // });
+
+  $('#total-payments').text("PHP " + formatPHP(total));
+}
+
+function updateOverdueRenters(renterDataMap) {
+  let overdueCount = 0;
+
+  for (const renterId in renterDataMap) {
+    if (renterDataMap.hasOwnProperty(renterId)) {
+      const renter = renterDataMap[renterId];
+      if (renter.isOverdue === true) {
+        overdueCount++;
+      }
+    }
+  }
+
+  $('#total-overdue-renters').text(overdueCount);
+}
+
+
+function updateNumberOfRenterAccounts(usersMap) {
+  let renterCount = 0;
+  for (const userId in usersMap) {
+    if (usersMap.hasOwnProperty(userId)) {
+      const user = usersMap[userId];
+      if (user.userRole && user.userRole.toLowerCase() === 'renter') {
+        renterCount++;
+      }
+    }
+  }
+  $('#total-renter-accounts').text(renterCount);
+}
+
+
+function updateNumberOfCaretakerAccounts(usersMap) {
+  let caretakerCount = 0;
+  for (const userId in usersMap) {
+    if (usersMap.hasOwnProperty(userId)) {
+      const user = usersMap[userId];
+      if (user.userRole && user.userRole.toLowerCase() === 'caretaker') {
+        caretakerCount++;
+      }
+    }
+  }
+  $('#total-caretaker-accounts').text(caretakerCount);
+}
+
+
+function calculateNumberOfAccounts(users) {
+  // users is an array of user objects
+  return users.length;
+}
+
+function updateTotalRenters(usersMap) {
+  let renterCount = 0;
+  for (const userId in usersMap) {
+    if (usersMap.hasOwnProperty(userId)) {
+      const user = usersMap[userId];
+      if (user.userRole && user.userRole.toLowerCase() === 'renter') {
+        renterCount++;
+      }
+    }
+  }
+  $('#total-renters').text(renterCount);
+}
+
+
+function updateTotalRenters(renterDataMap) {
+  const totalRenters = Object.keys(renterDataMap).length;
+  $('#total-renters-accounts').text(totalRenters);
+}
+
+
+
+function calculateTotalCompletedTasks() {
+  let count = 0;
+
+  for (const taskId in tasksMap) {
+    if (tasksMap.hasOwnProperty(taskId)) {
+      const task = tasksMap[taskId];
+      if (task.status && task.status.toLowerCase() === 'completed') {
+        count++;
+      }
+    }
+  }
+
+  return count;
+}
+
+
 
 function calculateTotalCurrentBill() {
   let total = 0;
