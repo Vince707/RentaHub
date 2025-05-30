@@ -182,69 +182,121 @@
                             </div>
                             
                             <div class="main-container h-100 p-4" id="main-container">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <p class="h2 font-red-gradient mb-0">Pete Resurreccion</p>
-                                </div>
-                                <div class="horizontal mt-1 mb-2"></div>
                                 
-                                <div class="d-flex justify-content-between align-items-center mb-4">
-                                    <p class="h5 font-red-gradient mb-0">Room 1B | Lease Start: May 20, 2025</p>
-                                    <button type="button" class="ms-auto btn-red d-flex align-items-center px-3 py-1" data-bs-toggle="modal" data-bs-target="#modalModifyRenter">
-                                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#8B0000">
-                                            <path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/>
-                                        </svg>
-                                        Edit
-                                    </button>
+                               <script>
+      $(document).ready(function() {
+    // 1. Load data from localStorage
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+    // 2. Check if data exists
+    if (currentUser) {
+        const userId = currentUser.id;
+
+        // 3. Update HTML
+        $.ajax({
+            url: 'apartment.xml', // Your XML file
+            dataType: 'xml',
+            success: function(xml) {
+                $(xml).find('renters &gt; renter').each(function() {
+                    if ($(this).find('userId').text() === userId) {
+                        // Update the HTML elements with data from XML
+                        const firstName = $(this).find('personalInfo &gt; name &gt; firstName').text();
+                        const surname = $(this).find('personalInfo &gt; name &gt; surname').text();
+                        const middleName = $(this).find('personalInfo &gt; name &gt; middleName').text();
+                        const extension = $(this).find('personalInfo &gt; name &gt; extension').text();
+                        const unitId = $(this).find('rentalInfo &gt; unitId').text();
+                        const leaseStart = $(this).find('rentalInfo &gt; leaseStart').text();
+                        const contact = $(this).find('personalInfo &gt; contact').text();
+                        const birthDate = $(this).find('personalInfo &gt; birthDate').text();
+                        const validIdType = $(this).find('personalInfo &gt; validId &gt; validIdType').text();
+                        const validIdNumber = $(this).find('personalInfo &gt; validId &gt; validIdNumber').text();
+
+                        // Get username (email) from usersMap
+                        const username = usersMap[userId]?.email || currentUser.email || 'Not set';
+
+                        $('.main-container').html(`
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <p class="h2 font-red-gradient mb-0">${firstName} ${surname}</p>
+                            </div>
+                            
+                            <div class="horizontal mt-1 mb-2"></div>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <p class="h5 font-red-gradient mb-0">Room ${unitId} | Lease Start: ${leaseStart}</p>
+                                <button type="button" class="ms-auto btn-red d-flex align-items-center px-3 py-1" data-bs-toggle="modal" data-bs-target="#modalModifyRenter">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#8B0000">
+                                        <path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/>
+                                    </svg>
+                                    Edit
+                                </button>
+                            </div>
+                            
+                            <div class="d-flex flex-column flex-md-row gap-3 mb-3">
+                                <!-- Personal Information -->
+                                <div class="flex-fill gradient-red-bg p-4 rounded-3">
+                                    <p class="h4 font-white mb-3">Personal Information</p>
+                                    <div class="d-flex flex-row mb-2">
+                                        <p class="h5 font-white me-2 mb-0">Name: </p>
+                                        <p class="font-white mb-0">
+                                            ${firstName} ${middleName} ${surname} ${extension}
+                                        </p>
+                                    </div>
+                                    <div class="d-flex flex-row mb-2">
+                                        <p class="h5 font-white me-2 mb-0">Contact Number: </p>
+                                        <p class="font-white mb-0">${contact}</p>
+                                    </div>
+                                    <div class="d-flex flex-row">
+                                        <p class="h5 font-white me-2 mb-0">Birth Date: </p>
+                                        <p class="font-white mb-0">${birthDate}</p>
+                                    </div>
                                 </div>
                                 
-                                <div class="d-flex flex-column flex-md-row gap-3 mb-3">
-                                    
-                                    <!-- Personal Information -->
-                                    <div class="flex-fill gradient-red-bg p-4 rounded-3">
-                                        <p class="h4 font-white mb-3">Personal Information</p>
-                                        <div class="d-flex flex-row mb-2">
-                                            <p class="h5 font-white me-2 mb-0">Name: Ashniel H. Diego Jr.</p>
-                                            <p class="font-white mb-0"><span id="view-renter-first-name" class="font-red"></span> <span id="view-renter-middle-name"></span> <span id="view-renter-surname"></span> <span id="view-renter-ext-name"></span></p>
-                                        </div>
-                                        <div class="d-flex flex-row mb-2">
-                                            <p class="h5 font-white me-2 mb-0">Contact Number: +639 123 456 789</p>
-                                            <p id="view-renter-contact-number" class="font-red mb-0"></p>
-                                        </div>
-                                        <div class="d-flex flex-row">
-                                            <p class="h5 font-white me-2 mb-0">Birth Date: December 10, 1987</p>
-                                            <p id="view-renter-birthdate" class="font-red mb-0"></p>
-                                        </div>
+                                <!-- Valid ID Information -->
+                                <div class="flex-fill gradient-red-bg p-4 rounded-3">
+                                    <p class="h4 font-white mb-3">Valid ID Information</p>
+                                    <div class="d-flex flex-row mb-2">
+                                        <p class="h5 font-white me-2 mb-0">Valid ID Type: </p>
+                                        <p class="font-white mb-0">${validIdType}</p>
                                     </div>
-                                    
-                                    <!-- Valid ID Information -->
-                                    <div class="flex-fill gradient-red-bg p-4 rounded-3">
-                                        <p class="h4 font-white mb-3">Valid ID Information</p>
-                                        <div class="d-flex flex-row mb-2">
-                                            <p class="h5 font-white me-2 mb-0">Valid ID Type: Philippine Passport</p>
-                                            <p id="view-renter-valid-id-type" class="font-red mb-0"></p>
-                                        </div>
-                                        <div class="d-flex flex-row">
-                                            <p class="h5 font-white me-2 mb-0">ID Number: 1234-5678-90XH </p>
-                                            <p id="view-renter-valid-id-number" class="font-red mb-0"></p>
-                                        </div>
+                                    <div class="d-flex flex-row">
+                                        <p class="h5 font-white me-2 mb-0">ID Number: </p>
+                                        <p class="font-white mb-0">${validIdNumber}</p>
                                     </div>
                                 </div>
-                                
-                                <!-- Security Information -->
-                                <div class="gradient-red-bg p-4 rounded-3 mb-3">
-                                    <p class="h4 font-white mb-3">Security</p>
-                                    <div class="d-flex flex-row justify-content-start align-items-center gap-5 flex-wrap">
-                                        <div class="d-flex align-items-center me-5">
-                                            <p class="h5 font-white mb-0 me-2">Username:</p>
-                                            <p id="view-renter-username" class="font-white mb-0">Ashniel1987</p>
-                                        </div>
-                                        <div class="d-flex  align-items-center">
-                                            <p class="h5 font-white mb-0 me-2">Password:</p>
-                                            <p class="font-white mb-0 me-2">•••••••••••</p>
-                                            <i class="bi bi-eye text-white"></i>
-                                        </div>
+                            </div>
+
+                            <!-- Security Information -->
+                            <div class="gradient-red-bg p-4 rounded-3 mb-3">
+                                <p class="h4 font-white mb-3">Security</p>
+                                <div class="d-flex flex-row justify-content-start align-items-center gap-5 flex-wrap">
+                                    <div class="d-flex align-items-center me-5">
+                                        <p class="h5 font-white mb-0 me-2">Username:</p>
+                                        <p id="view-renter-username" class="font-white mb-0">${username}</p>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <p class="h5 font-white mb-0 me-2">Password:</p>
+                                        <p class="font-white mb-0 me-2">•••••••••••</p>
+                                        <i class="bi bi-eye text-white"></i>
                                     </div>
                                 </div>
+                            </div>
+                        `);
+                    }
+                });
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error('Error loading XML:', textStatus, errorThrown);
+                $('.main-container').html('<p>Failed to load renter information.</p>');
+            }
+        });
+    } else {
+        // Handle the case where there's no user in localStorage
+        $('.main-container').html('<p>No user logged in.</p>');
+    }
+});
+
+                               </script>
+
                             </div>
                             
                             

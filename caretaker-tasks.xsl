@@ -121,12 +121,14 @@
                 
                             $(document).ready(function () {
                             $('#tasks-information-table').DataTable({
-                            layout: {
-                            bottomStart: {
-                            buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
-                            }
-                            }
-                            });
+  layout: {
+    bottomStart: {
+      buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+    }
+  },
+  order: [[0, 'desc']]  // Order by first column (index 0) descending
+});
+
                             
                             });
                 
@@ -144,25 +146,32 @@
                 const dueDate = new Date(dueDateStr);
                 dueDate.setHours(0, 0, 0, 0);
                 
-                if (originalStatus === 'completed') {
-                // Completed tasks: green badge
-                $statusSpan
-                .removeClass()
-                .addClass('badge rounded-pill bg-success')
-                .text('Completed');
-                } else if (dueDate &lt; today) {
-                                            // Overdue tasks: warning badge
-                                            $statusSpan
-                                            .removeClass()
-                                            .addClass('badge rounded-pill bg-warning')
-                                            .text('Overdue');
-                                            } else {
-                                            // Other statuses: secondary badge, keep original text
-                                            $statusSpan
-                                            .removeClass()
-                                            .addClass('badge rounded-pill bg-secondary')
-                                            .text($statusSpan.data('status'));
-                                            }
+                if (originalStatus.toLowerCase() === 'completed') {
+    // Completed tasks: green badge
+    $statusSpan
+        .removeClass()
+        .addClass('badge rounded-pill bg-success')
+        .text('Completed');
+} else if (originalStatus.toLowerCase() === 'deleted') {
+    // Deleted tasks: red badge
+    $statusSpan
+        .removeClass()
+        .addClass('badge rounded-pill bg-danger')
+        .text('Deleted');
+} else if (dueDate &lt; today) {
+    // Overdue tasks: warning badge
+    $statusSpan
+        .removeClass()
+        .addClass('badge rounded-pill bg-warning')
+        .text('Overdue');
+} else {
+    // Other statuses: secondary badge, keep original text
+    $statusSpan
+        .removeClass()
+        .addClass('badge rounded-pill bg-secondary')
+        .text($statusSpan.data('status'));
+}
+
                                             });
                                             });
                 
@@ -384,7 +393,7 @@
                                             <td>
                                                 <div class="d-flex flex-row justify-content-center align-items-center align-self-center">
                                                     <!-- Only show buttons if status is not Completed -->
-                                                    <xsl:if test="status != 'Completed'">
+                                                    <xsl:if test="status != 'Completed' and status != 'Deleted'">
                                                         <!-- COMPLETE button -->
                                                         <button
                                                             type="button"
@@ -482,7 +491,7 @@
                                                             <div class="date-input-container me-2 flex-fill">
                                                                 <label for="add-task-due-date" class="date-label">Due Date <span>*</span></label>
                                                                 <label class="date-input-wrapper">
-                                                                    <input type="date" id="add-renter-lease-start" class="custom-date-input" required="required"/>
+                                                                    <input type="date" id="add-task-due-date" class="custom-date-input" required="required"/>
                                                                         <span class="calendar-icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#8B0000"><path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Zm280 240q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm-160 0q-17 0-28.5-11.5T280-440q0-17 11.5-28.5T320-480q17 0 28.5 11.5T360-440q0 17-11.5 28.5T320-400Zm320 0q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400ZM480-240q-17 0-28.5-11.5T440-280q0-17 11.5-28.5T480-320q17 0 28.5 11.5T520-280q0 17-11.5 28.5T480-240Zm-160 0q-17 0-28.5-11.5T280-280q0-17 11.5-28.5T320-320q17 0 28.5 11.5T360-280q0 17-11.5 28.5T320-240Zm320 0q-17 0-28.5-11.5T600-280q0-17 11.5-28.5T640-320q17 0 28.5 11.5T680-280q0 17-11.5 28.5T640-240Z"/></svg></span>
                                                                     </label>
                                                                 </div>
@@ -545,10 +554,10 @@
                                                         <!-- Modal body -->
                                                         <div class="modal-body d-flex flex-sm-row flex-column">
                                                             <div class="d-flex flex-column me-5">
-                                                                <div class="d-flex flex-row">
+                                                                <!-- <div class="d-flex flex-row">
                                                                     <p class="h5 font-red-gradient me-2">Task ID:</p>
                                                                     <p id="confirm-add-task-task-id" class="font-red"></p>
-                                                                </div>
+                                                                </div> -->
                                                                 <div class="d-flex flex-row">
                                                                     <p class="h5 font-red-gradient me-2">Title:</p>
                                                                     <p id="confirm-add-task-title" class="font-red"></p>
@@ -571,7 +580,17 @@
                                                         <!-- Modal footer -->
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn-red" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalAddTask">Cancel</button>
-                                                            <button type="button" class="btn-green-fill" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalAddTaskSuccess" id="button-confirm-add-task">Confirm</button>
+                                                            <form id="add-task" method="POST" action="functions/add-task.php">
+                                                                <input type="hidden" id="hidden-add-task-task-id" name="task_id" />
+                                                                <input type="hidden" id="hidden-add-task-title" name="title" />
+                                                                <input type="hidden" id="hidden-add-task-type" name="type" />
+                                                                <input type="hidden" id="hidden-add-task-due-date" name="due_date" />
+                                                                <input type="hidden" id="hidden-add-task-concerned-with" name="concerned_with" />
+
+
+                                                            <button type="submit" class="btn-green-fill" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalAddTaskSuccess" id="button-confirm-add-task">Confirm</button>
+
+                                                            </form>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -708,10 +727,10 @@
                                                                     <!-- Modal body -->
                                                                     <div class="modal-body d-flex flex-sm-row flex-column">
                                                                         <div class="d-flex flex-column me-5">
-                                                                            <div class="d-flex flex-row">
+                                                                            <!-- <div class="d-flex flex-row">
                                                                                 <p class="h5 font-red-gradient me-2">Task ID:</p>
                                                                                 <p id="confirm-modify-task-task-id" class="font-red"></p>
-                                                                            </div>
+                                                                            </div> -->
                                                                             <div class="d-flex flex-row">
                                                                                 <p class="h5 font-red-gradient me-2">Title:</p>
                                                                                 <p id="confirm-modify-task-title" class="font-red"></p>
@@ -734,7 +753,15 @@
                                                                     <!-- Modal footer -->
                                                                     <div class="modal-footer">
                                                                         <button type="button" class="btn-red" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalModifyTask">Return</button>
-                                                                        <button type="button" class="btn-green-fill" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalModifyTaskSuccess" id="button-confirm-modify-task">Confirm</button>
+                                                                         <form id="modify-task" method="POST" action="functions/modify-task.php">
+                                                                            <input type="hidden" id="hidden-modify-task-task-id" name="task_id" />
+                                                                            <input type="hidden" id="hidden-modify-task-title" name="title" />
+                                                                            <input type="hidden" id="hidden-modify-task-type" name="type" />
+                                                                            <input type="hidden" id="hidden-modify-task-due-date" name="due_date" />
+                                                                            <input type="hidden" id="hidden-modify-task-concerned-with" name="concerned_with" />
+
+                                                                            <button type="submit" class="btn-green-fill" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalModifyTaskSuccess" id="button-confirm-modify-task">Confirm</button>
+                                                                        </form>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -896,7 +923,17 @@
                                                                     <!-- Modal footer -->
                                                                     <div class="modal-footer">
                                                                         <button type="button" class="btn-red" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalDeleteTask">Cancel</button>
-                                                                        <button type="button" class="btn-red-fill" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalDeleteTaskSuccess" id="button-confirm-delete-task">Delete</button>
+                                                                        <form id="delete-task" method="POST" action="functions/delete-task.php">
+                                                                            <input type="hidden" id="hidden-delete-task-task-id" name="task_id" />
+                                                                            <input type="hidden" id="hidden-delete-task-title" name="title" />
+                                                                            <input type="hidden" id="hidden-delete-task-type" name="type" />
+                                                                            <input type="hidden" id="hidden-delete-task-due-date" name="due_date" />
+                                                                            <input type="hidden" id="hidden-delete-task-concerned-with" name="concerned_with" />
+                                                                            <input type="hidden" id="hidden-delete-task-reason" name="delete_reason" />
+
+
+                                                                            <button type="submit" class="btn-red-fill" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalDeleteTaskSuccess" id="button-confirm-delete-task">Delete</button>
+                                                                        </form>
                                                                     </div>
                                                                 </div>
                                                             </div>

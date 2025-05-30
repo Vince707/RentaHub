@@ -144,37 +144,47 @@
                                     return showError("You must accept the Terms and Conditions to continue.", "#login-error-box", "#login-error-msg");
                                     }
                                     
-                                    // AJAX call to load users.xml and validate credentials
-                                    $.ajax({
-                                    url: "apartment.xml",
-                                    dataType: "xml",
-                                    success: function (xml) {
-                                    let userFound = false;
-                                    
-                                    $(xml).find("user").each(function () {
-                                    const storedEmail = $(this).find("email").text().trim();
-                                    const storedPassword = $(this).find("password").text().trim();
-                                    const role = $(this).find("userRole").text().trim();
-                                    
-                                    if (email === storedEmail &amp;&amp; password === storedPassword) {
-                                    userFound = true;
-                                    
-                                    const user = { email, role };
-                                    localStorage.setItem("currentUser", JSON.stringify(user));
-                                    
-                                    redirectToDashboard(role);
-                                    return false; // Stop iterating once user is found
-                                    }
-                                    });
-                                    
-                                    if (!userFound) {
-                                    showError("Email or password not found.", "#login-error-box", "#login-error-msg");
-                                    }
-                                    },
-                                    error: function () {
-                                    showError("Failed to load user data.", "#login-error-box", "#login-error-msg");
-                                    }
-                                    });
+                                    // AJAX call to load apartment.xml and validate credentials
+$.ajax({
+  url: "apartment.xml",
+  dataType: "xml",
+  success: function(xml) {
+    let userFound = false;
+    
+    $(xml).find("user").each(function() {
+      const storedEmail = $(this).find("email").text().trim();
+      const storedPassword = $(this).find("password").text().trim();
+      const role = $(this).find("userRole").text().trim();
+      const status = $(this).find("status").text().trim();
+      const id = $(this).attr('id'); 
+
+      if (email === storedEmail &amp;&amp; password === storedPassword) {
+        userFound = true;
+
+        // Check if user is archived
+        if (status === "Archived") {
+          showError("This account is archived. Contact support.", "#login-error-box", "#login-error-msg");
+          return false; // Exit loop but mark userFound=true
+        }
+
+        // Proceed with login if not archived
+        const user = { id, email, role, status };
+        localStorage.setItem("currentUser", JSON.stringify(user));
+        redirectToDashboard(role);
+        return false; // Stop iterating
+      }
+    });
+
+    if (!userFound) {
+      showError("Email or password not found.", "#login-error-box", "#login-error-msg");
+    }
+  },
+  error: function() {
+    showError("Failed to load user data.", "#login-error-box", "#login-error-msg");
+  }
+});
+
+
                                     });
                                     
                                     

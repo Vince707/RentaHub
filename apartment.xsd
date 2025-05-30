@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="apartmentManagement">
+    <xs:complexType>
+      <xs:sequence>
+
+        <xs:element name="renters">
+            <xs:complexType>
+                <xs:sequence>
+                <xs:element name="renter" maxOccurs="unbounded">
+                    <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="userId" type="xs:string"/>
+                        <xs:element name="status" type="xs:string"/>
+                        <xs:element name="personalInfo">
+                        <xs:complexType>
+                            <xs:sequence>
+                            <xs:element name="name">
+                                <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="surname" type="xs:string"/>
+                                    <xs:element name="firstName" type="xs:string"/>
+                                    <xs:element name="middleName" type="xs:string" minOccurs="0"/>
+                                    <xs:element name="extension" type="xs:string" minOccurs="0"/>
+                                </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="contact" type="xs:string"/>
+                            <xs:element name="birthDate" type="xs:date"/>
+                            <xs:element name="validId">
+                                <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="validIdType" type="xs:string"/>
+                                    <xs:element name="validIdNumber" type="xs:string"/>
+                                </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            </xs:sequence>
+                        </xs:complexType>
+                        </xs:element>
+                        <xs:element name="rentalInfo">
+                        <xs:complexType>
+                            <xs:sequence>
+                            <xs:element name="unitId" type="xs:string"/>
+                            <xs:element name="leaseStart" type="xs:date"/>
+                            <xs:element name="leaseEnd" type="xs:date"/>
+                            <xs:element name="contractTermInMonths" type="xs:integer"/>
+                            <xs:element name="leavingReason" type="xs:string" minOccurs="0"/>
+                            </xs:sequence>
+                            <xs:assert test="xs:date(leaseEnd) ge xs:date(leaseStart)"/>
+                            <xs:assert test="contractTermInMonths gt 0"/>
+                        </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                    <xs:attribute name="id" type="xs:integer" use="required"/>
+                    <xs:assert test="matches(userId, '^\d+$')"/>
+                    </xs:complexType>
+                </xs:element>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+    <xs:element name="rooms">
+            <xs:complexType>
+                <xs:sequence>
+                <xs:element name="room" maxOccurs="unbounded">
+                    <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="roomNo" type="xs:string"/>
+                        <xs:element name="floorNo" type="xs:string"/>
+                        <xs:element name="roomType" type="xs:string"/>
+                        <xs:element name="sizeSQM" type="xs:decimal"/>
+                        <xs:element name="rentPrice" type="xs:decimal"/>
+                        <xs:element name="status" type="xs:string"/>
+                        <xs:element name="deleteReason" type="xs:string" minOccurs="0"/>
+                    </xs:sequence>
+                    <xs:attribute name="id" type="xs:integer" use="required"/>
+                    <!-- Assertions -->
+                    <xs:assert test="sizeSQM gt 0"/>
+                    <xs:assert test="rentPrice gt 0"/>
+                    <xs:assert test="status = ('Occupied','Vacant','Unavailable')"/>
+                    <xs:assert test="matches(floorNo, '^[0-9]+$')"/>
+                    </xs:complexType>
+                </xs:element>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="billing">
+        <xs:complexType>
+            <xs:sequence>
+            <xs:element name="utilityBills">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="utility" maxOccurs="unbounded">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="accountInfo">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="accountName" type="xs:string"/>
+                                                <xs:element name="accountNumber" type="xs:string"/>
+                                                <xs:element name="meterNumber" type="xs:string"/>
+                                                <xs:element name="address" type="xs:string"/>
+                                            </xs:sequence>
+                                        </xs:complexType>
+                                    </xs:element>
+                                    <xs:element name="reading" maxOccurs="unbounded">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="readingDate" type="xs:date"/>
+                                                <xs:element name="periodEnd" type="xs:date"/>
+                                                <xs:element name="dueDate" type="xs:date"/>
+                                                <xs:element name="consumedKwhTotal" type="xs:decimal" minOccurs="0"/>
+                                                <xs:element name="consumedCubicMTotal" type="xs:decimal" minOccurs="0"/>
+                                                <xs:element name="amountPerKwh" type="xs:decimal" minOccurs="0"/>
+                                                <xs:element name="amountPerCubicM" type="xs:decimal" minOccurs="0"/>
+                                                <xs:element name="totalBill" type="xs:decimal"/>
+                                                <xs:element name="status" type="xs:string"/>
+                                                <xs:element name="bills">
+                                                    <xs:complexType>
+                                                        <xs:sequence>
+                                                            <xs:element name="bill" maxOccurs="unbounded">
+                                                                <xs:complexType>
+                                                                    <xs:sequence>
+                                                                        <xs:element name="renterId" type="xs:string"/>
+                                                                        <xs:element name="currentReading" type="xs:decimal"/>
+                                                                        <xs:element name="consumedKwh" type="xs:decimal" minOccurs="0"/>
+                                                                        <xs:element name="consumedCubic" type="xs:decimal" minOccurs="0"/>
+                                                                        <xs:element name="amount" type="xs:decimal"/>
+                                                                        <xs:element name="overpaid" type="xs:decimal"/>
+                                                                        <xs:element name="debt" type="xs:decimal"/>
+                                                                        <xs:element name="status" type="xs:string"/>
+                                                                    </xs:sequence>
+                                                                    <xs:attribute name="id" type="xs:string" use="required"/>
+                                                                    <xs:assert test="amount ge 0"/>
+                                                                    <xs:assert test="overpaid ge 0"/>
+                                                                    <xs:assert test="debt ge 0"/>
+                                                                    <xs:assert test="status = ('Paid','Unpaid','Partial','Overdue')"/>
+                                                                </xs:complexType>
+                                                            </xs:element>
+                                                        </xs:sequence>
+                                                    </xs:complexType>
+                                                </xs:element>
+                                            </xs:sequence>
+                                            <xs:attribute name="id" type="xs:integer" use="required"/>
+                                            <xs:assert test="xs:date(periodEnd) ge xs:date(readingDate)"/>
+                                            <xs:assert test="xs:date(dueDate) gt xs:date(periodEnd)"/>
+                                            <xs:assert test="totalBill ge 0"/>
+                                            <xs:assert test="status = ('Paid','Unpaid','Partial','Overdue')"/>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                                <xs:attribute name="type" type="xs:string" use="required"/>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="rentBills">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="bill" maxOccurs="unbounded">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="renterId" type="xs:string"/>
+                                    <xs:element name="amount" type="xs:decimal"/>
+                                    <xs:element name="dueDate" type="xs:date"/>
+                                    <xs:element name="overpaid" type="xs:decimal"/>
+                                    <xs:element name="debt" type="xs:decimal"/>
+                                    <xs:element name="status" type="xs:string"/>
+                                </xs:sequence>
+                                <xs:attribute name="id" type="xs:string" use="required"/>
+                                <xs:assert test="amount ge 0"/>
+                                <xs:assert test="overpaid ge 0"/>
+                                <xs:assert test="debt ge 0"/>
+                                <xs:assert test="status = ('Paid','Unpaid','Partial','Overdue')"/>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+        </xs:element>
+
+        <xs:element name="payments">
+            <xs:complexType>
+            <xs:sequence>
+                <xs:element name="payment" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="renterId" type="xs:string"/>
+                            <xs:element name="paymentType" type="xs:string"/>
+                            <xs:element name="paymentAmountType" type="xs:string"/>
+                            <xs:element name="paymentDate" type="xs:date"/>
+                            <xs:element name="amount" type="xs:decimal"/>
+                            <xs:element name="paymentMethod" type="xs:string"/>
+                            <xs:element name="remarks" type="xs:string" minOccurs="0"/>
+                        </xs:sequence>
+                        <xs:attribute name="id" type="xs:string" use="required"/>
+                        <!-- Assertions -->
+                        <xs:assert test="amount gt 0"/>
+                        <xs:assert test="paymentAmountType = ('Full','Partial','full','partial')"/>
+                        <xs:assert test="paymentMethod = ('Cash','GCash','cash','gcash')"/>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+        </xs:element>
+
+        <xs:element name="tasks">
+          <xs:complexType>
+                <xs:sequence>
+                    <xs:element name="task" maxOccurs="unbounded">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="title" type="xs:string"/>
+                                <xs:element name="type" type="xs:string"/>
+                                <xs:element name="concernedWith" type="xs:string" minOccurs="0"/>
+                                <xs:element name="amountPaid" type="xs:decimal" minOccurs="0"/>
+                                <xs:element name="dueDate" type="xs:date"/>
+                                <xs:element name="status" type="xs:string"/>
+                                <xs:element name="deleteReason" type="xs:string" minOccurs="0"/>
+                            </xs:sequence>
+                            <xs:attribute name="id" type="xs:integer" use="required"/>
+                            <!-- Assertions -->
+                            <xs:assert test="type = ('Utility','Collection','Maintenance','Other')"/>
+                            <xs:assert test="not(exists(concernedWith)) or (type = 'Utility' and concernedWith = ('Electricity','Water')) or (type != 'Utility')"/>
+                            <xs:assert test="status = ('Pending','Completed','Overdue','Cancelled','Deleted')"/>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="inquiries">
+            <xs:complexType>
+            <xs:sequence>
+                <xs:element name="inquiry" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="renterId" type="xs:string"/>
+                            <xs:element name="inquiryContent" type="xs:string"/>
+                            <xs:element name="dateGenerated" type="xs:date"/>
+                            <xs:element name="status" type="xs:string"/>
+                            <xs:element name="response" type="xs:string"/>
+                            <xs:element name="deleteReason" type="xs:string" minOccurs="0"/>
+                        </xs:sequence>
+                        <xs:attribute name="id" type="xs:integer" use="required"/>
+                        <!-- Assertions -->
+                        <xs:assert test="status = ('Completed','Overdue','Pending','Deleted')"/>
+                        <xs:assert test="matches(renterId, '^\d+$')"/>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+        </xs:element>
+
+        <xs:element name="users">
+         <xs:complexType>
+                <xs:sequence>
+                    <xs:element name="user" maxOccurs="unbounded">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="email" type="xs:string"/>
+                                <xs:element name="password" type="xs:string"/>
+                                <xs:element name="dateGenerated" type="xs:date"/>
+                                <xs:element name="userRole" type="xs:string"/>
+                                <xs:element name="status" type="xs:string"/>
+                                <xs:element name="lastLogin" type="xs:date"/>
+                            </xs:sequence>
+                            <xs:attribute name="id" type="xs:integer" use="required"/>
+                            <!-- Assertions -->
+                            <xs:assert test="matches(email, '^[^@]+@[^@]+\.[^@]+$')"/>
+                            <xs:assert test="string-length(password) ge 8"/>
+                            <xs:assert test="userRole = ('renter','caretaker','admin')"/>
+                            <xs:assert test="status = ('Active','Inactive','Archived','Pending')"/>
+                            <xs:assert test="xs:date(lastLogin) le current-date()"/>
+                            <xs:assert test="xs:date(dateGenerated) le xs:date(lastLogin)"/>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="caretakers">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element name="caretaker" maxOccurs="unbounded">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="userId" type="xs:string"/>
+                                <xs:element name="personalInfo">
+                                    <xs:complexType>
+                                        <xs:sequence>
+                                            <xs:element name="name">
+                                                <xs:complexType>
+                                                    <xs:sequence>
+                                                        <xs:element name="surname" type="xs:string"/>
+                                                        <xs:element name="firstName" type="xs:string"/>
+                                                        <xs:element name="middleName" type="xs:string" minOccurs="0"/>
+                                                        <xs:element name="extension" type="xs:string" minOccurs="0"/>
+                                                    </xs:sequence>
+                                                </xs:complexType>
+                                            </xs:element>
+                                        </xs:sequence>
+                                    </xs:complexType>
+                                </xs:element>
+                            </xs:sequence>
+                            <xs:attribute name="id" type="xs:integer" use="required"/>
+                            <!-- Assertions -->
+                            <xs:assert test="matches(userId, '^\d+$')"/>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+
+
+
+
+
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

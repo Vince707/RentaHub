@@ -1071,21 +1071,48 @@
                                             }
                                             };
                                             
-                                            document.getElementById('languageSelect').addEventListener('change', function () {
-                                            const lang = this.value;
-                                            
-                                            for (const id in translations) {
-                                            const entry = translations[id];
-                                            
-                                            // Update question
-                                            const headerButton = document.querySelector(`#${id}`).closest('.accordion-item').querySelector('.accordion-button span');
-                                            if (headerButton) headerButton.textContent = entry.question[lang];
-                                            
-                                            // Update answer
-                                            const answerBody = document.querySelector(`#${id} .accordion-body`);
-                                            if (answerBody) answerBody.textContent = entry.answer[lang];
-                                            }
-                                            });
+                                             document.getElementById('languageSelect').addEventListener('change', function () {
+    const lang = this.value;
+
+    for (const id in translations) {
+      const entry = translations[id];
+
+      // Update question
+      const headerEl = document.querySelector(`#${id}`);
+      if (headerEl) {
+        const span = headerEl.closest('.accordion-item').querySelector('.accordion-button span');
+        if (span) span.textContent = entry.question[lang];
+      }
+
+      // Update only the text content of .accordion-body
+      const bodyEl = document.querySelector(`#${id} .accordion-body`);
+      if (bodyEl) {
+        const clone = bodyEl.cloneNode(true); // clone original HTML
+        const walker = document.createTreeWalker(clone, NodeFilter.SHOW_TEXT, null, false);
+        let node;
+        let found = false;
+
+        while ((node = walker.nextNode())) {
+          const trimmed = node.nodeValue.trim();
+          if (trimmed &amp;&amp; entry.answer.en.includes(trimmed)) {
+            node.nodeValue = entry.answer[lang];
+            found = true;
+            break;
+          }
+        }
+
+        // fallback: if no exact match, replace whole textContent (preserves HTML)
+        if (!found) {
+          bodyEl.innerHTML = bodyEl.innerHTML.replace(
+            entry.answer.en,
+            entry.answer[lang]
+          );
+        } else {
+          bodyEl.innerHTML = clone.innerHTML;
+        }
+      }
+    }
+  });
                                         </script>
                                         
                                     </body>

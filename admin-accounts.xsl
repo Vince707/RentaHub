@@ -257,7 +257,7 @@
                                                 </a>
                                             </li>
                                             <li class="nav-item">
-                                                <a class="nav-link sidebar-nav mt-1" href="admin.xml" id="logout-nav">
+                                                <a class="nav-link sidebar-nav mt-1" href="logout.xml" id="logout-nav">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="me-1" height="24px" viewBox="0 -960 960 960" width="24px"
                                                          fill="#FFFFFF">
                                                         <path

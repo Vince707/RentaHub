@@ -179,7 +179,7 @@
                                 <!-- MAIN CONTENT -->
                                 <div class="main-container h-100 p-4" id="main-container">
                                     <div class="d-flex flex-sm-row flex-column justify-content-between align-items-start">
-                                        <p class="h2 font-red-gradient">Hello, David! </p>
+                                        <p class="h2 font-red-gradient">Hello, <span id="usernameOnRenterDashboard" class="h2 font-red-gradient"></span>! </p>
                                         <div class="d-flex flex-row align-items-center">
                                         </div>
                                     </div>
@@ -237,60 +237,106 @@
                                     </div>
                                     
                                     <!-- GRAPH -->
-                                    <div class="container-fluid d-flex">
-                                        <p class="h2 font-red-gradient mx-auto mt-5">
-                                            Total Payments Collected (PHP)
-                                        </p>
-                                    </div>
-                                    <canvas id="totalPaymentsChart" class="container-fluid"></canvas>
-                                    <script>
-                                        const xValues = [
-                                        "January",
-                                        "February",
-                                        "March",
-                                        "April",
-                                        "May",
-                                        "June",
-                                        "July",
-                                        "August",
-                                        "September",
-                                        "October",
-                                        "November",
-                                        "December",
-                                        ];
-                                        const yValues = [
-                                        55000, 49000, 44000, 24000, 25000, 21000, 28000, 32000, 21000,
-                                        16000, 21000, 16000,
-                                        ];
-                                        const barColors = "rgb(143,21,21,1.0)";
-                                        
-                                        new Chart("totalPaymentsChart", {
-                                        type: "bar",
-                                        data: {
-                                        labels: xValues,
-                                        datasets: [
-                                        {
-                                        label: "Monthly Total Payments", // ← Legend label
-                                        backgroundColor: barColors,
-                                        data: yValues,
-                                        },
-                                        ],
-                                        },
-                                        options: {
-                                        scales: {
-                                        y: {
-                                        beginAtZero: true,
-                                        },
-                                        },
-                                        plugins: {
-                                        legend: {
-                                        display: true,
-                                        position: "bottom", // ← Legend at bottom
-                                        },
-                                        },
-                                        },
-                                        });
-                                    </script>
+                            <div class="container-fluid d-flex">
+                                <p class="h2 font-red-gradient mx-auto mt-5">
+                                    Total Payments Collected (PHP)
+                                </p>
+                            </div>
+                            <canvas id="totalPaymentsChart" class="container-fluid"></canvas>
+                            <script>
+                                $(document).ready(function () {
+                                // Helper: Aggregate payments by month (0=Jan, 11=Dec)
+                                function aggregateMonthlyPayments(payments) {
+                                const monthlyTotals = new Array(12).fill(0);
+                                for (const id in payments) {
+                                if (payments.hasOwnProperty(id)) {
+                                const payment = payments[id];
+                                if (!payment.paymentDate || !payment.amount) continue;
+                                
+                                const date = new Date(payment.paymentDate);
+                                if (isNaN(date)) continue;
+                                
+                                const monthIndex = date.getMonth();
+                                const amount = parseFloat(payment.amount.replace(/[^0-9.-]+/g, '')) || 0;
+                                
+                                monthlyTotals[monthIndex] += amount;
+                                }
+                                }
+                                return monthlyTotals;
+                                }
+                                
+                                const paymentsMap = {};
+                                
+                                $.ajax({
+                                url: 'apartment.xml', // Replace with your actual XML URL
+                                dataType: 'xml',
+                                success: function (xml) {
+                                $(xml).find('payments > payment').each(function () {
+                                const id = $(this).attr('id');
+                                paymentsMap[id] = {
+                                renterId: $(this).find('renterId').text().trim(),
+                                paymentType: $(this).find('paymentType').text().trim(),
+                                paymentAmountType: $(this).find('paymentAmountType').text().trim(),
+                                paymentDate: $(this).find('paymentDate').text().trim(),
+                                amount: $(this).find('amount').text().trim(),
+                                paymentMethod: $(this).find('paymentMethod').text().trim(),
+                                remarks: $(this).find('remarks').text().trim()
+                                };
+                                });
+                                
+                                const monthlyTotals = aggregateMonthlyPayments(paymentsMap);
+                                
+                                const monthLabels = [
+                                "January", "February", "March", "April", "May", "June",
+                                "July", "August", "September", "October", "November", "December"
+                                ];
+                                
+                                const ctx = document.getElementById('totalPaymentsChart').getContext('2d');
+                                new Chart(ctx, {
+                                type: 'bar',
+                                data: {
+                                labels: monthLabels,
+                                datasets: [{
+                                label: 'Monthly Total Payments',
+                                data: monthlyTotals,
+                                backgroundColor: 'rgba(143,21,21,1.0)',
+                                }]
+                                },
+                                options: {
+                                scales: {
+                                y: {
+                                beginAtZero: true,
+                                ticks: {
+                                callback: function (value) {
+                                return 'PHP ' + value.toLocaleString('en-PH', { minimumFractionDigits: 2 });
+                                }
+                                }
+                                }
+                                },
+                                plugins: {
+                                legend: {
+                                display: true,
+                                position: 'bottom'
+                                },
+                                tooltip: {
+                                callbacks: {
+                                label: function (context) {
+                                const val = context.parsed.y;
+                                return 'PHP ' + val.toLocaleString('en-PH', { minimumFractionDigits: 2 });
+                                }
+                                }
+                                }
+                                }
+                                }
+                                });
+                                },
+                                error: function () {
+                                console.error('Failed to load payments XML');
+                                alert('Error loading payment data.');
+                                }
+                                });
+                                });
+                            </script>
                                     
                                     <!-- Latest Payments -->
                                     <div class="d-flex justify-content-center">

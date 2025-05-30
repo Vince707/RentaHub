@@ -211,15 +211,9 @@ if (!empty($overdueBillIds)) {
             }
             $result = &findUtilityBill($utility, $billId);
             if ($result && isset($result['bill'])) {
-                echo "<p>Successfully found bill ID: <strong>$billId</strong> in utility: <strong>$utilityType</strong></p>";
-                echo "<p>Retrieved bill XML:<br><pre>" . htmlspecialchars($result['bill']->asXML()) . "</pre></p>";
-                echo "<p>Updating bill...</p>";
                 $paid = updateBill($result['bill'], $amountPaid);
-                echo "<p>Amount paid for this bill: <strong>$paid</strong></p>";
                 $totalPaid += $paid;
                 $paidBills[] = $billId;
-                echo "<p>Paid bills so far: <pre>" . print_r($paidBills, true) . "</pre></p>";
-                echo "<p>Updating reading status...</p>";
                 updateReadingStatus($result['reading']);
                 break;
             } else {
@@ -231,16 +225,10 @@ if (!empty($overdueBillIds)) {
     echo "<p>Processing SINGLE rent bill payment for bill ID: <strong>$billId</strong></p>";
     $bill = &findRentBill($xml, $billId);
     if ($bill) {
-        echo "<p>Found rent bill ID: <strong>$billId</strong></p>";
-        echo "<p>Retrieved bill XML:<br><pre>" . htmlspecialchars($bill->asXML()) . "</pre></p>";
-        echo "<p>Updating bill...</p>";
         $paid = updateBill($bill, $amountPaid);
-        echo "<p>Amount paid for this bill: <strong>$paid</strong></p>";
         $totalPaid += $paid;
         $paidBills[] = $billId;
-        echo "<p>Paid bills so far: <pre>" . print_r($paidBills, true) . "</pre></p>";
     } else {
-        echo "<p>Rent bill ID: <strong>$billId</strong> not found.</p>";
     }
 }
 
@@ -262,22 +250,8 @@ $payment->addChild('paymentMethod', htmlspecialchars($paymentMethod));
 $payment->addChild('remarks', htmlspecialchars($paymentRemarks));
 $payment->addChild('billIds', implode(',', $paidBills));
 
-echo "<h3>Payment Recorded</h3>";
-echo "<pre>";
-echo "Renter ID: " . $renterId . "\n";
-echo "Payment Type: " . $billType . "\n";
-echo "Payment Amount Type: " . htmlspecialchars($paymentAmountType) . "\n";
-echo "Payment Date: " . $paymentDate . "\n";
-echo "Amount: " . $amountPaid . "\n";
-echo "Payment Method: " . htmlspecialchars($paymentMethod) . "\n";
-echo "Remarks: " . htmlspecialchars($paymentRemarks) . "\n";
-echo "Bill IDs: " . implode(',', $paidBills) . "\n";
-echo "Receipt Number: " . htmlspecialchars($receiptNumber) . "\n";
-echo "</pre>";
-
 // === Save changes ===
 $xml->asXML($xmlFile);
-echo "XML file saved.<br>";
 
 // Redirect or notify success
 header("Location: ../caretaker-billings.xml?pay=recorded");

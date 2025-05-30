@@ -646,7 +646,7 @@
                 <leavingReason/>
             </rentalInfo>
         </renter>
-    </renters>
+    <renter id="26"><userId>26</userId><status>Archived</status><personalInfo><name><surname>Lopez</surname><firstName>Novie Lei</firstName><middleName>L</middleName><extension/></name><contact>09090925793</contact><birthDate>2019-05-06</birthDate><validId><validIdType>student-id</validIdType><validIdNumber>22-00987</validIdNumber></validId></personalInfo><rentalInfo><unitId>1A</unitId><leaseStart>2025-05-28</leaseStart><leaseEnd>2025-05-30</leaseEnd><contractTermInMonths>22</contractTermInMonths><leavingReason>others</leavingReason></rentalInfo></renter></renters>
 
 
     <rooms>
@@ -2327,7 +2327,7 @@
                     <consumedCubicMTotal>15</consumedCubicMTotal>
                     <amountPerCubicM>50</amountPerCubicM>
                     <totalBill>750</totalBill>
-                    <status>Paid</status>
+                    <status>Unpaid</status>
                     <bills>
                         <bill id="W1">
                             <renterId>1</renterId>
@@ -3738,7 +3738,7 @@
             <paymentAmountType>Partial</paymentAmountType>
             <paymentDate>2025-05-05</paymentDate>
             <amount>1000</amount>
-            <paymentMethod>Bank Transfer</paymentMethod>
+            <paymentMethod>Cash</paymentMethod>
             <remarks>Partial payment</remarks>
         </payment>
         <payment id="R25000004">
@@ -3768,7 +3768,6 @@
             <amount>4300</amount>
             <paymentMethod>cash</paymentMethod>
             <remarks/>
-            <billIds>E3,W3,R3</billIds>
         </payment>
             
         <payment id="R25000007">
@@ -3779,7 +3778,6 @@
             <amount>1800</amount>
             <paymentMethod>cash</paymentMethod>
             <remarks/>
-            <billIds>E2,W5</billIds>
         </payment>
             
         <payment id="R25000007">
@@ -3790,7 +3788,6 @@
             <amount>1800</amount>
             <paymentMethod>cash</paymentMethod>
             <remarks/>
-            <billIds>E2,W5</billIds>
         </payment>
             
         <payment id="R25000008">
@@ -3801,7 +3798,6 @@
             <amount>2475</amount>
             <paymentMethod>cash</paymentMethod>
             <remarks/>
-            <billIds>E0,E1,W1,R1</billIds>
         </payment>
             
         <payment id="R25000009">
@@ -3812,7 +3808,6 @@
             <amount>4800</amount>
             <paymentMethod>cash</paymentMethod>
             <remarks/>
-            <billIds>E5,R5</billIds>
         </payment>
 
         <payment id="R25000010">
@@ -3831,9 +3826,8 @@
             <paymentAmountType>Full</paymentAmountType>
             <paymentDate>2025-06-10</paymentDate>
             <amount>5100</amount>
-            <paymentMethod>Bank Transfer</paymentMethod>
+            <paymentMethod>Cash</paymentMethod>
             <remarks>June rent and electric bill</remarks>
-            <billIds>E7,R7</billIds>
         </payment>
 
         <payment id="R25000012">
@@ -3872,7 +3866,7 @@
             <paymentAmountType>Full</paymentAmountType>
             <paymentDate>2025-07-01</paymentDate>
             <amount>1400</amount>
-            <paymentMethod>Bank Transfer</paymentMethod>
+            <paymentMethod>Cash</paymentMethod>
             <remarks>Monthly utilities</remarks>
         </payment>
 
@@ -3904,7 +3898,6 @@
             <amount>5100</amount>
             <paymentMethod>Cash</paymentMethod>
             <remarks>Electricity and rent</remarks>
-            <billIds>E14,R14</billIds>
         </payment>
 
         <payment id="R25000019">
@@ -3913,7 +3906,7 @@
             <paymentAmountType>Full</paymentAmountType>
             <paymentDate>2025-07-20</paymentDate>
             <amount>500</amount>
-            <paymentMethod>Bank Transfer</paymentMethod>
+            <paymentMethod>Cash</paymentMethod>
             <remarks>July water bill</remarks>
         </payment>
 
@@ -3935,7 +3928,6 @@
             <amount>5600</amount>
             <paymentMethod>GCash</paymentMethod>
             <remarks>All July bills</remarks>
-            <billIds>E17,W17,R17</billIds>
         </payment>
 
         <payment id="R25000022">
@@ -3954,7 +3946,7 @@
             <paymentAmountType>Partial</paymentAmountType>
             <paymentDate>2025-08-05</paymentDate>
             <amount>4050</amount>
-            <paymentMethod>Bank Transfer</paymentMethod>
+            <paymentMethod>Cash</paymentMethod>
             <remarks>August partial rent</remarks>
         </payment>
 
@@ -3966,7 +3958,6 @@
             <amount>4700</amount>
             <paymentMethod>Cash</paymentMethod>
             <remarks>Combined August payment</remarks>
-            <billIds>R20,W20</billIds>
         </payment>
 
         <payment id="R25000025">
@@ -3995,7 +3986,7 @@
             <title>Remind Juan Dela Cruz to pay rent</title>
             <type>Collection</type>
             <dueDate>2025-04-10</dueDate>
-            <status>Overdue</status>
+            <status>Completed</status>
         </task>
         <task id="303">
             <title>Water Meter Reading</title>
@@ -4032,12 +4023,12 @@
             <type>Collection</type>
             <concernedWith>5</concernedWith>
             <dueDate>2025-07-01</dueDate>
-            <status>Pending</status>
+            <status>Completed</status>
             <deleteReason/>
         </task>
         <task id="308">
             <title>Submit Water Utility Report</title>
-            <type>Report</type>
+            <type>Other</type>
             <concernedWith>Water</concernedWith>
             <amountPaid>0</amountPaid>
             <dueDate>2025-06-30</dueDate>
@@ -4046,7 +4037,7 @@
         </task>
         <task id="309">
             <title>Check Renter #2 Payment History</title>
-            <type>Audit</type>
+            <type>Other</type>
             <concernedWith>2</concernedWith>
             <dueDate>2025-05-20</dueDate>
             <status>Pending</status>
@@ -4062,14 +4053,14 @@
         </task>
         <task id="311">
             <title>Archive Old Task Logs</title>
-            <type>System</type>
+            <type>Other</type>
             <dueDate>2025-04-01</dueDate>
             <status>Deleted</status>
             <deleteReason>Logs no longer needed after audit</deleteReason>
         </task>
         <task id="312">
             <title>Request Refund for Overpayment (Renter #1)</title>
-            <type>Finance</type>
+            <type>Other</type>
             <concernedWith>1</concernedWith>
             <dueDate>2025-06-15</dueDate>
             <status>Deleted</status>
@@ -4086,7 +4077,7 @@
         </task>
         <task id="314">
             <title>Utility Reconciliation - Electricity and Water</title>
-            <type>Report</type>
+            <type>Other</type>
             <concernedWith>Electricity</concernedWith>
             <dueDate>2025-06-20</dueDate>
             <status>Completed</status>
@@ -4094,7 +4085,7 @@
         </task>
         <task id="315">
             <title>Update Tenant Contact Info</title>
-            <type>Admin</type>
+            <type>Other</type>
             <concernedWith>10</concernedWith>
             <dueDate>2025-07-05</dueDate>
             <status>Deleted</status>
@@ -4111,16 +4102,16 @@
         </task>
         <task id="317">
             <title>Verify Water Bill Discrepancy</title>
-            <type>Audit</type>
+            <type>Utility</type>
             <concernedWith>Water</concernedWith>
             <amountPaid>0</amountPaid>
-            <dueDate>2025-06-12</dueDate>
+            <dueDate>2025-01-15</dueDate>
             <status>Pending</status>
             <deleteReason/>
-        </task>
+        <dateModified>2025-05-30</dateModified></task>
         <task id="318">
             <title>Confirm Payment from Renter #6</title>
-            <type>Audit</type>
+            <type>Other</type>
             <concernedWith>6</concernedWith>
             <dueDate>2025-06-25</dueDate>
             <status>Pending</status>
@@ -4128,27 +4119,27 @@
         </task>
         <task id="319">
             <title>Prepare Receipts for July Rent</title>
-            <type>Finance</type>
+            <type>Other</type>
             <dueDate>2025-07-01</dueDate>
             <status>Completed</status>
             <deleteReason/>
         </task>
         <task id="320">
             <title>Contact Renter #7 for Payment Clarification</title>
-            <type>Communication</type>
+            <type>Other</type>
             <concernedWith>7</concernedWith>
             <dueDate>2025-07-03</dueDate>
             <status>Pending</status>
             <deleteReason/>
         </task>
-    </tasks>
+    <task id="321"><title>Pay Water Bill</title><type>Utility</type><dueDate>2025-06-25</dueDate><concernedWith>11</concernedWith><createdBy/><dateCreated>2025-05-30</dateCreated><status>Completed</status></task><task id="322"><title>NEW TASK 2</title><type>Collection</type><dueDate>2026-09-22</dueDate><concernedWith>19</concernedWith><createdBy/><dateCreated>2025-05-30</dateCreated><status>Deleted</status><dateModified>2025-05-30</dateModified><deleteReason/><dateDeleted>2025-05-30</dateDeleted></task><task id="323"><title>Pay Electricity Bill</title><type>Utility</type><dueDate>2025-06-25</dueDate><concernedWith>13</concernedWith><createdBy/><dateCreated>2025-05-30</dateCreated><status>Completed</status><dateModified>2025-05-30</dateModified></task><task id="324"><title>Pay Electricity Bill</title><type>Utility</type><dueDate>2025-06-30</dueDate><concernedWith>19</concernedWith><createdBy/><dateCreated>2025-05-30</dateCreated><status>Deleted</status><dateModified>2025-05-30</dateModified><deleteReason/><dateDeleted>2025-05-30</dateDeleted></task></tasks>
 
     <inquiries>
         <inquiry id="401">
             <renterId>1</renterId>
             <inquiryContent>Can I have a copy of my contract?</inquiryContent>
             <dateGenerated>2025-04-01</dateGenerated>
-            <status>Open</status>
+            <status>Pending</status>
             <response>Sent via email</response>
             <deleteReason/>
         </inquiry>
@@ -4156,7 +4147,7 @@
             <renterId>2</renterId>
             <inquiryContent>How to pay via GCash?</inquiryContent>
             <dateGenerated>2025-04-02</dateGenerated>
-            <status>Closed</status>
+            <status>Completed</status>
             <response>Instructions sent</response>
             <deleteReason/>
         </inquiry>
@@ -4164,7 +4155,7 @@
             <renterId>3</renterId>
             <inquiryContent>Request for maintenance</inquiryContent>
             <dateGenerated>2025-04-03</dateGenerated>
-            <status>Open</status>
+            <status>Pending</status>
             <response>Scheduled</response>
             <deleteReason/>
         </inquiry>
@@ -4180,7 +4171,7 @@
             <renterId>5</renterId>
             <inquiryContent>Request for room transfer</inquiryContent>
             <dateGenerated>2025-04-05</dateGenerated>
-            <status>Open</status>
+            <status>Pending</status>
             <response/>
             <deleteReason/>
         </inquiry>
@@ -4196,7 +4187,7 @@
             <renterId>2</renterId>
             <inquiryContent>How much is my total bill for May?</inquiryContent>
             <dateGenerated>2025-04-07</dateGenerated>
-            <status>Closed</status>
+            <status>Completed</status>
             <response>Breakdown sent</response>
             <deleteReason/>
         </inquiry>
@@ -4212,7 +4203,7 @@
             <renterId>4</renterId>
             <inquiryContent>I accidentally sent payment twice</inquiryContent>
             <dateGenerated>2025-04-09</dateGenerated>
-            <status>Closed</status>
+            <status>Completed</status>
             <response>Refund processed</response>
             <deleteReason/>
         </inquiry>
@@ -4253,7 +4244,7 @@
         </user>
         <user id="3">
             <email>rontaniegra707@gmail.com</email>
-            <password>NewPass#23456</password>
+            <password>Bluemazing707@</password>
             <dateGenerated>2025-05-15</dateGenerated>
             <userRole>renter</userRole>
             <status>Active</status>
@@ -4436,7 +4427,7 @@
             <lastLogin>2025-05-15</lastLogin>
         </user>
 
-    </users>
+    <user id="26"><email>lopez_novielei@plpasig.edu.ph</email><password>LopezLei123@</password><dateGenerated>2025-05-29</dateGenerated><userRole>Renter</userRole><status>Archived</status><lastLogin>2025-05-29</lastLogin></user></users>
 
     <caretakers>
         <caretaker id="501">
@@ -4496,7 +4487,7 @@
         </caretaker>
     </caretakers>
 
-    <auditTrail>
+    <!-- <auditTrail>
         <action id="601">
             <userId>1</userId>
             <ipAddress>192.168.1.10</ipAddress>
@@ -4532,5 +4523,5 @@
             <actionPerformed>Created User</actionPerformed>
             <timestamp>2025-04-18T16:20:00</timestamp>
         </action>
-    </auditTrail>
+    </auditTrail> -->
 </apartmentManagement>

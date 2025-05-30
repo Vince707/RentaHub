@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    
+    <!-- Root element declaration -->
+    <xs:element name="apartmentManagement">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="renters"/>
+                <xs:element ref="rooms"/>
+                <xs:element ref="billing"/>
+                <xs:element ref="payments"/>
+                <xs:element ref="tasks"/>
+                <xs:element ref="inquiries"/>
+                <xs:element ref="users"/>
+                <xs:element ref="caretakers"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Renters structure -->
+    <xs:element name="renters">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="renter" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="renter">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="userId"/>
+                <xs:element ref="status"/>
+                <xs:element ref="personalInfo"/>
+                <xs:element ref="rentalInfo"/>
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:integer" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Element definitions for renter details -->
+    <xs:element name="userId" type="xs:integer"/>
+    <xs:element name="status" type="xs:string"/>
+
+    <!-- PersonalInfo structure -->
+    <xs:element name="personalInfo">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="name"/>
+                <xs:element ref="contact"/>
+                <xs:element ref="birthDate"/>
+                <xs:element ref="validId"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Name structure -->
+    <xs:element name="name">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="surname"/>
+                <xs:element ref="firstName"/>
+                <xs:element ref="middleName"/>
+                <xs:element ref="extension"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Name component elements -->
+    <xs:element name="surname" type="xs:string"/>
+    <xs:element name="firstName" type="xs:string"/>
+    <xs:element name="middleName" type="xs:string"/>
+    <xs:element name="extension" type="xs:string"/>
+
+    <!-- Contact and birthDate -->
+    <xs:element name="contact" type="xs:string"/>
+    <xs:element name="birthDate" type="xs:date"/>
+
+    <!-- ValidId structure -->
+    <xs:element name="validId">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="validIdType"/>
+                <xs:element ref="validIdNumber"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="validIdType" type="xs:string"/>
+    <xs:element name="validIdNumber" type="xs:string"/>
+
+    <!-- RentalInfo structure -->
+    <xs:element name="rentalInfo">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="unitId"/>
+                <xs:element ref="leaseStart"/>
+                <xs:element ref="leaseEnd"/>
+                <xs:element ref="contractTermInMonths"/>
+                <xs:element ref="leavingReason" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="unitId" type="xs:string"/>
+    <xs:element name="leaseStart" type="xs:date"/>
+    <xs:element name="leaseEnd" type="xs:date"/>
+    <xs:element name="contractTermInMonths" type="xs:integer"/>
+    <xs:element name="leavingReason" type="xs:string"/>
+
+
+    <!-- Rooms structure -->
+    <xs:element name="rooms">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="room" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="room">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="roomNo" type="xs:string"/>
+                <xs:element name="floorNo" type="xs:integer"/>
+                <xs:element name="roomType" type="xs:string"/>
+                <xs:element name="sizeSQM" type="xs:integer"/>
+                <xs:element name="rentPrice" type="xs:decimal"/>
+                <xs:element name="status" type="xs:string"/>
+                <xs:element name="deleteReason" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:integer" use="required"/>
+        </xs:complexType>
+    </xs:element>  
+
+    <!-- Billing structure -->
+    <xs:element name="billing">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="utilityBills"/>
+                <xs:element ref="rentBills"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="utilityBills">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="utility" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="utility">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="accountInfo"/>
+                <xs:element ref="reading" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="type" type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="accountInfo">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="accountName"/>
+                <xs:element ref="accountNumber"/>
+                <xs:element ref="meterNumber"/>
+                <xs:element ref="address"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="accountName" type="xs:string"/>
+    <xs:element name="accountNumber" type="xs:string"/>
+    <xs:element name="meterNumber" type="xs:string"/>
+    <xs:element name="address" type="xs:string"/>
+
+    <xs:element name="reading">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="readingDate"/>
+                <xs:element ref="periodEnd"/>
+                <xs:element ref="dueDate"/>
+                <xs:element ref="consumedKwhTotal" minOccurs="0"/>
+                <xs:element ref="consumedCubicMTotal" minOccurs="0"/>
+                <xs:element ref="amountPerKwh" minOccurs="0"/>
+                <xs:element ref="amountPerCubicM" minOccurs="0"/>
+                <xs:element ref="totalBill"/>
+                <xs:element ref="status"/>
+                <xs:element ref="bills"/>
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:integer"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="readingDate" type="xs:date"/>
+    <xs:element name="periodEnd" type="xs:date"/>
+    <xs:element name="dueDate" type="xs:date"/>
+    <xs:element name="consumedKwhTotal" type="xs:integer"/>
+    <xs:element name="consumedCubicMTotal" type="xs:integer"/>
+    <xs:element name="amountPerKwh" type="xs:decimal"/>
+    <xs:element name="amountPerCubicM" type="xs:decimal"/>
+    <xs:element name="totalBill" type="xs:decimal"/>
+    <xs:element name="status" type="xs:string"/>
+
+    <xs:element name="bills">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="bill" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="bill">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="renterId"/>
+                <xs:element ref="currentReading" minOccurs="0"/>
+                <xs:element ref="consumedKwh" minOccurs="0"/>
+                <xs:element ref="consumedCubic" minOccurs="0"/>
+                <xs:element ref="amount"/>
+                <xs:element ref="overpaid"/>
+                <xs:element ref="debt"/>
+                <xs:element ref="status"/>
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="renterId" type="xs:integer"/>
+    <xs:element name="currentReading" type="xs:integer"/>
+    <xs:element name="consumedKwh" type="xs:integer"/>
+    <xs:element name="consumedCubic" type="xs:integer"/>
+    <xs:element name="amount" type="xs:decimal"/>
+    <xs:element name="overpaid" type="xs:decimal"/>
+    <xs:element name="debt" type="xs:decimal"/>
+
+    <xs:element name="rentBills">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="bill" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
+    <!-- Payments structure -->
+    <xs:element name="payments">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="payment" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="payment">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="renterId"/>
+                <xs:element ref="paymentType"/>
+                <xs:element ref="paymentAmountType"/>
+                <xs:element ref="paymentDate"/>
+                <xs:element ref="amount"/>
+                <xs:element ref="paymentMethod"/>
+                <xs:element ref="remarks"/>
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Element definitions for payment details -->
+    <xs:element name="renterId" type="xs:integer"/>
+    <xs:element name="paymentType" type="xs:string"/>
+    <xs:element name="paymentAmountType" type="xs:string"/>
+    <xs:element name="paymentDate" type="xs:date"/>
+    <xs:element name="amount" type="xs:decimal"/>
+    <xs:element name="paymentMethod" type="xs:string"/>
+    <xs:element name="remarks" type="xs:string"/>
+
+    <!-- Tasks structure -->
+    <xs:element name="tasks">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="task" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="task">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="title"/>
+                <xs:element ref="type"/>
+                <xs:element ref="concernedWith" minOccurs="0"/>
+                <xs:element ref="amountPaid" minOccurs="0"/>
+                <xs:element ref="dueDate"/>
+                <xs:element ref="status"/>
+                <xs:element ref="deleteReason" minOccurs="0"/>
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Element definitions for task details -->
+    <xs:element name="title" type="xs:string"/>
+    <xs:element name="type" type="xs:string"/>
+    <xs:element name="concernedWith" type="xs:string"/>
+    <xs:element name="amountPaid" type="xs:decimal"/>
+    <xs:element name="dueDate" type="xs:date"/>
+    <xs:element name="status" type="xs:string"/>
+    <xs:element name="deleteReason" type="xs:string"/>
+
+    <!-- Inquiries structure -->
+    <xs:element name="inquiries">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="inquiry" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="inquiry">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="renterId"/>
+                <xs:element ref="inquiryContent"/>
+                <xs:element ref="dateGenerated"/>
+                <xs:element ref="status"/>
+                <xs:element ref="response"/>
+                <xs:element ref="deleteReason" minOccurs="0"/>
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Element definitions for inquiry details -->
+    <xs:element name="renterId" type="xs:integer"/>
+    <xs:element name="inquiryContent" type="xs:string"/>
+    <xs:element name="dateGenerated" type="xs:date"/>
+    <xs:element name="status" type="xs:string"/>
+    <xs:element name="response" type="xs:string"/>
+    <xs:element name="deleteReason" type="xs:string"/>
+
+    <!-- Users structure -->
+    <xs:element name="users">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="user" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="user">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="email"/>
+                <xs:element ref="password"/>
+                <xs:element ref="dateGenerated"/>
+                <xs:element ref="userRole"/>
+                <xs:element ref="status"/>
+                <xs:element ref="lastLogin"/>
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:integer" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Element definitions for user details -->
+    <xs:element name="email" type="xs:string"/>
+    <xs:element name="password" type="xs:string"/>
+    <xs:element name="dateGenerated" type="xs:date"/>
+    <xs:element name="userRole" type="xs:string"/>
+    <xs:element name="status" type="xs:string"/>
+    <xs:element name="lastLogin" type="xs:date"/>
+
+    <!-- Caretakers structure -->
+    <xs:element name="caretakers">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="caretaker" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="caretaker">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="userId"/>
+                <xs:element ref="personalInfo"/>
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:integer" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Element definitions for caretaker details -->
+    <xs:element name="userId" type="xs:integer"/>
+
+    <!-- PersonalInfo structure -->
+    <xs:element name="personalInfo">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="name"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Name structure -->
+    <xs:element name="name">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="surname"/>
+                <xs:element ref="firstName"/>
+                <xs:element ref="middleName"/>
+                <xs:element ref="extension"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Name component elements -->
+    <xs:element name="surname" type="xs:string"/>
+    <xs:element name="firstName" type="xs:string"/>
+    <xs:element name="middleName" type="xs:string"/>
+    <xs:element name="extension" type="xs:string"/>
+
+</xs:schema>

@@ -1578,6 +1578,16 @@ function displaySuccessModal() {
     $('#modalCompleteTaskSuccess').modal('show');
   }
 
+  // Handle task actions
+  const taskAction = urlParams.get('task');
+  if (taskAction === 'added') {
+    $('#modalAddTaskSuccess').modal('show');
+  } else if (taskAction === 'modified') {
+    $('#modalModifyTaskSuccess').modal('show');
+  } else if (taskAction === 'deleted') {
+    $('#modalDeleteTaskSuccess').modal('show');  // <-- New block for deleted task
+  }
+
 
 
   // Clean URL (remove all search parameters)
@@ -1600,6 +1610,11 @@ $(document).ready(function () {
 
   const currentYear = new Date().getFullYear();
   $(".current-year").text(currentYear);
+
+  const userData = JSON.parse(localStorage.getItem('currentUser'));
+  if (userData && userData.email) {
+    $('#usernameOnRenterDashboard').text(userData.email);
+  }
 
   setInterval(updateTime, 1000);
 
@@ -1824,6 +1839,152 @@ $(document).ready(function () {
 
 
 
+  
+$('#button-add-task').on("click", function () {
+  
+    // Collect input values
+    const template = $("#add-task-common-tasks-templates").val();
+    const title = $("#add-task-title").val().trim();
+    const type = $("#add-task-type").val();
+    // Note: The due date input in your HTML has id="add-renter-lease-start" (likely a copy-paste error)
+    // For tasks, it should be: id="add-task-due-date"
+    const dueDate = $("#add-task-due-date").val();
+    const concernedWith = $("#add-task-concerned-with").val();
+
+    // Generate a Task ID (you can use a better method as needed)
+    // const taskId = 'TASK-' + Date.now();
+
+    // Validation
+    if (!title || !type || !dueDate || !concernedWith) {
+        return showError("All required fields must be filled.", "#error-box-add-task", "#error-text-add-task");
+    }
+
+    if (title.length > 100) {
+        return showError("Title exceeds length limit.", "#error-box-add-task", "#error-text-add-task");
+    }
+
+    // Add more validation as needed (e.g., date in the future, valid type, etc.)
+
+    // Fill confirmation modal
+    // $("#confirm-add-task-task-id").text(taskId);
+    $("#confirm-add-task-title").text(title);
+    $("#confirm-add-task-type").text(type);
+    $("#confirm-add-task-due-date").text(dueDate);
+    $("#confirm-add-task-concerned-with").text(concernedWith);
+
+    // Optionally, store hidden fields for submission
+    // $("#hidden-add-task-task-id").val(taskId);
+    $("#hidden-add-task-title").val(title);
+    $("#hidden-add-task-type").val(type);
+    $("#hidden-add-task-due-date").val(dueDate);
+    $("#hidden-add-task-concerned-with").val(concernedWith);
+
+    // Hide error, close input modal, show confirmation modal
+    hideError("#error-box-add-task", "#error-text-add-task");
+    $('#modalAddTask').modal('hide');
+    $('#modalAddTaskConfirmation').modal('show');
+});
+
+// When the edit button is clicked, retrieve the task ID from data attribute
+$('.button-task-edit').on('click', function() {
+  const taskId = $(this).data('task-id'); // jQuery automatically reads data-task-id
+  // Now you can use taskId, for example, set it into your modal input
+  $('#hidden-modify-task-task-id').val(taskId);
+
+  // Optionally, load other task data into the modal here...
+
+  // console.log('Editing task with ID:', taskId);
+});
+
+
+$('#button-modify-task').on("click", function () {
+    // console.log(this);
+    // Collect input values
+    const taskId = $("#modify-task-task-id").val(); // Get from input or confirmation
+    const title = $("#modify-task-title").val().trim();
+    const type = $("#modify-task-type").val();
+    const dueDate = $("#modify-task-due-date").val();
+    const concernedWith = $("#modify-task-concerned-with").val();
+
+    // Validation
+    if (!title || !type || !dueDate || !concernedWith) {
+        return showError("All required fields must be filled.", "#error-box-modify-task", "#error-text-modify-task");
+    }
+    if (title.length > 100) {
+        return showError("Title exceeds length limit.", "#error-box-modify-task", "#error-text-modify-task");
+    }
+    // Add more validation as needed
+
+    // Fill confirmation modal
+    $("#confirm-modify-task-task-id").text(taskId);
+    $("#confirm-modify-task-title").text(title);
+    $("#confirm-modify-task-type").text(type);
+    $("#confirm-modify-task-due-date").text(dueDate);
+    $("#confirm-modify-task-concerned-with").text(concernedWith);
+
+    // Fill hidden fields for PHP
+    // $("#hidden-modify-task-task-id").val(taskId);
+    $("#hidden-modify-task-title").val(title);
+    $("#hidden-modify-task-type").val(type);
+    $("#hidden-modify-task-due-date").val(dueDate);
+    $("#hidden-modify-task-concerned-with").val(concernedWith);
+
+    // Hide error, close input modal, show confirmation modal
+    hideError("#error-box-modify-task", "#error-text-modify-task");
+    $('#modalModifyTask').modal('hide');
+    $('#modalModifyTaskConfirmation').modal('show');
+});
+
+// When the edit button is clicked, retrieve the task ID from data attribute
+$('.button-task-delete').on('click', function() {
+  const taskId = $(this).data('task-id'); // jQuery automatically reads data-task-id
+  // Now you can use taskId, for example, set it into your modal input
+  $('#hidden-delete-task-task-id').val(taskId);
+  $("#confirm-delete-task-task-id").text(taskId);
+
+
+  // Optionally, load other task data into the modal here...
+
+  // console.log('Editing task with ID:', taskId);
+});
+
+$('#button-delete-task').on("click", function () {
+    // Collect input values from modal inputs or confirmation text
+    // const taskId = $("#delete-task-task-id").val();
+    const title = $("#delete-task-title").val().trim();
+    const type = $("#delete-task-type").val();
+    const dueDate = $("#delete-task-due-date").val();
+    const concernedWith = $("#delete-task-concerned-with").val();
+    const reason = $("#remove-task-reason").val();
+
+    // Validation
+    if (!taskId || !title || !type || !dueDate || !concernedWith) {
+        return showError("All task details must be present.", "#error-box-delete-task", "#error-text-delete-task");
+    }
+    if (!reason) {
+        return showError("Please select a reason for deleting the task.", "#error-box-delete-task", "#error-text-delete-task");
+    }
+
+    // Fill confirmation modal text (if needed)
+    $("#confirm-delete-task-title").text(title);
+    $("#confirm-delete-task-type").text(type);
+    $("#confirm-delete-task-due-date").text(dueDate);
+    $("#confirm-delete-task-concerned-with").text(concernedWith);
+
+    // Fill hidden fields for PHP submission
+    // $("#hidden-delete-task-task-id").val(taskId);
+    $("#hidden-delete-task-title").val(title);
+    $("#hidden-delete-task-type").val(type);
+    $("#hidden-delete-task-due-date").val(dueDate);
+    $("#hidden-delete-task-concerned-with").val(concernedWith);
+    $("#hidden-delete-task-reason").val(reason);
+
+    // Hide error, close input modal, show confirmation modal
+    hideError("#error-box-delete-task", "#error-text-delete-task");
+    $('#modalDeleteTask').modal('hide');
+    $('#modalDeleteTaskConfirmation').modal('show');
+});
+
 
 
 
@@ -1868,11 +2029,11 @@ $(document).ready(function () {
       },
       'send-rent-reminder': {
         title: 'Send Rent Reminder',
-        type: ''
+        type: 'Maintenance'
       },
       'collect-rent-payment': {
         title: 'Collect Rent Payment',
-        type: 'Collection ' // adjust if needed
+        type: 'Collection' // adjust if needed
       }
     };
 
@@ -2106,21 +2267,12 @@ $(document).on('click', '.button-delete-room', function() {
     $('#remove-task-reason').val('');
   });
 
-  document.querySelector('.button-task-complete').addEventListener('click', function() {
-    const taskId = this.dataset.taskId;
-    document.getElementById('completeTaskId').value = taskId;
+  $('.button-task-complete').on('click', function() {
+    var taskId = $(this).data('task-id');
+    $('#completeTaskId').val(taskId);
   });
 
-  
-  $('#button-add-task').on("click", function () {
-    $('#modalAddTask').modal('hide');
-    $('#modalAddTaskConfirmation').modal('show');
-  });
 
-  $('#button-modify-task').on("click", function () {
-    $('#modalModifyTask').modal('hide');
-    $('#modalModifyTaskConfirmation').modal('show');
-  });
 
 $(document).ready(function () {
   $('#button-check').on("click", function () {
@@ -2315,12 +2467,6 @@ function isNumber(val) {
 function isDecimal(val) {
   return /^(\d+(\.\d{1,2})?)$/.test(val.replace(/,/g, ''));
 }
-
-function showError(msg, boxSelector, textSelector) {
-  $(boxSelector).show();
-  $(textSelector).text(msg);
-}
-
 
 // When the modal opens, set due date and populate table and total bill
 $('#modalModifyElectricBill').on('shown.bs.modal', function() {
