@@ -72,7 +72,10 @@
                 }
                 
                 verifyUserRole(role);
-                
+
+                        $('#usernameOnRenterDashboard').text(email);
+                        $('#userRoleOnRenterDashboard').text(role);
+                                    
                 // User info available for use
                 console.log('Logged in user:', email, 'Role:', role);
                 
@@ -178,62 +181,52 @@
                                 
                                 <!-- MAIN CONTENT -->
                                 <div class="main-container h-100 p-4" id="main-container">
-                                    <div class="d-flex flex-sm-row flex-column justify-content-between align-items-start">
-                                        <p class="h2 font-red-gradient">Hello, <span id="usernameOnRenterDashboard" class="h2 font-red-gradient"></span>! </p>
-                                        <div class="d-flex flex-row align-items-center">
-                                        </div>
+                                    <div class="d-flex flex-column justify-content-between align-items-start">
+                                        <p class="h4 font-red-gradient"><span id="usernameOnRenterDashboard" class="h3 font-red-gradient"></span></p>
+                                        <p class="h6 font-red fst-italic"><span id="userRoleOnRenterDashboard" class="h5 font-red"></span></p>
                                     </div>
                                     
                                     <div class="horizontal mt-1 mb-2"></div>
                                     <!-- METRICS -->
                                     <div class="row gx-3 gy-3">
                                         <div class="col-12 col-sm-6 col-lg-4">
-                                            <div
-                                                class="gradient-red-bg d-flex flex-row align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
+                                            <div class="gradient-red-bg d-flex flex-row align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
                                                 <p class="h5 font-white my-0">Total Current Bills</p>
-                                                <p class="h3 font-white ms-3 my-0" id="renter-role-total-current-bills"></p>
+                                                <p class="h3 font-white ms-3 my-0">PHP 15,283.17 </p>
+                                            </div>
+                                        </div>
+
+                                        
+                                        <div class="col-12 col-sm-6 col-lg-4">
+                                            <div class="red-border d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
+                                                <p class="h3 font-red my-0" id="next-due-days">Next Due in -- Days</p>
+                                                <p class="h3 font-red my-0" id="next-due-date">--</p>
                                             </div>
                                         </div>
                                         
                                         <div class="col-12 col-sm-6 col-lg-4">
-                                            <div
-                                                class="red-border d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
-                                                <p class="h3 font-red my-0">Next Due in 5 Days</p>
-                                                <p class="h3 font-red my-0">April 30,2025</p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-12 col-sm-6 col-lg-4">
-                                            <div
-                                                class="red-border d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
+                                           <div class="red-border d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
                                                 <p class="h6 font-red my-0">Total Bills Paid</p>
-                                                <p class="h3 font-red my-0">10</p>
+                                                <p class="h3 font-red my-0" id="renter-role-total-bills-paid">0</p>
                                             </div>
+
                                         </div>
                                         
                                         <div class="col-12 col-sm-6 col-lg-4">
-                                            <div
-                                                class="red-border d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
+                                            <div class="red-border d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
                                                 <p class="h6 font-red my-0">Collection Rate</p>
-                                                <p class="h3 font-red my-0">82.41%</p>
+                                                <p class="h3 font-red my-0" id="collection-rate">0.00%</p>
                                             </div>
+
                                         </div>
                                         
                                         <div class="col-12 col-sm-6 col-lg-4">
-                                            <div
-                                                class="red-border d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
-                                                <p class="h6 font-red my-0 text-center">On-Time Payment Rate</p>
-                                                <p class="h3 font-red my-0">68.32%</p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-12 col-sm-6 col-lg-4">
-                                            <div
-                                                class="gradient-red-bg d-flex flex-row align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
+                                            <div class="gradient-red-bg d-flex flex-row align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
                                                 <p class="h5 font-white my-0">Total Payments</p>
-                                                <p class="h3 font-white ms-3 my-0">PHP 7,289.23</p>
+                                                <p class="h3 font-white ms-3 my-0" id="renter-role-total-payments">PHP 0.00</p>
                                             </div>
-                                        </div>
+                                            </div>
+
                                     </div>
                                     
                                     <!-- GRAPH -->
@@ -246,24 +239,51 @@
                             <script>
                                 $(document).ready(function () {
                                 // Helper: Aggregate payments by month (0=Jan, 11=Dec)
-                                function aggregateMonthlyPayments(payments) {
-                                const monthlyTotals = new Array(12).fill(0);
-                                for (const id in payments) {
-                                if (payments.hasOwnProperty(id)) {
-                                const payment = payments[id];
-                                if (!payment.paymentDate || !payment.amount) continue;
-                                
-                                const date = new Date(payment.paymentDate);
-                                if (isNaN(date)) continue;
-                                
-                                const monthIndex = date.getMonth();
-                                const amount = parseFloat(payment.amount.replace(/[^0-9.-]+/g, '')) || 0;
-                                
-                                monthlyTotals[monthIndex] += amount;
-                                }
-                                }
-                                return monthlyTotals;
-                                }
+   function aggregateMonthlyPayments(payments, currentUserId, renterDataMap) {
+  // Find renterId by userId
+  let renterId = null;
+  for (const rId in renterDataMap) {
+    if (renterDataMap.hasOwnProperty(rId)) {
+      if (renterDataMap[rId].userId === currentUserId) {
+        renterId = rId;
+        break;
+      }
+    }
+  }
+
+  if (!renterId) {
+    // Return an array of zeros if the renterId isn't found
+    return new Array(12).fill(0);
+  }
+
+  const monthlyTotals = new Array(12).fill(0);
+
+  for (const id in payments) {
+    if (payments.hasOwnProperty(id)) {
+      const payment = payments[id];
+
+      // Skip if essential payment data is missing
+      if (!payment.paymentDate || !payment.amount) continue;
+
+      // Skip if payment is not for the target renter
+      if (payment.renterId !== renterId) continue;
+
+      const date = new Date(payment.paymentDate);
+      // Skip if the payment date is invalid
+      if (isNaN(date)) continue;
+
+      const monthIndex = date.getMonth();
+      // Clean and parse the amount, defaulting to 0 if invalid
+      const amount = parseFloat(payment.amount.toString().replace(/[^0-9.-]+/g, '')) || 0;
+
+      monthlyTotals[monthIndex] += amount;
+    }
+  }
+
+  return monthlyTotals;
+}
+
+
                                 
                                 const paymentsMap = {};
                                 
@@ -284,7 +304,18 @@
                                 };
                                 });
                                 
-                                const monthlyTotals = aggregateMonthlyPayments(paymentsMap);
+                                const currentUserStr = localStorage.getItem('currentUser');
+                                let currentUser;
+                                try {
+                                currentUser = JSON.parse(currentUserStr);
+                                } catch (e) {
+                                console.error('Failed to parse currentUser from localStorage', e);
+                                signOut();
+                                return;
+                                }
+
+                                
+                                const monthlyTotals = aggregateMonthlyPayments(paymentsMap, currentUser.id, renterDataMap);
                                 
                                 const monthLabels = [
                                 "January", "February", "March", "April", "May", "June",
@@ -338,47 +369,43 @@
                                 });
                             </script>
                                     
-                                    <!-- Latest Payments -->
-                                    <div class="d-flex justify-content-center">
-                                        <div class="row gx-3 gy-3" style="max-width: 800px; width: 100%;">
-                                            <div class="col-12">
-                                                <div class="container-fluid d-flex">
-                                                    <p class="h2 font-red-gradient mx-auto mt-5">Latest Payments</p>
-                                                </div>
-                                                <div class="table-responsive">
-                                                    <table class="table text-center align-middle">
-                                                        <thead style="background-color: #8e1616 !important; color: white">
-                                                            <tr>
-                                                                <th>Payment Type</th>
-                                                                <th>Payment Date</th>
-                                                                <th>Payment Amount</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody style="border-top: 2px solid #8e1616">
-                                                            <tr style="border-bottom: 2px solid #8e1616">
-                                                                <td>Electric</td>
-                                                                <td>02/12/2025</td>
-                                                                <td>PHP 4,291.75</td>
-                                                            </tr>
-                                                            <tr style="border-bottom: 2px solid #8e1616">
-                                                                <td>Water</td>
-                                                                <td>02/12/2025</td>
-                                                                <td>PHP 4,291.75</td>
-                                                            </tr>
-                                                            <tr style="border-bottom: 2px solid #8e1616">
-                                                                <td>Rent</td>
-                                                                <td>02/12/2025</td>
-                                                                <td>PHP 4,291.75</td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
+                                     <!-- Latest Payments -->
+                                <div class="col-6 mx-auto">
+                                    <div class="container-fluid d-flex">
+                                        <p class="h2 font-red-gradient mx-auto mt-5">Latest Payments</p>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table text-center align-middle">
+                                            <thead style="background-color: #8e1616 !important; color: white">
+                                                <tr>
+                                                    <th>Renter Name</th>
+                                                    <th>Payment Date</th>
+                                                    <th>Payment Amount</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody style="border-top: 2px solid #8e1616">
+                                                <xsl:for-each select="$data//payments/payment">
+                                                    <!-- Sort payments by paymentDate descending -->
+                                                    <xsl:sort select="paymentDate" data-type="text" order="descending" />
+                                                    <!-- Limit to first 3 -->
+                                                    <xsl:if test="position() &lt;= 3">
+                                                        <tr style="border-bottom: 2px solid #8e1616">
+                                                            <td><xsl:value-of select="paymentType"/></td> <!-- Replace with renter name if available -->
+                                                            <td><xsl:value-of select="paymentDate"/></td>
+                                                            <td>
+                                                                PHP <xsl:value-of select="format-number(number(amount), '#,##0.00')"/>
+                                                            </td>
+                                                        </tr>
+                                                    </xsl:if>
+                                                </xsl:for-each>
+                                            </tbody>
+                                              
+                                        </table>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                                </div>
+                            </div>
                                     
                                 </body>
                             </html>

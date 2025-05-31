@@ -3528,11 +3528,11 @@
             <bill id="R3">
                 <renterId>3</renterId>
                 <amount>4200</amount>
-                <dueDate>2025-05-01</dueDate>
+                <dueDate>2025-06-05</dueDate>
                 <overpaid>2200</overpaid>
                 <debt>0</debt>
                 <!-- Half paid -->
-                <status>Paid</status>
+                <status>Unpaid</status>
             </bill>
             <bill id="R4">
                 <renterId>4</renterId>
@@ -4126,13 +4126,13 @@
         </task>
         <task id="320">
             <title>Contact Renter #7 for Payment Clarification</title>
-            <type>Other</type>
-            <concernedWith>7</concernedWith>
-            <dueDate>2025-07-03</dueDate>
-            <status>Pending</status>
+            <type>Utility</type>
+            <concernedWith>10</concernedWith>
+            <dueDate>2025-08-09</dueDate>
+            <status>Deleted</status>
             <deleteReason/>
-        </task>
-    <task id="321"><title>Pay Water Bill</title><type>Utility</type><dueDate>2025-06-25</dueDate><concernedWith>11</concernedWith><createdBy/><dateCreated>2025-05-30</dateCreated><status>Completed</status></task><task id="322"><title>NEW TASK 2</title><type>Collection</type><dueDate>2026-09-22</dueDate><concernedWith>19</concernedWith><createdBy/><dateCreated>2025-05-30</dateCreated><status>Deleted</status><dateModified>2025-05-30</dateModified><deleteReason/><dateDeleted>2025-05-30</dateDeleted></task><task id="323"><title>Pay Electricity Bill</title><type>Utility</type><dueDate>2025-06-25</dueDate><concernedWith>13</concernedWith><createdBy/><dateCreated>2025-05-30</dateCreated><status>Completed</status><dateModified>2025-05-30</dateModified></task><task id="324"><title>Pay Electricity Bill</title><type>Utility</type><dueDate>2025-06-30</dueDate><concernedWith>19</concernedWith><createdBy/><dateCreated>2025-05-30</dateCreated><status>Deleted</status><dateModified>2025-05-30</dateModified><deleteReason/><dateDeleted>2025-05-30</dateDeleted></task></tasks>
+        <dateModified>2025-05-31</dateModified><dateDeleted>2025-05-31</dateDeleted></task>
+    <task id="321"><title>Pay Water Bill</title><type>Utility</type><dueDate>2025-06-25</dueDate><concernedWith>11</concernedWith><createdBy/><dateCreated>2025-05-30</dateCreated><status>Completed</status></task><task id="322"><title>NEW TASK 2</title><type>Collection</type><dueDate>2026-09-22</dueDate><concernedWith>19</concernedWith><createdBy/><dateCreated>2025-05-30</dateCreated><status>Deleted</status><dateModified>2025-05-30</dateModified><deleteReason/><dateDeleted>2025-05-30</dateDeleted></task><task id="323"><title>Pay Electricity Bill</title><type>Utility</type><dueDate>2025-06-25</dueDate><concernedWith>13</concernedWith><createdBy/><dateCreated>2025-05-30</dateCreated><status>Completed</status><dateModified>2025-05-30</dateModified></task><task id="324"><title>Pay Electricity Bill</title><type>Utility</type><dueDate>2025-06-30</dueDate><concernedWith>19</concernedWith><createdBy/><dateCreated>2025-05-30</dateCreated><status>Deleted</status><dateModified>2025-05-30</dateModified><deleteReason/><dateDeleted>2025-05-30</dateDeleted></task><task id="325"><title>Pay Water Bill</title><type>Utility</type><dueDate>2025-06-07</dueDate><concernedWith>8</concernedWith><createdBy/><dateCreated>2025-05-31</dateCreated><status>Pending</status></task></tasks>
 
     <inquiries>
         <inquiry id="401">
