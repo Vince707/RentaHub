@@ -36,6 +36,7 @@ class PaymentContext {
 const paymentContext = new PaymentContext();
 
 
+
 $(window).on('load', function () {
   // Fade out the loading screen
   $('#loading-screen').fadeOut('slow', function () {
@@ -263,6 +264,7 @@ $.ajax({
         timestamp: $(this).find('timestamp').text().trim()
       };
     });
+    
 
     function calculateTotalUnpaidDebt() {
     let totalDebt = 0;
@@ -296,6 +298,405 @@ $.ajax({
 
     return totalDebt;
   }
+
+  
+
+function countTotalBillsPaidForRenter(renterId) {
+  let paidCount = 0;
+
+  // Count paid rent bills
+  for (const billId in rentBillsMap) {
+    if (rentBillsMap.hasOwnProperty(billId)) {
+      const bill = rentBillsMap[billId];
+      if (bill.renterId === renterId && bill.status === 'Paid') {
+        paidCount++;
+      }
+    }
+  }
+
+  // Count paid utility bills
+  for (const utilityType in utilityBillsMap) {
+    if (utilityBillsMap.hasOwnProperty(utilityType)) {
+      const utility = utilityBillsMap[utilityType];
+      utility.readings.forEach(reading => {
+        reading.bills.forEach(bill => {
+          if (bill.renterId === renterId && bill.status === 'Paid') {
+            paidCount++;
+          }
+        });
+      });
+    }
+  }
+
+  return paidCount;
+}
+
+function updateTotalBillsPaidForUser(currentUserId, renterDataMap) {
+  // Find renterId by userId
+  let renterId = null;
+  for (const rId in renterDataMap) {
+    if (renterDataMap.hasOwnProperty(rId)) {
+      if (renterDataMap[rId].userId === currentUserId) {
+        renterId = rId;
+        break;
+      }
+    }
+  }
+
+  if (!renterId) {
+    $('#renter-role-total-bills-paid').text('0');
+    return;
+  }
+
+  const paidCount = countTotalBillsPaidForRenter(renterId);
+  $('#renter-role-total-bills-paid').text(paidCount);
+}
+
+
+function calculateTotalCurrentBills(renterId) {
+  let totalAmount = 0;
+
+  // Sum rent bills for renter
+  for (const billId in rentBillsMap) {
+    if (rentBillsMap.hasOwnProperty(billId)) {
+      const bill = rentBillsMap[billId];
+      if (bill.renterId === renterId && bill.status !== 'Paid') {
+        totalAmount += parseFloat(bill.amount) || 0;
+      }
+    }
+  }
+
+  // Sum utility bills for renter
+  for (const utilityType in utilityBillsMap) {
+    if (utilityBillsMap.hasOwnProperty(utilityType)) {
+      const utility = utilityBillsMap[utilityType];
+      utility.readings.forEach(reading => {
+        reading.bills.forEach(bill => {
+          if (bill.renterId === renterId && bill.status !== 'Paid') {
+            totalAmount += parseFloat(bill.amount) || 0;
+          }
+        });
+      });
+    }
+  }
+
+  return totalAmount;
+}
+
+function calculateCollectionRateForRenter(renterId) {
+  let totalBills = 0;
+  let paidBills = 0;
+
+  // Rent bills
+  for (const billId in rentBillsMap) {
+    if (rentBillsMap.hasOwnProperty(billId)) {
+      const bill = rentBillsMap[billId];
+      if (bill.renterId === renterId) {
+        totalBills++;
+        if (bill.status === 'Paid') {
+          paidBills++;
+        }
+      }
+    }
+  }
+
+  // Utility bills
+  for (const utilityType in utilityBillsMap) {
+    if (utilityBillsMap.hasOwnProperty(utilityType)) {
+      const utility = utilityBillsMap[utilityType];
+      utility.readings.forEach(reading => {
+        reading.bills.forEach(bill => {
+          if (bill.renterId === renterId) {
+            totalBills++;
+            if (bill.status === 'Paid') {
+              paidBills++;
+            }
+          }
+        });
+      });
+    }
+  }
+
+  if (totalBills === 0) return 0;
+
+  return (paidBills / totalBills) * 100;
+}
+
+function updateCollectionRateForUser(currentUserId, renterDataMap) {
+  // Find renterId by userId
+  let renterId = null;
+  for (const rId in renterDataMap) {
+    if (renterDataMap.hasOwnProperty(rId)) {
+      if (renterDataMap[rId].userId === currentUserId) {
+        renterId = rId;
+        break;
+      }
+    }
+  }
+
+  if (!renterId) {
+    $('#renter-role-collection-rate').text('0.00%');
+    return;
+  }
+
+  const rate = calculateCollectionRateForRenter(renterId);
+  $('#renter-role-collection-rate').text(rate.toFixed(2) + '%');
+}
+
+function calculateTotalPaymentsForRenter(renterId, paymentsMap) {
+  let totalPayments = 0;
+
+  for (const paymentId in paymentsMap) {
+    if (paymentsMap.hasOwnProperty(paymentId)) {
+      const payment = paymentsMap[paymentId];
+      if (payment.renterId === renterId) {
+        totalPayments += parseFloat(payment.amount) || 0;
+      }
+    }
+  }
+
+  return totalPayments;
+}
+
+function updateTotalPaymentsForUser(currentUserId, renterDataMap, paymentsMap) {
+  // Find renterId by userId
+  let renterId = null;
+  for (const rId in renterDataMap) {
+    if (renterDataMap.hasOwnProperty(rId)) {
+      if (renterDataMap[rId].userId === currentUserId) {
+        renterId = rId;
+        break;
+      }
+    }
+  }
+
+  if (!renterId) {
+    $('#renter-role-total-payments').text('PHP 0.00');
+    return;
+  }
+
+  const totalPayments = calculateTotalPaymentsForRenter(renterId, paymentsMap);
+
+  // Format as PHP currency with 2 decimals and thousands separator
+  const formattedTotal = 'PHP ' + totalPayments.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  $('#renter-role-total-payments').text(formattedTotal);
+}
+
+
+function updateTotalCurrentBillsForUser(userId, renterDataMap) {
+  // Find renterId by matching userId
+  let renterId = null;
+  for (const rId in renterDataMap) {
+    if (renterDataMap.hasOwnProperty(rId)) {
+      if (renterDataMap[rId].userId === userId) {
+        renterId = rId;
+        break;
+      }
+    }
+  }
+
+  if (!renterId) {
+    console.warn('Renter not found for userId:', userId);
+    $('#renter-role-total-current-bills').text('PHP 0.00');
+    return;
+  }
+
+  const total = calculateTotalCurrentBills(renterId);
+
+  // Format as PHP currency with 2 decimals and thousands separator
+  const formattedTotal = 'PHP ' + total.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  $('#renter-role-total-current-bills').text(formattedTotal);
+}
+
+function getNextDueBillForRenter(renterId) {
+  const dueDates = [];
+
+  // Rent bills
+  for (const billId in rentBillsMap) {
+    if (rentBillsMap.hasOwnProperty(billId)) {
+      const bill = rentBillsMap[billId];
+      if (bill.renterId === renterId && bill.status !== 'Paid' && bill.dueDate) {
+        dueDates.push(new Date(bill.dueDate));
+      }
+    }
+  }
+
+  // Utility bills
+  for (const utilityType in utilityBillsMap) {
+    if (utilityBillsMap.hasOwnProperty(utilityType)) {
+      const utility = utilityBillsMap[utilityType];
+      utility.readings.forEach(reading => {
+        reading.bills.forEach(bill => {
+          if (bill.renterId === renterId && bill.status !== 'Paid' && bill.dueDate) {
+            dueDates.push(new Date(bill.dueDate));
+          }
+        });
+      });
+    }
+  }
+
+  // Find the soonest upcoming due date that is today or in the future
+  const today = new Date();
+  // Ensure 'today' is set to the start of the day for consistent comparison
+  today.setHours(0, 0, 0, 0);
+
+  const upcoming = dueDates
+    .filter(date => date >= today)
+    .sort((a, b) => a - b);
+
+  return upcoming.length > 0 ? upcoming[0] : null;
+}
+
+function updateNextDueForUser(currentUserId, renterDataMap) {
+  // Find renterId by userId
+  let renterId = null;
+  for (const rId in renterDataMap) {
+    if (renterDataMap.hasOwnProperty(rId)) {
+      if (renterDataMap[rId].userId === currentUserId) {
+        renterId = rId;
+        break;
+      }
+    }
+  }
+
+  if (!renterId) {
+    $('#next-due-days').text('Next Due in -- Days');
+    $('#next-due-date').text('--');
+    return;
+  }
+
+  const nextDueDate = getNextDueBillForRenter(renterId);
+
+  if (nextDueDate) {
+    const today = new Date();
+    const diffTime = nextDueDate - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    // Format date as "Month DD, YYYY"
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = nextDueDate.toLocaleDateString('en-US', options);
+
+    $('#next-due-days').text(`Next Due in ${diffDays} Day${diffDays !== 1 ? 's' : ''}`);
+    $('#next-due-date').text(formattedDate);
+  } else {
+    $('#next-due-days').text('No Upcoming Due');
+    $('#next-due-date').text('--');
+  }
+}
+
+
+function updateOnTimePaymentRateByStatus(utilityBillsMap, rentBillsMap) {
+  let totalPayments = 0;
+  let onTimePayments = 0;
+
+  function isPaidOnTime(status) {
+    return status && status.toLowerCase() === 'paid';
+  }
+
+  for (const billId in rentBillsMap) {
+    if (rentBillsMap.hasOwnProperty(billId)) {
+      const bill = rentBillsMap[billId];
+      totalPayments++;
+      if (isPaidOnTime(bill.status)) onTimePayments++;
+    }
+  }
+
+  for (const utilityType in utilityBillsMap) {
+    if (utilityBillsMap.hasOwnProperty(utilityType)) {
+      const utility = utilityBillsMap[utilityType];
+      const readings = utility.readings || [];
+
+      readings.forEach(reading => {
+        const bills = reading.bills || [];
+        bills.forEach(bill => {
+          totalPayments++;
+          if (isPaidOnTime(bill.status)) onTimePayments++;
+        });
+      });
+    }
+  }
+
+  let rate = 0;
+  if (totalPayments > 0) {
+    rate = (onTimePayments / totalPayments) * 100;
+  }
+
+  const formattedRate = rate.toFixed(2) + '%';
+  $('#on-time-payment-rate').text(formattedRate);
+}
+
+
+
+function updateCollectionRate(utilityBillsMap, rentBillsMap) {
+  let totalPaid = 0;
+  let totalDue = 0;
+
+  // Sum rent bills
+  for (const billId in rentBillsMap) {
+    if (rentBillsMap.hasOwnProperty(billId)) {
+      const bill = rentBillsMap[billId];
+
+      const amount = parseFloat(bill.amount.replace(/[^0-9.-]+/g, '')) || 0;
+      const overpaid = parseFloat(bill.overpaid.replace(/[^0-9.-]+/g, '')) || 0;
+      const debt = parseFloat(bill.debt.replace(/[^0-9.-]+/g, '')) || 0;
+
+      totalDue += amount + debt;
+      totalPaid += amount + overpaid;
+    }
+  }
+
+  // Sum utility bills
+  for (const utilityType in utilityBillsMap) {
+    if (utilityBillsMap.hasOwnProperty(utilityType)) {
+      const utility = utilityBillsMap[utilityType];
+      const readings = utility.readings || [];
+
+      readings.forEach(reading => {
+        const bills = reading.bills || [];
+        bills.forEach(bill => {
+          const amount = parseFloat(bill.amount.replace(/[^0-9.-]+/g, '')) || 0;
+          const overpaid = parseFloat(bill.overpaid.replace(/[^0-9.-]+/g, '')) || 0;
+          const debt = parseFloat(bill.debt.replace(/[^0-9.-]+/g, '')) || 0;
+
+          totalDue += amount + debt;
+          totalPaid += amount + overpaid;
+        });
+      });
+    }
+  }
+
+  let rate = 0;
+  if (totalDue > 0) {
+    rate = (totalPaid / totalDue) * 100;
+  }
+
+  const formattedRate = rate.toFixed(2) + '%';
+  $('#collection-rate').text(formattedRate);
+}
+
+const currentUserStr = localStorage.getItem('currentUser');
+let currentUserId = null;
+
+if (currentUserStr) {
+  try {
+    const currentUser = JSON.parse(currentUserStr);
+    currentUserId = currentUser.id; // This is the user ID you stored
+    
+    // RENTER DASHBOARD
+    if (currentUserId) {
+        updateTotalCurrentBillsForUser(currentUserId, renterDataMap);
+      updateNextDueForUser(currentUserId, renterDataMap);
+      updateTotalBillsPaidForUser(currentUserId, renterDataMap);
+      updateCollectionRateForUser(currentUserId, renterDataMap);
+      updateTotalPaymentsForUser(currentUserId, renterDataMap, paymentsMap);
+    }
+
+  } catch (e) {
+    console.error('Failed to parse currentUser from localStorage', e);
+  }
+}
+
 
   // Format as PHP currency and update the DOM
   const totalDebt = calculateTotalUnpaidDebt();
@@ -1611,10 +2012,10 @@ $(document).ready(function () {
   const currentYear = new Date().getFullYear();
   $(".current-year").text(currentYear);
 
-  const userData = JSON.parse(localStorage.getItem('currentUser'));
-  if (userData && userData.email) {
-    $('#usernameOnRenterDashboard').text(userData.email);
-  }
+
+
+
+
 
   setInterval(updateTime, 1000);
 
@@ -4263,95 +4664,6 @@ function calculateTotalOverdueTasks() {
   return count;
 }
 
-
-function updateOnTimePaymentRateByStatus(utilityBillsMap, rentBillsMap) {
-  let totalPayments = 0;
-  let onTimePayments = 0;
-
-  function isPaidOnTime(status) {
-    return status && status.toLowerCase() === 'paid';
-  }
-
-  for (const billId in rentBillsMap) {
-    if (rentBillsMap.hasOwnProperty(billId)) {
-      const bill = rentBillsMap[billId];
-      totalPayments++;
-      if (isPaidOnTime(bill.status)) onTimePayments++;
-    }
-  }
-
-  for (const utilityType in utilityBillsMap) {
-    if (utilityBillsMap.hasOwnProperty(utilityType)) {
-      const utility = utilityBillsMap[utilityType];
-      const readings = utility.readings || [];
-
-      readings.forEach(reading => {
-        const bills = reading.bills || [];
-        bills.forEach(bill => {
-          totalPayments++;
-          if (isPaidOnTime(bill.status)) onTimePayments++;
-        });
-      });
-    }
-  }
-
-  let rate = 0;
-  if (totalPayments > 0) {
-    rate = (onTimePayments / totalPayments) * 100;
-  }
-
-  const formattedRate = rate.toFixed(2) + '%';
-  $('#on-time-payment-rate').text(formattedRate);
-}
-
-
-
-function updateCollectionRate(utilityBillsMap, rentBillsMap) {
-  let totalPaid = 0;
-  let totalDue = 0;
-
-  // Sum rent bills
-  for (const billId in rentBillsMap) {
-    if (rentBillsMap.hasOwnProperty(billId)) {
-      const bill = rentBillsMap[billId];
-
-      const amount = parseFloat(bill.amount.replace(/[^0-9.-]+/g, '')) || 0;
-      const overpaid = parseFloat(bill.overpaid.replace(/[^0-9.-]+/g, '')) || 0;
-      const debt = parseFloat(bill.debt.replace(/[^0-9.-]+/g, '')) || 0;
-
-      totalDue += amount + debt;
-      totalPaid += amount + overpaid;
-    }
-  }
-
-  // Sum utility bills
-  for (const utilityType in utilityBillsMap) {
-    if (utilityBillsMap.hasOwnProperty(utilityType)) {
-      const utility = utilityBillsMap[utilityType];
-      const readings = utility.readings || [];
-
-      readings.forEach(reading => {
-        const bills = reading.bills || [];
-        bills.forEach(bill => {
-          const amount = parseFloat(bill.amount.replace(/[^0-9.-]+/g, '')) || 0;
-          const overpaid = parseFloat(bill.overpaid.replace(/[^0-9.-]+/g, '')) || 0;
-          const debt = parseFloat(bill.debt.replace(/[^0-9.-]+/g, '')) || 0;
-
-          totalDue += amount + debt;
-          totalPaid += amount + overpaid;
-        });
-      });
-    }
-  }
-
-  let rate = 0;
-  if (totalDue > 0) {
-    rate = (totalPaid / totalDue) * 100;
-  }
-
-  const formattedRate = rate.toFixed(2) + '%';
-  $('#collection-rate').text(formattedRate);
-}
 
 
 // function updateTotalCurrentBillsDueThisMonth(utilityBillsMap, rentBillsMap) {
