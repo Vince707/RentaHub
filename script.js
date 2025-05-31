@@ -304,6 +304,7 @@ $.ajax({
   );
 
 
+
   // Usage example:
   const totalPendingTasks = calculateTotalPendingTasks();
   $('#total-pending-tasks').text(totalPendingTasks);
@@ -4184,6 +4185,76 @@ function isStrongPassword(password) {
 
   return { isValid: errors.length === 0, errors };
 }
+
+function calculateTotalCurrentBills(renterId) {
+  let totalAmount = 0;
+
+  // Sum rent bills for renter
+  for (const billId in rentBillsMap) {
+    if (rentBillsMap.hasOwnProperty(billId)) {
+      const bill = rentBillsMap[billId];
+      if (bill.renterId === renterId && bill.status !== 'Paid') {
+        totalAmount += parseFloat(bill.amount) || 0;
+      }
+    }
+  }
+
+  // Sum utility bills for renter
+  for (const utilityType in utilityBillsMap) {
+    if (utilityBillsMap.hasOwnProperty(utilityType)) {
+      const utility = utilityBillsMap[utilityType];
+      utility.readings.forEach(reading => {
+        reading.bills.forEach(bill => {
+          if (bill.renterId === renterId && bill.status !== 'Paid') {
+            totalAmount += parseFloat(bill.amount) || 0;
+          }
+        });
+      });
+    }
+  }
+
+  return totalAmount;
+}
+
+function updateTotalCurrentBillsForUser(userId, renterDataMap) {
+  // Find renterId by matching userId
+  let renterId = null;
+  for (const rId in renterDataMap) {
+    if (renterDataMap.hasOwnProperty(rId)) {
+      if (renterDataMap[rId].userId === userId) {
+        renterId = rId;
+        break;
+      }
+    }
+  }
+
+  if (!renterId) {
+    console.warn('Renter not found for userId:', userId);
+    $('#renter-role-total-current-bills').text('PHP 0.00');
+    return;
+  }
+
+  const total = calculateTotalCurrentBills(renterId);
+
+  // Format as PHP currency with 2 decimals and thousands separator
+  const formattedTotal = 'PHP ' + total.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  $('#renter-role-total-current-bills').text(formattedTotal);
+}
+
+const currentUserStr = localStorage.getItem('currentUser');
+let currentUserId = null;
+
+if (currentUserStr) {
+  try {
+    const currentUser = JSON.parse(currentUserStr);
+    currentUserId = currentUser.id; // This is the user ID you stored
+  } catch (e) {
+    console.error('Failed to parse currentUser from localStorage', e);
+  }
+}
+
+updateTotalCurrentBillsForUser(currentUserId, renterDataMap);
 
 function calculateTotalPendingTasks() {
   let count = 0;

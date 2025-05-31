@@ -191,7 +191,7 @@
                                             <div
                                                 class="gradient-red-bg d-flex flex-row align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
                                                 <p class="h5 font-white my-0">Total Current Bills</p>
-                                                <p class="h3 font-white ms-3 my-0">PHP 15,283.17 </p>
+                                                <p class="h3 font-white ms-3 my-0" id="renter-role-total-current-bills"></p>
                                             </div>
                                         </div>
                                         
@@ -271,7 +271,7 @@
                                 url: 'apartment.xml', // Replace with your actual XML URL
                                 dataType: 'xml',
                                 success: function (xml) {
-                                $(xml).find('payments > payment').each(function () {
+                                $(xml).find('payments &gt; payment').each(function () {
                                 const id = $(this).attr('id');
                                 paymentsMap[id] = {
                                 renterId: $(this).find('renterId').text().trim(),
