@@ -1,14 +1,20 @@
 <?php
+// C:\xampp3\htdocs\3Y2S\functions\generate-electric-bill.php
+
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+// Start output buffering at the very beginning to prevent "headers already sent" errors
+ob_start();
+
 $xmlFile = '../apartment.xml';
 
 if (file_exists($xmlFile)) {
-    echo "XML file found.<br>";
     $xml = simplexml_load_file($xmlFile);
 } else {
+    // If XML file not found, clean buffer and exit
+    ob_end_clean();
     exit('XML file not found.');
 }
 
@@ -21,14 +27,14 @@ foreach ($xml->billing->utilityBills->utility as $util) {
     }
 }
 if (!$utility) {
+    // If Electricity utility not found, clean buffer and exit
+    ob_end_clean();
     exit('Electricity utility not found in XML.');
 }
-echo "Electricity utility node found.<br>";
 
 // Determine new reading ID
 if (!isset($utility->reading)) {
     $newReadingId = 0;
-    echo "No existing readings, starting at ID 0.<br>";
 } else {
     $lastReadingId = -1;
     foreach ($utility->reading as $readingNode) {
@@ -36,7 +42,6 @@ if (!isset($utility->reading)) {
         if ($id > $lastReadingId) $lastReadingId = $id;
     }
     $newReadingId = $lastReadingId + 1;
-    echo "Last reading ID: $lastReadingId, new reading ID: $newReadingId<br>";
 }
 
 // Set readingDate to today
@@ -50,14 +55,7 @@ $dueDate = $_POST['monthDue'] ?? date('Y-m-d');
 
 $status = 'Unpaid';
 
-echo "Reading Date: $readingDate<br>";
-echo "Period End: $periodEnd<br>";
-echo "Due Date: $dueDate<br>";
-
 $renters = $_POST['renters'] ?? [];
-
-echo "Renters data received:<br>";
-echo "<pre>" . print_r($renters, true) . "</pre>";
 
 // Calculate total consumed kWh and total bill amount, removing commas
 $consumedKwhTotal = 0;
@@ -66,8 +64,6 @@ foreach ($renters as $renter) {
     $consumedKwhTotal += floatval(str_replace(',', '', $renter['consumedKwh'] ?? 0));
     $totalBill += floatval(str_replace(',', '', $renter['total'] ?? 0));
 }
-echo "Total consumed Kwh: $consumedKwhTotal<br>";
-echo "Total Bill (sum of renters): $totalBill<br>";
 
 // Create new reading node
 $reading = $utility->addChild('reading');
@@ -83,25 +79,28 @@ $billsNode = $reading->addChild('bills');
 
 // Determine next bill ID
 $lastBillId = -1;
+// Iterate through all existing readings to find the highest bill ID
 foreach ($utility->reading as $rd) {
-    foreach ($rd->bills->bill as $billNode) {
-        $billId = (int)preg_replace('/\D/', '', (string)$billNode['id']);
-        if ($billId > $lastBillId) $lastBillId = $billId;
+    if (isset($rd->bills->bill)) { // Ensure 'bill' exists before iterating
+        foreach ($rd->bills->bill as $billNode) {
+            // Extract numeric part of ID (e.g., "E123" -> 123)
+            $billId = (int)preg_replace('/\D/', '', (string)$billNode['id']);
+            if ($billId > $lastBillId) $lastBillId = $billId;
+        }
     }
 }
 $nextBillId = $lastBillId + 1;
-echo "Last bill ID: $lastBillId, next bill ID: $nextBillId<br>";
 
 // Add bill nodes for each renter
-$once = true;
+$once = true; // Flag to add amountPerKwh only once per reading
 foreach ($renters as $renterId => $renter) {
     $bill = $billsNode->addChild('bill');
-    $billIdStr = "E" . $nextBillId++;
+    $billIdStr = "E" . $nextBillId++; // Increment for each new bill
     $bill->addAttribute('id', $billIdStr);
     $bill->addChild('renterId', htmlspecialchars($renterId));
     $bill->addChild('currentReading', htmlspecialchars($renter['currentReading'] ?? ''));
-    $bill->addChild('consumedKwh', htmlspecialchars($renter['consumedKwh'] ?? ''));
-    $bill->addChild('amount', htmlspecialchars(str_replace(',', '', $renter['total'] ?? '')));
+    $bill->addChild('consumedKwh', htmlspecialchars(str_replace(',', '', $renter['consumedKwh'] ?? ''))); // Ensure comma removal
+    $bill->addChild('amount', htmlspecialchars(str_replace(',', '', $renter['total'] ?? ''))); // Ensure comma removal
     $bill->addChild('overpaid', 0);
     $bill->addChild('debt', 0);
     $bill->addChild('status', $status);
@@ -110,19 +109,18 @@ foreach ($renters as $renterId => $renter) {
         $reading->addChild('amountPerKwh', htmlspecialchars(str_replace(',', '', $renter['amountPerKwh'] ?? '')));
         $once = false;
     }
-
-    echo "Added bill for renter ID $renterId with bill ID $billIdStr<br>";
 }
-
 
 // Save XML
 if ($xml->asXML($xmlFile) === false) {
+    // If saving fails, clean buffer and exit
+    ob_end_clean();
     exit('Failed to save XML file.');
 } else {
-    echo "XML file saved successfully.<br>";
+    // XML saved successfully.
+    // Clean the buffer before redirection to ensure no accidental output
+    ob_end_clean();
+    header("Location: ../caretaker-billings.xml?electricbill=added");
+    exit(); // Always exit after a header redirect
 }
-
-// Uncomment to redirect after processing
-header("Location: ../caretaker-billings.xml?electricbill=added");
-exit();
 ?>

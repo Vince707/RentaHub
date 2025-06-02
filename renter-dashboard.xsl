@@ -192,17 +192,22 @@
                                         <div class="col-12 col-sm-6 col-lg-4">
                                             <div class="gradient-red-bg d-flex flex-row align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
                                                 <p class="h5 font-white my-0">Total Current Bills</p>
-                                                <p class="h3 font-white ms-3 my-0">PHP 15,283.17 </p>
+                                                <p class="h3 font-white ms-3 my-0" id="renter-role-total-current-bills">PHP 0.00</p>
                                             </div>
                                         </div>
-
-                                        
-                                        <div class="col-12 col-sm-6 col-lg-4">
+                                          
+                                
+                                        <div class="col-12 col-sm-6 col-lg-8">
                                             <div class="red-border d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
                                                 <p class="h3 font-red my-0" id="next-due-days">Next Due in -- Days</p>
                                                 <p class="h3 font-red my-0" id="next-due-date">--</p>
                                             </div>
                                         </div>
+                                
+                                       
+
+                                        
+                                        
                                         
                                         <div class="col-12 col-sm-6 col-lg-4">
                                            <div class="red-border d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
@@ -219,69 +224,73 @@
                                             </div>
 
                                         </div>
-                                        
+                                
                                         <div class="col-12 col-sm-6 col-lg-4">
                                             <div class="gradient-red-bg d-flex flex-row align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
                                                 <p class="h5 font-white my-0">Total Payments</p>
                                                 <p class="h3 font-white ms-3 my-0" id="renter-role-total-payments">PHP 0.00</p>
                                             </div>
-                                            </div>
+                                        </div>
+                                       
+                                                
+                                
+                                
 
                                     </div>
                                     
                                     <!-- GRAPH -->
                             <div class="container-fluid d-flex">
                                 <p class="h2 font-red-gradient mx-auto mt-5">
-                                    Total Payments Collected (PHP)
+                                    Total Payments (PHP)
                                 </p>
                             </div>
                             <canvas id="totalPaymentsChart" class="container-fluid"></canvas>
                             <script>
                                 $(document).ready(function () {
-                                // Helper: Aggregate payments by month (0=Jan, 11=Dec)
-   function aggregateMonthlyPayments(payments, currentUserId, renterDataMap) {
-  // Find renterId by userId
-  let renterId = null;
-  for (const rId in renterDataMap) {
-    if (renterDataMap.hasOwnProperty(rId)) {
-      if (renterDataMap[rId].userId === currentUserId) {
-        renterId = rId;
-        break;
-      }
-    }
-  }
+                                                                // Helper: Aggregate payments by month (0=Jan, 11=Dec)
+                                function aggregateMonthlyPayments(payments, currentUserId, renterDataMap) {
+                                // Find renterId by userId
+                                let renterId = null;
+                                for (const rId in renterDataMap) {
+                                    if (renterDataMap.hasOwnProperty(rId)) {
+                                    if (renterDataMap[rId].userId === currentUserId) {
+                                        renterId = rId;
+                                        break;
+                                    }
+                                    }
+                                }
 
-  if (!renterId) {
-    // Return an array of zeros if the renterId isn't found
-    return new Array(12).fill(0);
-  }
+                                if (!renterId) {
+                                    // Return an array of zeros if the renterId isn't found
+                                    return new Array(12).fill(0);
+                                }
 
-  const monthlyTotals = new Array(12).fill(0);
+                                const monthlyTotals = new Array(12).fill(0);
 
-  for (const id in payments) {
-    if (payments.hasOwnProperty(id)) {
-      const payment = payments[id];
+                                for (const id in payments) {
+                                    if (payments.hasOwnProperty(id)) {
+                                    const payment = payments[id];
 
-      // Skip if essential payment data is missing
-      if (!payment.paymentDate || !payment.amount) continue;
+                                    // Skip if essential payment data is missing
+                                    if (!payment.paymentDate || !payment.amount) continue;
 
-      // Skip if payment is not for the target renter
-      if (payment.renterId !== renterId) continue;
+                                    // Skip if payment is not for the target renter
+                                    if (payment.renterId !== renterId) continue;
 
-      const date = new Date(payment.paymentDate);
-      // Skip if the payment date is invalid
-      if (isNaN(date)) continue;
+                                    const date = new Date(payment.paymentDate);
+                                    // Skip if the payment date is invalid
+                                    if (isNaN(date)) continue;
 
-      const monthIndex = date.getMonth();
-      // Clean and parse the amount, defaulting to 0 if invalid
-      const amount = parseFloat(payment.amount.toString().replace(/[^0-9.-]+/g, '')) || 0;
+                                    const monthIndex = date.getMonth();
+                                    // Clean and parse the amount, defaulting to 0 if invalid
+                                    const amount = parseFloat(payment.amount.toString().replace(/[^0-9.-]+/g, '')) || 0;
 
-      monthlyTotals[monthIndex] += amount;
-    }
-  }
+                                    monthlyTotals[monthIndex] += amount;
+                                    }
+                                }
 
-  return monthlyTotals;
-}
+                                return monthlyTotals;
+                                }
 
 
                                 
@@ -366,6 +375,8 @@
                                 alert('Error loading payment data.');
                                 }
                                 });
+                                
+                                
                                 });
                             </script>
                                     
@@ -378,26 +389,85 @@
                                         <table class="table text-center align-middle">
                                             <thead style="background-color: #8e1616 !important; color: white">
                                                 <tr>
-                                                    <th>Renter Name</th>
+                                                    <th>Payment Type</th>
                                                     <th>Payment Date</th>
                                                     <th>Payment Amount</th>
                                                 </tr>
                                             </thead>
-                                            <tbody style="border-top: 2px solid #8e1616">
-                                                <xsl:for-each select="$data//payments/payment">
-                                                    <!-- Sort payments by paymentDate descending -->
+                                        <script>
+                                            $(document).ready(function() {
+                                            // Your function definition
+                                            function displayRecentPayments(paymentsMap, currentUserId, targetTableBodySelector) {
+                                            // Find renterId by userId
+                                            let renterId = null;
+                                            for (const rId in renterDataMap) {
+                                            if (renterDataMap.hasOwnProperty(rId)) {
+                                            if (renterDataMap[rId].userId === currentUserId) {
+                                            renterId = rId;
+                                            break;
+                                            }
+                                            }
+                                            }
+                                            
+                                            if (!renterId) {
+                                            // No renter found, clear table and return
+                                            $(targetTableBodySelector).empty();
+                                            return;
+                                            }
+                                            
+                                            // Convert paymentsMap object to array
+                                            const paymentsArray = Object.values(paymentsMap);
+                                            
+                                            // Filter payments by renterId
+                                            const filteredPayments = paymentsArray.filter(p =&gt; p.renterId === renterId);
+                                            
+                                            // Sort payments by paymentDate descending
+                                            filteredPayments.sort((a, b) =&gt; new Date(b.paymentDate) - new Date(a.paymentDate));
+                                            
+                                            // Limit to first 3
+                                            const recentPayments = filteredPayments.slice(0, 3);
+                                            
+                                            // Clear existing rows
+                                            $(targetTableBodySelector).empty();
+                                            
+                                            // Append rows
+                                            recentPayments.forEach(payment =&gt; {
+                                            const amountFormatted = Number(payment.amount).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                                            const row = `
+                                            <tr style="border-bottom: 2px solid #8e1616">
+                                                <td>${payment.paymentType}</td>
+                                                <td>${payment.paymentDate}</td>
+                                                <td>PHP ${amountFormatted}</td>
+                                            </tr>
+                                            `;
+                                            $(targetTableBodySelector).append(row);
+                                            });
+                                            }
+                                            
+                                            // Defer execution to ensure it runs last
+                                            setTimeout(function() {
+                                            // Make sure paymentsMap, currentUserId, renterDataMap are ready here
+                                            displayRecentPayments(paymentsMap, currentUserId, "#payments-table-body");
+                                            }, 0);
+                                            });
+                                              
+                                              
+                                            
+                                        </script>
+                                            <tbody style="border-top: 2px solid #8e1616" id="payments-table-body">
+                                                <!-- <xsl:for-each select="$data//payments/payment">
                                                     <xsl:sort select="paymentDate" data-type="text" order="descending" />
-                                                    <!-- Limit to first 3 -->
                                                     <xsl:if test="position() &lt;= 3">
                                                         <tr style="border-bottom: 2px solid #8e1616">
-                                                            <td><xsl:value-of select="paymentType"/></td> <!-- Replace with renter name if available -->
+                                                            <td><xsl:value-of select="paymentType"/></td> 
                                                             <td><xsl:value-of select="paymentDate"/></td>
                                                             <td>
                                                                 PHP <xsl:value-of select="format-number(number(amount), '#,##0.00')"/>
                                                             </td>
                                                         </tr>
                                                     </xsl:if>
-                                                </xsl:for-each>
+                                                </xsl:for-each> -->
+                                             
                                             </tbody>
                                               
                                         </table>

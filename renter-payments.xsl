@@ -9,25 +9,51 @@
                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                 <title>Payments | RentaHub</title>
                 <link rel="icon" type="image/x-icon" href="images/logo-only.png" />
-                <!-- Latest compiled and minified CSS -->
-                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+                
+                <!-- Bootstrap 5 CSS -->
+                <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet"/>
+                
+                <!-- Bootstrap Icons -->
                 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"/>
-                    <!-- Latest compiled JavaScript -->
-                    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
-                            integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
-                            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-                    
-                    <!-- FONTS -->
-                    <link rel="preconnect" href="https://fonts.googleapis.com" />
-                    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
-                        <link href="https://fonts.googleapis.com/css2?family=Varela+Round&amp;display=swap" rel="stylesheet" />
-                            <link rel="stylesheet" type="text/css" href="styles.css" />
-                            <!-- jQuery Script -->
-                            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-                            <script src="script.js"></script>
-                        </head>
+                
+                <!-- DataTables Bootstrap 5 CSS -->
+                <link href="https://cdn.datatables.net/2.3.0/css/dataTables.bootstrap5.css" rel="stylesheet"/>
+                
+                <!-- Google Fonts -->
+                <link rel="preconnect" href="https://fonts.googleapis.com"/>
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin"/>
+                <link href="https://fonts.googleapis.com/css2?family=Varela+Round&amp;display=swap" rel="stylesheet"/>
+                
+                <!-- Custom CSS -->
+                <link rel="stylesheet" type="text/css" href="styles.css"/>
+                
+                <!-- jQuery (latest) -->
+                <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+                
+                <!-- Bootstrap 5 JS Bundle (with Popper) -->
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+                
+                <!-- DataTables JS Core + Bootstrap 5 Integration -->
+                <script src="https://cdn.datatables.net/2.3.0/js/dataTables.js"></script>
+                <script src="https://cdn.datatables.net/2.3.0/js/dataTables.bootstrap5.js"></script>
+                
+                <!-- DataTables Buttons Extensions for Export -->
+                <script src="https://cdn.datatables.net/buttons/3.2.3/js/dataTables.buttons.js"></script>
+                <script src="https://cdn.datatables.net/buttons/3.2.3/js/buttons.dataTables.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+                <script src="https://cdn.datatables.net/buttons/3.2.3/js/buttons.html5.min.js"></script>
+                <script src="https://cdn.datatables.net/buttons/3.2.3/js/buttons.print.min.js"></script>
+                
+                <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+                </script>
+                
+                <!-- Custom JS -->
+                <script src="script.js"></script>
+            </head>
                         <script>
+                            
                 // Allowed roles for this page
                 const allowedRoles = ['renter'];
                 
@@ -93,6 +119,17 @@
                             passwordField.type = isPassword ? 'text' : 'password';
                             eyeIcon.className = isPassword ? 'bi bi-eye' : 'bi bi-eye-slash';
                             }
+                
+                $(document).ready(function () {
+             
+                $('#payments-history').DataTable({
+                layout: {
+                bottomStart: {
+                buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                }
+                }
+                                }); 
+                            });
                         </script>
                         <body class="h-100">
                 <!-- Loading Screen -->
@@ -190,72 +227,53 @@
                                         <!-- Header -->
                                         <div class="d-flex flex-sm-row flex-column justify-content-between align-items-start">
                                             <p class="h2 font-red-gradient">Payments</p>
-                                            <p class="text-end text-danger small">as of April 26, 2025</p>
+                                            <p class="font-red">as of <span class="current-date"></span> </p>
                                         </div>
                                         <div class="horizontal mt-1 mb-2"></div>
                                         
-                                        <!-- Warning -->
-                                        <div class="d-flex justify-content-end mb-3">
-                                            <div class="d-flex align-items-center border border-danger rounded-3 px-3 py-1" style="background-color: #8B0000;">
-                                                <i class="bi bi-exclamation-triangle-fill text-white me-2"></i>
-                                                <div class="text-white small fw-semibold">
-                                                    Warning!<br/>Unpaid Balance
-                                                    </div>
-                                                </div>
-                                        </div>
-                            
                             <!-- METRICS -->
                             <div class="row gx-3 gy-3 w-100">
                                 <div class="col-12 col-sm-6 col-lg-3">
-                                    <div
-                                        class="gradient-red-bg d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
-                                        <p class="h6 font-white my-0 text-center">Total
-                                            Unpaid</p>
-                                        <p class="h3 font-white my-0 text-center">PHP
-                                            7,208.28</p>
+                                    <div class="gradient-red-bg d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
+                                        <p class="h6 font-white my-0 text-center">Total Unpaid</p>
+                                        <p class="h3 font-white my-0 text-center" id="renter-role-total-unpaid">PHP 0.00</p>
+                                    </div>
+                                </div>
+                                
+                                
+                                <div class="col-12 col-sm-6 col-lg-3">
+                                    <div class="gradient-red-bg d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
+                                        <p class="h6 font-white my-0 text-center">Total Payments</p>
+                                        <p class="h3 font-white my-0 text-center" id="renter-role-total-payments">PHP 0.00</p>
+                                    </div>
+                                </div>
+                                
+                                
+                                
+                                <div class="col-12 col-sm-6 col-lg-3">
+                                    <div class="red-border d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
+                                        <p class="h6 font-red my-0 text-center">Total Current Paid</p>
+                                        <p class="h3 font-red my-0 text-center" id="renter-role-total-current-paid">PHP 0.00</p>
                                     </div>
                                 </div>
                                 
                                 <div class="col-12 col-sm-6 col-lg-3">
-                                    <div
-                                        class="gradient-red-bg d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
-                                        <p class="h6 font-white my-0 text-center">Total Current
-                                            Inflows</p>
-                                        <p class="h3 font-white my-0 text-center">PHP
-                                            7,208.28</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="col-12 col-sm-6 col-lg-3">
-                                    <div
-                                        class="red-border d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
-                                        <p class="h6 font-red my-0 text-center">Total Current
-                                            Paid</p>
-                                        <p class="h3 font-red my-0 text-center">PHP 7,208.28</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="col-12 col-sm-6 col-lg-3">
-                                    <div
-                                        class="red-border d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
+                                    <div class="red-border d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
                                         <p class="h6 font-red my-0 text-center">Overpaid</p>
-                                        <p class="h3 font-red my-0 text-center">PHP 7,208.28</p>
+                                        <p class="h3 font-red my-0 text-center" id="renter-role-overpaid-amount">PHP 0.00</p>
                                     </div>
                                 </div>
+                                  
                                 
                             </div>
                             
                             <div class="col-12 col-sm-6 col-lg-6 mt-4">
-                                <div
-                                    class="red-border d-flex flex-row align-items-center justify-content-between rounded-4 p-3 px-4">
+                                <div class="red-border d-flex flex-row align-items-center justify-content-between rounded-4 p-3 px-4">
                                     <p class="h6 font-red my-0 me-1 text-center">Overdue</p>
-                                    <p class="h3 font-red my-0 me-1 text-center">PHP
-                                        7,208.28</p>
-                                    <button type="button" class="btn-red-fill"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#modalSendNotificationConfirmation">Notify</button>
+                                    <p class="h3 font-red my-0 me-1 text-center" id="renter-role-overdue-amount">PHP 0.00</p>
                                 </div>
                             </div>
+                              
                                         
                                         <div class="d-flex flex-sm-row flex-column justify-content-between align-items-start mt-4">
                                             <p class="h3 font-red-gradient me-2">Payment History</p>
@@ -263,7 +281,7 @@
                                         <div class="horizontal mt-1"></div>
                                      
                                             <!-- Table -->
-                                            <table class="custom-table mt-3">
+                                            <table class="custom-table mt-3" id="payments-history">
                                                 <thead>
                                                     <tr>
                                                         <th>Receipt No.</th>
@@ -271,11 +289,13 @@
                                                         <th>Payment Date</th>
                                                         <th>Amount</th>
                                                         <th>Method</th>
-                                                        <th>GCash Ref</th>
                                                         <th>Remarks</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody>
+                                                <tbody id="payment-history-tbody">
+                                                <!-- Rows will be dynamically inserted here -->
+                                                </tbody>
+                                                <!-- <tbody>
                                                     <tr>
                                                         <td class="text-danger">R25000001</td>
                                                         <td>Water Utility, Rent</td>
@@ -285,11 +305,11 @@
                                                         <td>79317644112</td>
                                                         <td><span class="badge rounded-pill bg-success">Full Payment</span></td>
                                                     </tr>
-                                                </tbody>
+                                                </tbody> -->
                                             </table>
                                                 </div>
                                             </div>
-                                    </div>
+                                        </div>
                     
                                 </body>
                             </html>

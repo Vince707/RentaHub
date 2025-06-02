@@ -223,7 +223,7 @@
                             
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <p class="h5 font-red-gradient mb-0">Room ${unitId} | Lease Start: ${leaseStart}</p>
-                                <button type="button" class="ms-auto btn-red d-flex align-items-center px-3 py-1" data-bs-toggle="modal" data-bs-target="#modalModifyRenter">
+                                <button type="button" class="ms-auto btn-red d-flex align-items-center px-3 py-1" data-bs-toggle="modal" data-bs-target="#modalModifyRenterRenterRole">
                                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#8B0000">
                                         <path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/>
                                     </svg>
@@ -270,13 +270,12 @@
                                 <p class="h4 font-white mb-3">Security</p>
                                 <div class="d-flex flex-row justify-content-start align-items-center gap-5 flex-wrap">
                                     <div class="d-flex align-items-center me-5">
-                                        <p class="h5 font-white mb-0 me-2">Username:</p>
+                                        <p class="h5 font-white mb-0 me-2">Email:</p>
                                         <p id="view-renter-username" class="font-white mb-0">${username}</p>
                                     </div>
                                     <div class="d-flex align-items-center">
                                         <p class="h5 font-white mb-0 me-2">Password:</p>
-                                        <p class="font-white mb-0 me-2">•••••••••••</p>
-                                        <i class="bi bi-eye text-white"></i>
+                                        <p class="font-white mb-0 me-2 fst-italic">Accessible in Modify</p>
                                     </div>
                                 </div>
                             </div>
@@ -301,7 +300,7 @@
                             
                             
                             <!-- Modal Modify Renter Information -->
-                            <div class="modal fade" id="modalModifyRenter" tabindex="-1">
+                            <div class="modal fade" id="modalModifyRenterRenterRole" tabindex="-1">
                                 <div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-md-down">
                                     <div class="modal-content p-4">
                                         
@@ -315,29 +314,29 @@
                                             <p class="h5 font-red-gradient">Personal Information</p>
                                             <div class="d-flex flex-row mb-3 flex-wrap">
                                                 <div class="form-floating me-2 flex-fill">
-                                                    <input type="text" class="form-control" id="modify-renter-surname" placeholder="" required="required"/>
-                                                        <label for="modify-renter-surname">Surname *</label>
+                                                    <input type="text" class="form-control" id="modify-renter-surname-renter-role" placeholder="" required="required"/>
+                                                        <label for="modify-renter-surname-renter-role">Surname *</label>
                                                     </div>
                                                     <div class="form-floating me-2 flex-fill">
-                                                        <input type="text" class="form-control" id="modify-renter-first-name" placeholder="" required="required"/>
-                                                            <label for="modify-renter-first-name">First Name *</label>
+                                                        <input type="text" class="form-control" id="modify-renter-first-name-renter-role" placeholder="" required="required"/>
+                                                            <label for="modify-renter-first-name-renter-role">First Name *</label>
                                                         </div>
                                                         <div class="form-floating me-2 flex-fill">
-                                                            <input type="text" class="form-control" id="modify-renter-middle-name" placeholder=""/>
-                                                                <label for="modify-renter-middle-name">Middle Name</label>
+                                                            <input type="text" class="form-control" id="modify-renter-middle-name-renter-role" placeholder=""/>
+                                                                <label for="modify-renter-middle-name-renter-role">Middle Name</label>
                                                             </div>
                                                             <div class="form-floating me-2 flex-fill">
-                                                                <input type="text" class="form-control" id="modify-renter-ext-name" placeholder=""/>
-                                                                    <label for="modify-renter-ext-name">Extension Name</label>
+                                                                <input type="text" class="form-control" id="modify-renter-ext-name-renter-role" placeholder=""/>
+                                                                    <label for="modify-renter-ext-name-renter-role">Extension Name</label>
                                                                 </div>
                                                                 <div class="form-floating me-2 flex-fill">
-                                                                    <input type="text" class="form-control" id="modify-renter-contact-number" placeholder="" required="required"/>
-                                                                        <label for="modify-renter-contact-number">Contact Number *</label>
+                                                                    <input type="text" class="form-control" id="modify-renter-contact-number-renter-role" placeholder="" required="required"/>
+                                                                        <label for="modify-renter-contact-number-renter-role">Contact Number *</label>
                                                                     </div>
                                                                     <div class="date-input-container me-2 flex-fill">
-                                                                        <label for="modify-renter-birthdate" class="date-label">Birthdate <span>*</span></label>
+                                                                        <label for="modify-renter-birthdate-renter-role" class="date-label">Birthdate <span>*</span></label>
                                                                         <label class="date-input-wrapper">
-                                                                            <input type="date" id="modify-renter-birthdate" class="custom-date-input" required="required" />
+                                                                            <input type="date" id="modify-renter-birthdate-renter-role" class="custom-date-input" required="required" />
                                                                                 <span class="calendar-icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#8B0000"><path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Zm280 240q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm-160 0q-17 0-28.5-11.5T280-440q0-17 11.5-28.5T320-480q17 0 28.5 11.5T360-440q0 17-11.5 28.5T320-400Zm320 0q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400ZM480-240q-17 0-28.5-11.5T440-280q0-17 11.5-28.5T480-320q17 0 28.5 11.5T520-280q0 17-11.5 28.5T480-240Zm-160 0q-17 0-28.5-11.5T280-280q0-17 11.5-28.5T320-320q17 0 28.5 11.5T360-280q0 17-11.5 28.5T320-240Zm320 0q-17 0-28.5-11.5T600-280q0-17 11.5-28.5T640-320q17 0 28.5 11.5T680-280q0 17-11.5 28.5T640-240Z"/></svg></span>
                                                                             </label>
                                                                         </div>
@@ -346,7 +345,7 @@
                                                                     <p class="h5 font-red-gradient">Valid ID Information</p>
                                                                     <div class="d-flex flex-row mb-3 flex-wrap">
                                                                         <div class="me-2 mb-3 flex-fill">
-                                                                            <select class="form-select custom-select" id="modify-renter-valid-id-type" required="required" style="height: 3.5rem;">
+                                                                            <select class="form-select custom-select" id="modify-renter-valid-id-type-renter-role" required="required" style="height: 3.5rem;">
                                                                                 <option selected="selected" disabled="disabled " hidden="hidden">Valid ID Type *</option> 
                                                                                 <option value="national-id">National ID</option>
                                                                                 <option value="sss">SSS ID</option>
@@ -366,8 +365,8 @@
                                                                             </select>
                                                                         </div>
                                                                         <div class="form-floating me-2 flex-fill">
-                                                                            <input type="text" class="form-control" id="modify-renter-valid-id-number" placeholder="" required="required"/>
-                                                                                <label for="modify-renter-valid-id-number">ID Number *</label>
+                                                                            <input type="text" class="form-control" id="modify-renter-valid-id-number-renter-role" placeholder="" required="required"/>
+                                                                                <label for="modify-renter-valid-id-number-renter-role">ID Number *</label>
                                                                             </div>
                                                                         </div>
                                                                         
@@ -375,20 +374,18 @@
                                                                         <div class="d-flex flex-row mb-3 flex-wrap">
                                                                             <div class="me-2 mb-3 flex-fill">
                                                                                 <div class="form-floating me-2 flex-fill">
-                                                                                    <input type="text" class="form-control" id="modify-renter-username" placeholder="" required="required"/>
-                                                                                        <label for="modify-renter-username">Username</label>
+                                                                                    <input type="text" class="form-control" id="modify-renter-username-renter-role" placeholder="" required="required"/>
+                                                                                        <label for="modify-renter-username-renter-role">Username</label>
                                                                                     </div>
                                                                                     <div class="position-relative flex-fill">
                                                                                         <div class="form-floating">
-                                                                                            <input type="password" class="form-control pe-5" id="modify-renter-password" placeholder="" required="required"/>
-                                                                                                <label for="modify-renter-password">Password</label>
-                                                                                            </div>
-                                                                                            <span class="position-absolute top-50 end-0 translate-middle-y me-3" style="cursor: pointer;" onclick="togglePasswordVisibility('modify-renter-password')">
-                                                                                                <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20" fill="#8B0000">
-                                                                                                    <path d="M0 0h24v24H0V0z" fill="none"/>
-                                                                                                    <path d="M12 6a9.77 9.77 0 0 1 9 6 9.77 9.77 0 0 1-9 6 9.77 9.77 0 0 1-9-6 9.77 9.77 0 0 1 9-6m0-2C6.48 4 2 9 2 12s4.48 8 10 8 10-5 10-8-4.48-8-10-8zm0 3a5 5 0 1 1 0 10 5 5 0 0 1 0-10z"/>
-                                                                                                </svg>
-                                                                                            </span>
+                                                                                        <input type="password" class="form-control" id="modify-renter-password-renter-role" placeholder="Password"/>
+                                                                                        <label for="modify-renter-password-renter-role">Password</label>
+                                                                                        <button class="btn btn-sm position-absolute end-0 top-50 translate-middle-y me-3 border-0 bg-transparent"
+                                                                                                onclick="togglePasswordVisibility('modify-renter-password-renter-role')" id="password">
+                                                                                            <i id="eyeIcon" class="bi bi-eye-slash"></i>
+                                                                                        </button>
+                                                                                        </div>
                                                                                         </div>    
                                                                                     </div>
                                                                                 </div>
@@ -396,24 +393,110 @@
                                                                             
                                                                             <!-- Modal footer -->
                                                                             <div class="modal-footer d-flex justify-content-between">
-                                                                                <div id="error-box-modify-renter" class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-10 col-lg-6" style="color:white; background-color: #a6192e;">
+                                                                                <div id="error-box-modify-renter-renter-role" class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-10 col-lg-6" style="color:white; background-color: #a6192e;">
                                                                                     <i class="bi bi-exclamation-triangle-fill fs-3"></i>
                                                                                     <div>
                                                                                         <strong class="fs-5">Warning!</strong><br/>
-                                                                                        <span class="small" id="error-text-modify-renter"></span>
+                                                                                        <span class="small" id="error-text-modify-renter-renter-role"></span>
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="ms-auto">
-                                                                                    <button type="button" class="btn-red" data-bs-dismiss="modal" id="button-cancel-modify-renter">Cancel</button>
-                                                                                    <button type="button" class="btn-green-fill" id="button-modify-renter">Update</button>
+                                                                                    <button type="button" class="btn-red" data-bs-dismiss="modal" id="button-cancel-modify-renter-renter-role">Cancel</button>
+                                                                                    <button type="button" class="btn-green-fill" id="button-modify-renter-renter-role">Update</button>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                
+                        
+                            <script>
+                            $(document).ready(function() {
+                            const currentUserStr = localStorage.getItem('currentUser');
+                            
+                            if (!currentUserStr) {
+                            return;
+                            }
+                            
+                            const currentUser = JSON.parse(currentUserStr);
+                            const currentUserId = currentUser.id;
+                            $("#hidden-modify-renter-user-id-renter-role").val(currentUserId);
+
+                            
+                            $.ajax({
+                            url: 'apartment.xml',
+                            dataType: 'xml',
+                            success: function(xml) {
+                            let renterId = null;
+                            let renterNode = null;
+                            
+                            $(xml).find('renters &gt; renter').each(function() {
+                            if ($(this).find('userId').text().trim() === currentUserId) {
+                            renterId = $(this).attr('id').trim();
+                            renterNode = $(this);
+                              $("#hidden-modify-renter-renter-id-renter-role").val(renterId);
+
+                            return false; 
+                            }
+                            });
+                            
+                            if (!renterId || !renterNode) {
+                            return;
+                            }
+                            
+                            const surname = renterNode.find('personalInfo &gt; name &gt; surname').text().trim();
+                            const firstName = renterNode.find('personalInfo &gt; name &gt; firstName').text().trim();
+                            const middleName = renterNode.find('personalInfo &gt; name &gt; middleName').text().trim();
+                            const extension = renterNode.find('personalInfo &gt; name &gt; extension').text().trim();
+                            const contact = renterNode.find('personalInfo &gt; contact').text().trim();
+                            const birthDate = renterNode.find('personalInfo &gt; birthDate').text().trim();
+                            const validIdType = renterNode.find('personalInfo &gt; validId &gt; validIdType').text().trim();
+                            const validIdNumber = renterNode.find('personalInfo &gt; validId &gt; validIdNumber').text().trim();
+                            const roomNumber = renterNode.find('rentalInfo &gt; unitId').text().trim();
+                            $("#hidden-modify-renter-room-number-renter-role").val(roomNumber);
+                            
+                            const contractTerm = renterNode.find('rentalInfo &gt; contractTermInMonths').text().trim();
+                            $("#hidden-modify-renter-contract-term-renter-role").val(contractTerm);
+                            
+                            const leaseStart = renterNode.find('rentalInfo &gt; leaseStart').text().trim();
+                            $("#hidden-modify-renter-lease-start-renter-role").val(leaseStart);
+                            
+                            let username = '';
+                            if (typeof usersMap !== 'undefined' &amp;&amp; usersMap[currentUserId]) {
+                            username = usersMap[currentUserId].email;
+                            } else if (currentUser.email) {
+                            username = currentUser.email;
+                            }
+                            
+                            let password = '';
+                            if (typeof usersMap !== 'undefined' &amp;&amp; usersMap[currentUserId]) {
+                            password = usersMap[currentUserId].password || '';
+                            } else {
+                            $(xml).find('users &gt; user').each(function() {
+                            if ($(this).attr('id').trim() === currentUserId) {
+                            password = $(this).find('password').text().trim();
+                            return false;
+                            }
+                            });
+                            }
+                            
+                            $('#modify-renter-surname-renter-role').val(surname);
+                            $('#modify-renter-first-name-renter-role').val(firstName);
+                            $('#modify-renter-middle-name-renter-role').val(middleName);
+                            $('#modify-renter-ext-name-renter-role').val(extension);
+                            $('#modify-renter-contact-number-renter-role').val(contact);
+                            $('#modify-renter-birthdate-renter-role').val(birthDate);
+                            $('#modify-renter-valid-id-type-renter-role').val(validIdType);
+                            $('#modify-renter-valid-id-number-renter-role').val(validIdNumber);
+                            $('#modify-renter-username-renter-role').val(username);
+                            $('#modify-renter-password-renter-role').val(password);
+                            }
+                            });
+                            <!-- $('#modalModifyRenterRenterRole').modal('show'); -->
+                            });
+                            </script>
+                        
                                                                 <!-- Modal Modify Renter Confirmation -->
-                                                                <div class="modal fade" id="modalModifyRenterConfirmation" tabindex="-1">
+                                                                <div class="modal fade" id="modalModifyRenterRenterRoleConfirmation" tabindex="-1">
                                                                     <div class="modal-dialog modal-dialog-centered modal-lg modal-fullscreen-md-down">
                                                                         <div class="modal-content p-4">
                                                                             
@@ -428,25 +511,25 @@
                                                                                     <p class="h4 font-red-gradient">Personal Information</p>
                                                                                     <div class="d-flex flex-row">
                                                                                         <p class="h5 font-red-gradient me-2">Name:</p>
-                                                                                        <p class="font-red"><span id="confirm-modify-renter-first-name" class="font-red"></span> <span id="confirm-modify-renter-middle-name"></span> <span id="confirm-modify-renter-surname"></span> <span id="confirm-modify-renter-ext-name"></span></p>
+                                                                                        <p class="font-red"><span id="confirm-modify-renter-first-name-renter-role" class="font-red"></span>&#160;<span id="confirm-modify-renter-middle-name-renter-role"></span>&#160;<span id="confirm-modify-renter-surname-renter-role"></span>&#160;<span id="confirm-modify-renter-ext-name-renter-role"></span></p>
                                                                                     </div>
                                                                                     <div class="d-flex flex-row">
                                                                                         <p class="h5 font-red-gradient me-2">Contact Number:</p>
-                                                                                        <p id="confirm-modify-renter-contact-number" class="font-red"></p>
+                                                                                        <p id="confirm-modify-renter-contact-number-renter-role" class="font-red"></p>
                                                                                     </div>
                                                                                     <div class="d-flex flex-row">
                                                                                         <p class="h5 font-red-gradient me-2">Birth Date:</p>
-                                                                                        <p id="confirm-modify-renter-birthdate" class="font-red"></p>
+                                                                                        <p id="confirm-modify-renter-birthdate-renter-role" class="font-red"></p>
                                                                                     </div>
                                                                                     
                                                                                     <p class="h4 font-red-gradient mt-3">Valid ID Information</p>
                                                                                     <div class="d-flex flex-row">
                                                                                         <p class="h5 font-red-gradient me-2">Valid ID Type:</p>
-                                                                                        <p id="confirm-modify-renter-valid-id-type" class="font-red"></p>
+                                                                                        <p id="confirm-modify-renter-valid-id-type-renter-role" class="font-red"></p>
                                                                                     </div>
                                                                                     <div class="d-flex flex-row">
                                                                                         <p class="h5 font-red-gradient me-2">ID Number:</p>
-                                                                                        <p id="confirm-modify-renter-valid-id-number" class="font-red"></p>
+                                                                                        <p id="confirm-modify-renter-valid-id-number-renter-role" class="font-red"></p>
                                                                                     </div>
                                                                                 </div>
                                                                                 
@@ -454,24 +537,44 @@
                                                                                     <p class="h4 font-red-gradient mt-3">Security</p>
                                                                                     <div class="d-flex flex-row">
                                                                                         <p class="h5 font-red-gradient me-2">Username:</p>
-                                                                                        <p><span id="confirm-modify-renter-username" class="font-red"></span></p>
+                                                                                        <p><span id="confirm-modify-renter-username-renter-role" class="font-red"></span></p>
                                                                                     </div>
                                                                                     <div class="d-flex flex-row">
-                                                                                        <p class="h5 font-red-gradient me-2">Password</p>
-                                                                                        <p id="confirm-modify-renter-password" class="font-red"></p>
+                                                                                        <p class="h5 font-red-gradient me-2">Password:</p>
+                                                                                        <p id="confirm-modify-renter-password-renter-role" class="font-red"></p>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                        </div>
+                                                                        <!-- </div> -->
                                                                         
-                                                                        <!-- Modal footer -->
-                                                                        <div class="modal-footer">
-                                                                            <button type="button" class="btn-red" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalModifyRenter">Return</button>
-                                                                            <button type="button" class="btn-green-fill" id="button-confirm-modify-renter">Confirm</button>
+                                                                             <!-- Modal footer -->
+                                                                            <div class="modal-footer">
+                                                                                <button type="button" class="btn-red" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalModifyRenterRenterRole">Return</button>
+                                                                                <form id="hidden-modify-renter-form-renter-role" method="post" action="functions/modify-renter-renter-role.php">
+                                                                                    <input type="hidden" name="surname" id="hidden-modify-renter-surname-renter-role"/>
+                                                                                    <input type="hidden" name="firstName" id="hidden-modify-renter-first-name-renter-role"/>
+                                                                                    <input type="hidden" name="middleName" id="hidden-modify-renter-middle-name-renter-role"/>
+                                                                                    <input type="hidden" name="extName" id="hidden-modify-renter-ext-name-renter-role"/>
+                                                                                    <input type="hidden" name="contact" id="hidden-modify-renter-contact-number-renter-role"/>
+                                                                                    <input type="hidden" name="birthdate" id="hidden-modify-renter-birthdate-renter-role"/>
+                                                                                    <input type="hidden" name="idType" id="hidden-modify-renter-valid-id-type-renter-role"/>
+                                                                                    <input type="hidden" name="idNumber" id="hidden-modify-renter-valid-id-number-renter-role"/>
+                                                                                    <input type="hidden" name="username" id="hidden-modify-renter-username-renter-role"/>
+                                                                                    <input type="hidden" name="password" id="hidden-modify-renter-password-renter-role"/>
+                                                                                    <input type="hidden" name="renterId" id="hidden-modify-renter-renter-id-renter-role"/>
+                                                                                    <input type="hidden" name="userId" id="hidden-modify-renter-user-id-renter-role"/>
+                                                                                    <input type="hidden" id="hidden-modify-renter-room-number-renter-role" name="roomNumber"/>
+                                                                                    <input type="hidden" id="hidden-modify-renter-contract-term-renter-role" name="contractTerm"/>
+                                                                                    <input type="hidden" id="hidden-modify-renter-lease-start-renter-role" name="leaseStart"/>
+                                                                                    <!-- Add more hidden fields if you add more data fields in your modal -->
+                                                                                <button type="submit" class="btn-green-fill" id="button-confirm-modify-renter-renter-role">Confirm</button>
+                                                                                    
+                                                                                </form>
+                                                                                
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
                                                             
                                                             <!-- Modal Modify Renter Success -->
                                                             <div class="modal fade" id="modalModifyRenterSuccess" tabindex="-1">
@@ -496,6 +599,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
+                    </div>
                                                             
                                                             
                                                         </body>

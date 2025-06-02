@@ -113,13 +113,7 @@
   document.addEventListener('DOMContentLoaded', checkUserAccess);
         
   $(document).ready(function () {
-    $('#billings-summary').DataTable({
-      layout: {
-        bottomStart: {
-          buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
-        }
-      }
-    });
+    
     $('#electric-bill-allocation').DataTable({
       layout: {
         bottomStart: {
@@ -1220,9 +1214,9 @@
                         </label>
                       </div>
                       <div class="form-floating ms-2 col-12 col-sm-6 col-lg-3 mt-3">
-                        <input type="text" class="form-control" id="add-billings-electric-total-bill" placeholder=""
+                        <input type="text" class="form-control" id="generate-billings-electric-total-bill" placeholder=""
                           required="required"/>
-                        <label for="add-billings-electric-total-bill">Total Electric Bill *</label>
+                        <label for="generate-billings-electric-total-bill">Total Electric Bill *</label>
                       </div>
                     </div>
                     <!-- TABLE -->

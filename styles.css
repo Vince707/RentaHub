@@ -497,7 +497,7 @@ input.search-input::placeholder {
 }
 
 .custom-checkbox {
-  appearance: none;
+  /* appearance: none; */
   width: 20px;
   height: 20px;
   border: 2px solid #891B1B;
@@ -539,7 +539,7 @@ input.search-input::placeholder {
 
 
 .custom-checkbox-white {
-  appearance: none;
+  /* appearance: none; */
   width: 20px;
   height: 20px;
   border: 2px solid white;
