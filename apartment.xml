@@ -671,7 +671,7 @@
                 <leavingReason>others</leavingReason>
             </rentalInfo>
         </renter>
-    </renters>
+    <renter id="27"><userId>27</userId><status>Archived</status><personalInfo><name><surname>New</surname><firstName>New</firstName><middleName>New</middleName><extension/></name><contact>09090925793</contact><birthDate>2025-01-08</birthDate><validId><validIdType>national-id</validIdType><validIdNumber>123-213-9431-3</validIdNumber></validId></personalInfo><rentalInfo><unitId>4A</unitId><leaseStart>2025-06-10</leaseStart><leaseEnd>2025-06-02</leaseEnd><contractTermInMonths>2</contractTermInMonths><leavingReason>rule-violation</leavingReason></rentalInfo></renter></renters>
 
 
     <rooms>
@@ -4751,7 +4751,7 @@
             <status>Archived</status>
             <lastLogin>2025-05-29</lastLogin>
         </user>
-    </users>
+    <user id="27"><email>new@gmail.com</email><password>NewAccount@123</password><dateGenerated>2025-06-03</dateGenerated><userRole>Renter</userRole><status>Archived</status><lastLogin>2025-06-03</lastLogin></user></users>
 
     <caretakers>
         <caretaker id="501">

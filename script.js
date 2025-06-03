@@ -680,6 +680,436 @@ function populateIndividualBillDetailsRenterRole(monthStr, renterId) {
     populateOverdueBillsCardRenterRole(renterId);
 }
 
+
+
+function populateBillingSummaryForAllRenters(renterDataMap, roomsDataMap, rentBillsMap, utilityBillsMap) {
+  // Helper: badge and class based on status and amount
+  function getBadgeAndClass(status, amount) {
+    if (parseFloat(amount) === 0) {
+      return {
+        badge: '<span class="badge rounded-pill bg-success ms-1">Full Payment</span>',
+        cls: 'text-success'
+      };
+    }
+    if (status === "Unpaid") {
+      return {
+        badge: '<span class="badge rounded-pill bg-danger ms-1">Unpaid</span>',
+        cls: 'text-danger'
+      };
+    }
+    if (status === "Partial") {
+      return {
+        badge: '<span class="badge rounded-pill bg-warning ms-1">Partial Payment</span>',
+        cls: 'text-warning'
+      };
+    }
+    if (status === "Paid") {
+      return {
+        badge: '<span class="badge rounded-pill bg-success ms-1">Full Payment</span>',
+        cls: 'text-success'
+      };
+    }
+    return {
+      badge: '',
+      cls: parseFloat(amount) === 0 ? 'text-success' : 'text-secondary'
+    };
+  }
+
+  // Helper: format PHP currency
+  function formatPHP(amount) {
+    return Number(amount).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  // Collect all due months from utility readings and rent bills
+  let monthsSet = new Set();
+  Object.values(utilityBillsMap).forEach(utility => {
+    utility.readings.forEach(reading => {
+      if (reading.dueDate) monthsSet.add(reading.dueDate.slice(0, 7));
+    });
+  });
+  Object.values(rentBillsMap).forEach(bill => {
+    if (bill.dueDate) monthsSet.add(bill.dueDate.slice(0, 7));
+  });
+  let allMonths = Array.from(monthsSet).sort();
+
+  let rowsHtml = '';
+
+  Object.values(renterDataMap).forEach(renter => {
+    if (!renter.unitId) return; // skip renters with no unit
+
+    const room = roomsDataMap[renter.unitId] || {};
+    const roomNo = room.roomNo || '';
+    const fullName = [renter.firstName, renter.middleName, renter.surname, renter.extension].filter(Boolean).join(' ');
+
+    // Add a header row for the renter
+    rowsHtml += `
+      <tr class="table-secondary">
+        <td colspan="7">
+          <strong>${fullName}</strong> ${roomNo ? `| Room: ${roomNo}` : ''}
+        </td>
+      </tr>
+    `;
+
+    allMonths.forEach(monthStr => {
+      // --- Electric Bill ---
+      let electricBill = 0, electricStatus = '';
+      if (utilityBillsMap['Electricity']) {
+        utilityBillsMap['Electricity'].readings.forEach(reading => {
+          if (reading.dueDate && reading.dueDate.slice(0, 7) === monthStr) {
+            reading.bills.forEach(bill => {
+              if (String(bill.renterId) === String(renter.id)) {
+                electricBill += parseFloat(bill.amount) || 0;
+                electricStatus = bill.status;
+              }
+            });
+          }
+        });
+      }
+      let electricInfo = getBadgeAndClass(electricStatus, electricBill);
+
+      // --- Water Bill ---
+      let waterBill = 0, waterStatus = '';
+      if (utilityBillsMap['Water']) {
+        utilityBillsMap['Water'].readings.forEach(reading => {
+          if (reading.dueDate && reading.dueDate.slice(0, 7) === monthStr) {
+            reading.bills.forEach(bill => {
+              if (String(bill.renterId) === String(renter.id)) {
+                waterBill += parseFloat(bill.amount) || 0;
+                waterStatus = bill.status;
+              }
+            });
+          }
+        });
+      }
+      let waterInfo = getBadgeAndClass(waterStatus, waterBill);
+
+      // --- Rent Bill ---
+      let rentBill = 0, rentStatus = '';
+      Object.values(rentBillsMap).forEach(bill => {
+        if (String(bill.renterId) === String(renter.id) && bill.dueDate && bill.dueDate.slice(0, 7) === monthStr) {
+          rentBill += parseFloat(bill.amount) || 0;
+          rentStatus = bill.status;
+        }
+      });
+      let rentInfo = getBadgeAndClass(rentStatus, rentBill);
+
+      const today = new Date();
+      const [year, month] = monthStr.split('-').map(Number);
+      const monthStartDate = new Date(year, month - 1, 1); // first day of current month
+      const monthEndDate = new Date(year, month, 0, 23, 59, 59, 999); // last day of current month
+
+      let overdue = 0, overdueStatus = '';
+
+      // Rent bills overdue from previous months (dueDate < first day of current month)
+      Object.values(rentBillsMap).forEach(bill => {
+        if (
+          String(bill.renterId) === String(renter.id) &&
+          bill.status === 'Unpaid' &&
+          bill.dueDate &&
+          new Date(bill.dueDate) < monthStartDate &&  // strictly before current month
+          new Date(bill.dueDate) < today              // already past due
+        ) {
+          overdue += parseFloat(bill.amount) || 0;
+          overdueStatus = bill.status;
+        }
+      });
+
+      // Utility bills overdue from previous months (dueDate < first day of current month)
+      ['Electricity', 'Water'].forEach(type => {
+        if (utilityBillsMap[type]) {
+          utilityBillsMap[type].readings.forEach(reading => {
+            if (
+              reading.dueDate &&
+              new Date(reading.dueDate) < monthStartDate &&
+              new Date(reading.dueDate) < today
+            ) {
+              reading.bills.forEach(bill => {
+                if (String(bill.renterId) === String(renter.id) && bill.status === 'Unpaid') {
+                  overdue += parseFloat(bill.amount) || 0;
+                  overdueStatus = bill.status;
+                }
+              });
+            }
+          });
+        }
+      });
+
+      let overdueInfo = getBadgeAndClass(overdueStatus, overdue);
+
+      let total = electricBill + waterBill + rentBill + overdue;
+
+      // Collect statuses into an array for easier checking
+      const statuses = [electricStatus, waterStatus, rentStatus];
+      let totalStatus = '';
+      if (statuses.every(status => status === 'Paid')) {
+        totalStatus = 'Paid';
+      } else if (statuses.some(status => status === 'Paid' || status === 'Partial')) {
+        totalStatus = 'Partial';
+      } else {
+        totalStatus = 'Unpaid';
+      }
+      let totalInfo = getBadgeAndClass(totalStatus, total);
+
+      let totalUnpaid = 0, unpaidStatus = '';
+
+      // Rent Bills unpaid for the current month only
+      Object.values(rentBillsMap).forEach(bill => {
+        if (
+          String(bill.renterId) === String(renter.id) &&
+          bill.status && 
+          (bill.status === 'Unpaid' || bill.status === 'Partial') &&
+          bill.dueDate &&
+          bill.dueDate.slice(0, 7) === monthStr // Only bills due in current month
+        ) {
+          if (bill.status === 'Unpaid') {
+            totalUnpaid += parseFloat(bill.amount) || 0;
+          } else if (bill.status === 'Partial') {
+            totalUnpaid += parseFloat(bill.debt) || 0;
+          }
+          unpaidStatus = bill.status;
+        }
+      });
+
+      // Utility Bills unpaid for the current month only (Electricity & Water)
+      ['Electricity', 'Water'].forEach(type => {
+        if (utilityBillsMap[type]) {
+          utilityBillsMap[type].readings.forEach(reading => {
+            if (reading.dueDate && reading.dueDate.slice(0, 7) === monthStr) {
+              reading.bills.forEach(bill => {
+                if (
+                  String(bill.renterId) === String(renter.id) &&
+                  bill.status &&
+                  (bill.status === 'Unpaid' || bill.status === 'Partial')
+                ) {
+                  if (bill.status === 'Unpaid') {
+                    totalUnpaid += parseFloat(bill.amount) || 0;
+                  } else if (bill.status === 'Partial') {
+                    totalUnpaid += parseFloat(bill.debt) || 0;
+                  }
+                  unpaidStatus = bill.status;
+                }
+              });
+            }
+          });
+        }
+      });
+
+      let unpaidInfo = getBadgeAndClass(unpaidStatus, totalUnpaid);
+
+      // Only display row if there is any bill for this month
+      if (electricBill || waterBill || rentBill) {
+        let monthDueText = monthStr; // formatted as YYYY-MM
+        rowsHtml += `
+          <tr>
+            <td>${monthDueText}</td>
+            <td class="${electricInfo.cls}">${formatPHP(electricBill)}${electricInfo.badge}</td>
+            <td class="${waterInfo.cls}">${formatPHP(waterBill)}${waterInfo.badge}</td>
+            <td class="${rentInfo.cls}">${formatPHP(rentBill)}${rentInfo.badge}</td>
+            <td class="${overdueInfo.cls}">${formatPHP(overdue)}${overdueInfo.badge}</td>
+            <td class="${totalInfo.cls}">${formatPHP(total)}${totalInfo.badge}</td>
+            <td class="${unpaidInfo.cls}">${formatPHP(totalUnpaid)}${unpaidInfo.badge}</td>
+          </tr>
+        `;
+      }
+    });
+  });
+
+  $('#billings-summary tbody').html(rowsHtml);
+}
+
+
+function populateBillingSummary(renterDataMap, roomsDataMap, rentBillsMap, utilityBillsMap) {
+    // Determines badge and color class based on status and amount
+    function getBadgeAndClass(status, amount) {
+      if (parseFloat(amount) === 0) {
+        return {
+          badge: '<span class="badge rounded-pill bg-success ms-1">Full Payment</span>',
+          cls: 'text-success'
+        };
+      }
+      if (status === "Unpaid") {
+        return {
+          badge: '<span class="badge rounded-pill bg-danger ms-1">Unpaid</span>',
+          cls: 'text-danger'
+        };
+      }
+      if (status === "Partial") {
+        return {
+          badge: '<span class="badge rounded-pill bg-warning ms-1">Partial Payment</span>',
+          cls: 'text-warning'
+        };
+      }
+      if (status === "Paid") {
+        return {
+          badge: '<span class="badge rounded-pill bg-success ms-1">Full Payment</span>',
+          cls: 'text-success'
+        };
+      }
+      return {
+        badge: '',
+        cls: parseFloat(amount) === 0 ? 'text-success' : 'text-secondary'
+      };
+    }
+
+function formatPHP(amount) {
+  return Number(amount).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+// 1. Collect all due months from all readings and rent bills
+let monthsSet = new Set();
+
+Object.values(utilityBillsMap).forEach(utility => {
+  utility.readings.forEach(reading => {
+    if (reading.dueDate) monthsSet.add(reading.dueDate.slice(0, 7));
+  });
+});
+Object.values(rentBillsMap).forEach(bill => {
+  if (bill.dueDate) monthsSet.add(bill.dueDate.slice(0, 7));
+});
+
+let allMonths = Array.from(monthsSet).sort(); // Sort for display
+let rowsHtml = '';
+
+Object.keys(renterDataMap).forEach(renterId => {
+  const renter = renterDataMap[renterId];
+  if (!renter.unitId) return;
+
+  const room = roomsDataMap[renter.unitId] || {};
+  const roomNo = room.roomNo || '';
+  const fullName = [renter.firstName, renter.middleName, renter.surname, renter.extension].filter(Boolean).join(' ');
+
+  allMonths.forEach(monthStr => {
+    // --- Electric Bill ---
+    let electricBill = 0, electricStatus = '';
+    if (utilityBillsMap['Electricity']) {
+      utilityBillsMap['Electricity'].readings.forEach(reading => {
+        if (reading.dueDate && reading.dueDate.slice(0, 7) === monthStr) {
+          reading.bills.forEach(bill => {
+            if (String(bill.renterId) === String(renterId)) {
+              electricBill += parseFloat(bill.amount) || 0;
+              electricStatus = bill.status;
+            }
+          });
+        }
+      });
+    }
+    let electricInfo = getBadgeAndClass(electricStatus, electricBill);
+
+    // --- Water Bill ---
+    let waterBill = 0, waterStatus = '';
+    if (utilityBillsMap['Water']) {
+      utilityBillsMap['Water'].readings.forEach(reading => {
+        if (reading.dueDate && reading.dueDate.slice(0, 7) === monthStr) {
+          reading.bills.forEach(bill => {
+            if (String(bill.renterId) === String(renterId)) {
+              waterBill += parseFloat(bill.amount) || 0;
+              waterStatus = bill.status;
+            }
+          });
+        }
+      });
+    }
+    let waterInfo = getBadgeAndClass(waterStatus, waterBill);
+
+    // --- Rent Bill ---
+    let rentBill = 0, rentStatus = '';
+    Object.values(rentBillsMap).forEach(bill => {
+      if (String(bill.renterId) === String(renterId) && bill.dueDate && bill.dueDate.slice(0, 7) === monthStr) {
+        rentBill += parseFloat(bill.amount) || 0;
+        rentStatus = bill.status;
+      }
+    });
+    let rentInfo = getBadgeAndClass(rentStatus, rentBill);
+
+    // --- Overdue: all unpaid bills with dueDate < today ---
+    let today = new Date();
+    let overdue = 0, overdueStatus = '';
+    Object.values(rentBillsMap).forEach(bill => {
+      if (String(bill.renterId) === String(renterId) && bill.status === 'Unpaid' && bill.dueDate && new Date(bill.dueDate) < today) {
+        overdue += parseFloat(bill.amount) || 0;
+        overdueStatus = bill.status;
+      }
+    });
+    ['Electricity', 'Water'].forEach(type => {
+      if (utilityBillsMap[type]) {
+        utilityBillsMap[type].readings.forEach(reading => {
+          if (reading.dueDate && new Date(reading.dueDate) < today) {
+            reading.bills.forEach(bill => {
+              if (String(bill.renterId) === String(renterId) && bill.status === 'Unpaid') {
+                overdue += parseFloat(bill.amount) || 0;
+                overdueStatus = bill.status;
+              }
+            });
+          }
+        });
+      }
+    });
+    let overdueInfo = getBadgeAndClass(overdueStatus, overdue);
+
+    // --- Total (for this month) ---
+    let total = electricBill + waterBill + rentBill + overdue;
+    let totalStatus = (electricStatus === 'Unpaid' || waterStatus === 'Unpaid' || rentStatus === 'Unpaid') ? 'Unpaid'
+      : (electricStatus === 'Partial' || waterStatus === 'Partial' || rentStatus === 'Partial') ? 'Partial'
+      : 'Paid';
+    let totalInfo = getBadgeAndClass(totalStatus, total);
+
+    // --- Total Unpaid: all unpaid bills for this renter ---
+    let totalUnpaid = 0, unpaidStatus = '';
+    // Rent Bills
+    Object.values(rentBillsMap).forEach(bill => {
+      if (String(bill.renterId) === String(renterId)) {
+        if (bill.status === 'Unpaid') {
+          totalUnpaid += parseFloat(bill.amount) || 0;
+          unpaidStatus = bill.status;
+        } else if (bill.status === 'Partial') {
+          totalUnpaid += parseFloat(bill.debt) || 0;
+          unpaidStatus = bill.status;
+        }
+      }
+    });
+    // Utility Bills (Electricity & Water)
+    ['Electricity', 'Water'].forEach(type => {
+      if (utilityBillsMap[type]) {
+        utilityBillsMap[type].readings.forEach(reading => {
+          reading.bills.forEach(bill => {
+            if (String(bill.renterId) === String(renterId)) {
+              if (bill.status === 'Unpaid') {
+                totalUnpaid += parseFloat(bill.amount) || 0;
+                unpaidStatus = bill.status;
+              } else if (bill.status === 'Partial') {
+                totalUnpaid += parseFloat(bill.debt) || 0;
+                unpaidStatus = bill.status;
+              }
+            }
+          });
+        });
+      }
+    });
+    let unpaidInfo = getBadgeAndClass(unpaidStatus, totalUnpaid);
+
+    // Only display row if there is any bill for this month
+    if (electricBill || waterBill || rentBill) {
+      let monthDueText = monthStr; // <-- formatted as YYYY-MM
+      rowsHtml += `
+        <tr>
+          <td>${roomNo}</td>
+          <td>${fullName}</td>
+          <td>${monthDueText}</td>
+          <td class="${electricInfo.cls}">${formatPHP(electricBill)}${electricInfo.badge}</td>
+          <td class="${waterInfo.cls}">${formatPHP(waterBill)}${waterInfo.badge}</td>
+          <td class="${rentInfo.cls}">${formatPHP(rentBill)}${rentInfo.badge}</td>
+          <td class="${overdueInfo.cls}">${formatPHP(overdue)}${overdueInfo.badge}</td>
+          <td class="${totalInfo.cls}">${formatPHP(total)}${totalInfo.badge}</td>
+          <td class="${unpaidInfo.cls}">${formatPHP(totalUnpaid)}${unpaidInfo.badge}</td>
+        </tr>
+      `;
+    }
+  });
+});
+
+$('#billings-summary tbody').html(rowsHtml);
+}
+
 function populateBillingSummaryForRenter(renterId, renterDataMap, roomsDataMap, rentBillsMap, utilityBillsMap) {
   // Helper: badge and class based on status and amount
   function getBadgeAndClass(status, amount) {
@@ -2020,6 +2450,8 @@ if (currentUserStr) {
       updateTotalCurrentWaterBillForUser(currentUserId, renterDataMap);
       updateTotalCurrentRentBillForUser(currentUserId, renterDataMap);
 
+      
+
       // Payment Metrics
       updateTotalUnpaidForUser(currentUserId, renterDataMap);
       updateTotalPaymentsForUser(currentUserId, renterDataMap, paymentsMap);
@@ -2039,7 +2471,7 @@ if (currentUserStr) {
       }
       // Table
       populatePaymentHistoryForRenter(renterId, paymentsMap);
-
+      populateBillingSummary(renterDataMap, roomsDataMap, rentBillsMap, utilityBillsMap);
       populateBillingSummaryForRenter(renterId, renterDataMap, roomsDataMap, rentBillsMap, utilityBillsMap);
 
       $('#individual-month-due-renter-role').on('change', function() {
@@ -3242,200 +3674,10 @@ $(document).ready(function () {
       order: [[2, 'desc']] // Sort by 3rd column (Month Due) descending
     });
     
-      populateBillingSummary(renterDataMap, roomsDataMap, rentBillsMap, utilityBillsMap);
+      
     }, 0);
 
-    function populateBillingSummary(renterDataMap, roomsDataMap, rentBillsMap, utilityBillsMap) {
-    // Determines badge and color class based on status and amount
-    function getBadgeAndClass(status, amount) {
-      if (parseFloat(amount) === 0) {
-        return {
-          badge: '<span class="badge rounded-pill bg-success ms-1">Full Payment</span>',
-          cls: 'text-success'
-        };
-      }
-      if (status === "Unpaid") {
-        return {
-          badge: '<span class="badge rounded-pill bg-danger ms-1">Unpaid</span>',
-          cls: 'text-danger'
-        };
-      }
-      if (status === "Partial") {
-        return {
-          badge: '<span class="badge rounded-pill bg-warning ms-1">Partial Payment</span>',
-          cls: 'text-warning'
-        };
-      }
-      if (status === "Paid") {
-        return {
-          badge: '<span class="badge rounded-pill bg-success ms-1">Full Payment</span>',
-          cls: 'text-success'
-        };
-      }
-      return {
-        badge: '',
-        cls: parseFloat(amount) === 0 ? 'text-success' : 'text-secondary'
-      };
-    }
-
-function formatPHP(amount) {
-  return Number(amount).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-
-// 1. Collect all due months from all readings and rent bills
-let monthsSet = new Set();
-
-Object.values(utilityBillsMap).forEach(utility => {
-  utility.readings.forEach(reading => {
-    if (reading.dueDate) monthsSet.add(reading.dueDate.slice(0, 7));
-  });
-});
-Object.values(rentBillsMap).forEach(bill => {
-  if (bill.dueDate) monthsSet.add(bill.dueDate.slice(0, 7));
-});
-
-let allMonths = Array.from(monthsSet).sort(); // Sort for display
-let rowsHtml = '';
-
-Object.keys(renterDataMap).forEach(renterId => {
-  const renter = renterDataMap[renterId];
-  if (!renter.unitId) return;
-
-  const room = roomsDataMap[renter.unitId] || {};
-  const roomNo = room.roomNo || '';
-  const fullName = [renter.firstName, renter.middleName, renter.surname, renter.extension].filter(Boolean).join(' ');
-
-  allMonths.forEach(monthStr => {
-    // --- Electric Bill ---
-    let electricBill = 0, electricStatus = '';
-    if (utilityBillsMap['Electricity']) {
-      utilityBillsMap['Electricity'].readings.forEach(reading => {
-        if (reading.dueDate && reading.dueDate.slice(0, 7) === monthStr) {
-          reading.bills.forEach(bill => {
-            if (String(bill.renterId) === String(renterId)) {
-              electricBill += parseFloat(bill.amount) || 0;
-              electricStatus = bill.status;
-            }
-          });
-        }
-      });
-    }
-    let electricInfo = getBadgeAndClass(electricStatus, electricBill);
-
-    // --- Water Bill ---
-    let waterBill = 0, waterStatus = '';
-    if (utilityBillsMap['Water']) {
-      utilityBillsMap['Water'].readings.forEach(reading => {
-        if (reading.dueDate && reading.dueDate.slice(0, 7) === monthStr) {
-          reading.bills.forEach(bill => {
-            if (String(bill.renterId) === String(renterId)) {
-              waterBill += parseFloat(bill.amount) || 0;
-              waterStatus = bill.status;
-            }
-          });
-        }
-      });
-    }
-    let waterInfo = getBadgeAndClass(waterStatus, waterBill);
-
-    // --- Rent Bill ---
-    let rentBill = 0, rentStatus = '';
-    Object.values(rentBillsMap).forEach(bill => {
-      if (String(bill.renterId) === String(renterId) && bill.dueDate && bill.dueDate.slice(0, 7) === monthStr) {
-        rentBill += parseFloat(bill.amount) || 0;
-        rentStatus = bill.status;
-      }
-    });
-    let rentInfo = getBadgeAndClass(rentStatus, rentBill);
-
-    // --- Overdue: all unpaid bills with dueDate < today ---
-    let today = new Date();
-    let overdue = 0, overdueStatus = '';
-    Object.values(rentBillsMap).forEach(bill => {
-      if (String(bill.renterId) === String(renterId) && bill.status === 'Unpaid' && bill.dueDate && new Date(bill.dueDate) < today) {
-        overdue += parseFloat(bill.amount) || 0;
-        overdueStatus = bill.status;
-      }
-    });
-    ['Electricity', 'Water'].forEach(type => {
-      if (utilityBillsMap[type]) {
-        utilityBillsMap[type].readings.forEach(reading => {
-          if (reading.dueDate && new Date(reading.dueDate) < today) {
-            reading.bills.forEach(bill => {
-              if (String(bill.renterId) === String(renterId) && bill.status === 'Unpaid') {
-                overdue += parseFloat(bill.amount) || 0;
-                overdueStatus = bill.status;
-              }
-            });
-          }
-        });
-      }
-    });
-    let overdueInfo = getBadgeAndClass(overdueStatus, overdue);
-
-    // --- Total (for this month) ---
-    let total = electricBill + waterBill + rentBill + overdue;
-    let totalStatus = (electricStatus === 'Unpaid' || waterStatus === 'Unpaid' || rentStatus === 'Unpaid') ? 'Unpaid'
-      : (electricStatus === 'Partial' || waterStatus === 'Partial' || rentStatus === 'Partial') ? 'Partial'
-      : 'Paid';
-    let totalInfo = getBadgeAndClass(totalStatus, total);
-
-    // --- Total Unpaid: all unpaid bills for this renter ---
-    let totalUnpaid = 0, unpaidStatus = '';
-    // Rent Bills
-    Object.values(rentBillsMap).forEach(bill => {
-      if (String(bill.renterId) === String(renterId)) {
-        if (bill.status === 'Unpaid') {
-          totalUnpaid += parseFloat(bill.amount) || 0;
-          unpaidStatus = bill.status;
-        } else if (bill.status === 'Partial') {
-          totalUnpaid += parseFloat(bill.debt) || 0;
-          unpaidStatus = bill.status;
-        }
-      }
-    });
-    // Utility Bills (Electricity & Water)
-    ['Electricity', 'Water'].forEach(type => {
-      if (utilityBillsMap[type]) {
-        utilityBillsMap[type].readings.forEach(reading => {
-          reading.bills.forEach(bill => {
-            if (String(bill.renterId) === String(renterId)) {
-              if (bill.status === 'Unpaid') {
-                totalUnpaid += parseFloat(bill.amount) || 0;
-                unpaidStatus = bill.status;
-              } else if (bill.status === 'Partial') {
-                totalUnpaid += parseFloat(bill.debt) || 0;
-                unpaidStatus = bill.status;
-              }
-            }
-          });
-        });
-      }
-    });
-    let unpaidInfo = getBadgeAndClass(unpaidStatus, totalUnpaid);
-
-    // Only display row if there is any bill for this month
-    if (electricBill || waterBill || rentBill) {
-      let monthDueText = monthStr; // <-- formatted as YYYY-MM
-      rowsHtml += `
-        <tr>
-          <td>${roomNo}</td>
-          <td>${fullName}</td>
-          <td>${monthDueText}</td>
-          <td class="${electricInfo.cls}">${formatPHP(electricBill)}${electricInfo.badge}</td>
-          <td class="${waterInfo.cls}">${formatPHP(waterBill)}${waterInfo.badge}</td>
-          <td class="${rentInfo.cls}">${formatPHP(rentBill)}${rentInfo.badge}</td>
-          <td class="${overdueInfo.cls}">${formatPHP(overdue)}${overdueInfo.badge}</td>
-          <td class="${totalInfo.cls}">${formatPHP(total)}${totalInfo.badge}</td>
-          <td class="${unpaidInfo.cls}">${formatPHP(totalUnpaid)}${unpaidInfo.badge}</td>
-        </tr>
-      `;
-    }
-  });
-});
-
-$('#billings-summary tbody').html(rowsHtml);
-}
+    
 // setTimeout(function() {
 //       populateBillingSummary(renterDataMap, roomsDataMap, rentBillsMap, utilityBillsMap);
 //     }, 0);

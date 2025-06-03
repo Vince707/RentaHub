@@ -6,7 +6,7 @@ $xmlFile = '../apartment.xml';
 if (file_exists($xmlFile)) {
     $xml = simplexml_load_file($xmlFile);
 } else {
-    $xml = new SimpleXMLElement('<apartmentManagement><users></users><renters></renters></apartmentManagement>');
+    $xml = new SimpleXMLElement('<apartmentManagement><users></users><renters></renters><rooms></rooms></apartmentManagement>');
 }
 
 // === Generate new user ID ===
@@ -42,7 +42,7 @@ $room = $_POST['room_number'] ?? '';
 $contractTerm = $_POST['contract_term'] ?? '';
 $leaseStart = $_POST['lease_start'] ?? '';
 $email = $_POST['email'] ?? '';
-$password = $_POST['password']; // Default password, hash this in real apps
+$password = $_POST['password']; // Note: hash this in production
 $userRole = 'Renter';
 $status = 'Active';
 $dateGenerated = date('Y-m-d');
@@ -84,6 +84,15 @@ $leaseEnd = date('Y-m-d', strtotime("{$leaseStart} +{$contractTerm} months"));
 $rentalInfo->addChild('leaseEnd', $leaseEnd);
 $rentalInfo->addChild('contractTermInMonths', htmlspecialchars($contractTerm));
 $rentalInfo->addChild('leavingReason', '');
+
+// === Update room status to 'Occupied' ===
+// Find the <room> with matching <roomNo> and update its <status>
+foreach ($xml->rooms->room as $roomNode) {
+    if ((string)$roomNode->roomNo === $room) {
+        $roomNode->status = 'Occupied';
+        break;
+    }
+}
 
 // Save updated XML
 $xml->asXML($xmlFile);

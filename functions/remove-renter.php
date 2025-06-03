@@ -25,18 +25,29 @@ if ($userId !== null) {
     }
 }
 
-// === Update <renters> status, leaseEnd, and leavingReason ===
+// === Update <renters> status, leaseEnd, leavingReason and update room status ===
 if ($renterId !== null) {
     foreach ($xml->renters->renter as $renter) {
         if ((string)$renter['id'] === $renterId) {
             $renter->status = $status;
 
-            // Optional logs
-            // echo "<script>console.log('Setting renter to Archived')</script>";
-
             // Set leaseEnd and reason
             $renter->rentalInfo->leaseEnd = htmlspecialchars($leaseEnd);
             $renter->rentalInfo->leavingReason = htmlspecialchars($reason);
+
+            // Get the unitId (room number) for this renter
+            $unitId = (string)$renter->rentalInfo->unitId;
+
+            // Update the room status to "Vacant"
+            if (isset($xml->rooms)) {
+                foreach ($xml->rooms->room as $room) {
+                    if ((string)$room->roomNo === $unitId) {
+                        $room->status = 'Vacant';
+                        break;
+                    }
+                }
+            }
+
             break;
         }
     }

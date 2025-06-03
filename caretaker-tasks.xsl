@@ -511,7 +511,12 @@
                                                                     <option value="Water">Water</option>
                                                                     <option value="Rent">Rent</option>
                                                                     <xsl:for-each select="$data//apartmentManagement/renters/renter[status='Active']">
+                                                                        <xsl:variable name="unitId" select="rentalInfo/unitId"/>
+                                                                        
                                                                         <option value="{userId}">
+                                                                            <!-- Lookup roomNo by matching unitId -->
+                                                                            <xsl:value-of select="$data//apartmentManagement/rooms/room[rentPrice and @id = $unitId]/roomNo"/>
+                                                                            <xsl:text> </xsl:text>
                                                                             <xsl:value-of select="personalInfo/name/firstName"/>
                                                                             <xsl:text> </xsl:text>
                                                                             <xsl:value-of select="personalInfo/name/middleName"/>
@@ -524,6 +529,7 @@
                                                                             </xsl:if>
                                                                         </option>
                                                                     </xsl:for-each>
+                                                                      
                                                                     </select>
                                                              
                                                                 </div>
@@ -684,7 +690,12 @@
                                                                                     <option value="Water">Water</option>
                                                                                     <option value="Rent">Rent</option>
                                                                                     <xsl:for-each select="$data//apartmentManagement/renters/renter[status='Active']">
+                                                                                        <xsl:variable name="unitId" select="rentalInfo/unitId"/>
+                                                                                        
                                                                                         <option value="{userId}">
+                                                                                            <!-- Lookup roomNo by matching unitId -->
+                                                                                            <xsl:value-of select="$data//apartmentManagement/rooms/room[rentPrice and @id = $unitId]/roomNo"/>
+                                                                                            <xsl:text> </xsl:text>
                                                                                             <xsl:value-of select="personalInfo/name/firstName"/>
                                                                                             <xsl:text> </xsl:text>
                                                                                             <xsl:value-of select="personalInfo/name/middleName"/>
@@ -696,7 +707,7 @@
                                                                                                 <xsl:value-of select="personalInfo/name/extension"/>
                                                                                             </xsl:if>
                                                                                         </option>
-                                                                                    </xsl:for-each>
+                                                                                        </xsl:for-each>
                                                                                     </select>
                                                                             </div>
                                                                         </div>
