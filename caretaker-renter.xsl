@@ -349,7 +349,7 @@
                         <xsl:variable name="userId" select="userId"/>
 
                         <!-- VIEW button -->
-                        <button type="button" class="ms-1 btn-red-fill d-flex align-items-center px-3 py-1 button-table-view-renter" data-bs-toggle="modal" data-bs-target="#modalViewRenter">
+                        <button type="button" class="ms-1 btn-red-fill d-flex align-items-center px-3 py-1 button-table-view-renter" data-bs-toggle="modal" data-bs-target="#modalViewRenter" title="View Renter Information">
                            <xsl:attribute name="data-renter-id">
                             <xsl:value-of select="$renterId"/>
                             </xsl:attribute>
@@ -363,6 +363,7 @@
 
                         <!-- EDIT button -->
                         <button
+                            title="Edit Renter Information"
                             type="button"
                             class="ms-1 btn-red-fill d-flex align-items-center px-3 py-1 button-table-modify-renter"
                             data-bs-toggle="modal"
@@ -380,6 +381,7 @@
 
                         <!-- DELETE button -->
                         <button
+                            title="Delete/Archive Renter"
                             type="button"
                             class="ms-1 btn-red-fill d-flex align-items-center px-3 py-1 button-table-remove-renter"
                             data-bs-toggle="modal"
@@ -484,17 +486,19 @@
            <div class="me-2 mb-3 flex-fill">
             <select class="form-select custom-select" id="add-renter-room-number" required="required" style="height: 3.5rem;">
             <option selected="selected" disabled="disabled" hidden="hidden" value="">Room Number *</option>
-
+                      
             <xsl:for-each select="$data/apartmentManagement/rooms/room[roomNo != '']">
-                <xsl:variable name="roomNo" select="roomNo"/>
-                
-                <!-- Only display this room if it is NOT in use by a non-Archived renter -->
-                <xsl:if test="not(/apartmentManagement/renters/renter[status != 'Archived' and rentalInfo/unitId = $roomNo])">
-                    <option value="{roomNo}">
-                        <xsl:value-of select="roomNo"/>
-                    </option>
-                </xsl:if>
+              <xsl:variable name="roomNo" select="roomNo"/>
+            
+              <!-- Display room only if status is NOT 'Unavailable' AND NOT 'Occupied' -->
+              <xsl:if test="status != 'Unavailable' and status != 'Occupied'">
+                <option value="{roomNo}">
+                  <xsl:value-of select="roomNo"/>
+                </option>
+              </xsl:if>
             </xsl:for-each>
+            
+
         </select>
 
 
@@ -1596,7 +1600,7 @@
           </div>
           <div class="horizontal mt-1 mb-2"></div>
           <div class="d-flex flex-row">
-            <p class="h5 font-red-gradient">Room <span id="view-archive-renter-roomNo"></span> | Lease Period: <span id="view-archive-renter-leaseStart"></span> to <span id="view-archive-renter-leaseEnd"></span></p>
+            <p class="h5 font-red-gradient">Room <span id="view-archive-renter-roomNo"></span> | Lease Period: <span id="view-archive-renter-leaseStart"></span> to <span class="view-archive-renter-leaseEnd"></span></p>
           </div>
           <!-- Nav pills -->
           <div class="nav-pills-red border-bottom border-3 border-danger">
@@ -1676,365 +1680,348 @@
                 </div>
             </div>
             <div class="tab-pane container fade" id="billingsArchive">
-
-              <!-- TODO: Populate from XML -->
-            <div class="d-flex flex-column align-items-start">
-              <div class="d-flex flex-row mt-3">
-                <div class="date-input-container ms-2 d-flex flex-row" style="transform: translateY(0%);">
-                  <label for="individual-month-due" class="date-label">Month Due</label>
-                  <label class="date-input-wrapper ms-2">
-                    <input type="month" id="individual-month-due" class="custom-date-input" required="required"/>
-                    <span class="calendar-icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px"
-                        viewBox="0 -960 960 960" width="24px" fill="#8B0000">
-                        <path
-                          d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Zm280 240q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm-160 0q-17 0-28.5-11.5T280-440q0-17 11.5-28.5T320-480q17 0 28.5 11.5T360-440q0 17-11.5 28.5T320-400Zm320 0q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400ZM480-240q-17 0-28.5-11.5T440-280q0-17 11.5-28.5T480-320q17 0 28.5 11.5T520-280q0 17-11.5 28.5T480-240Zm-160 0q-17 0-28.5-11.5T280-280q0-17 11.5-28.5T320-320q17 0 28.5 11.5T360-280q0 17-11.5 28.5T320-240Zm320 0q-17 0-28.5-11.5T600-280q0-17 11.5-28.5T640-320q17 0 28.5 11.5T680-280q0 17-11.5 28.5T640-240Z" />
-                      </svg></span>
-                  </label>
-                </div>
-              </div>
-
-              <!-- METRICS -->
-              <div class="row gx-3 gy-3 mt-2">
-                <div class="col-12 col-sm-6 col-lg-3">
-                  <div
-                    class="gradient-red-bg d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
-                    <p class="h6 font-white my-0 text-center">Total Unpaid Bill</p>
-                    <p class="h3 font-white my-0 text-center">PHP 7,208.28</p>
-                  </div>
-                </div>
-
-                <div class="col-12 col-sm-6 col-lg-3">
-                  <div
-                    class="gradient-red-bg d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
-                    <p class="h6 font-white my-0 text-center">Total Current Bill</p>
-                    <p class="h3 font-white my-0 text-center">PHP 7,208.28</p>
-                  </div>
-                </div>
-
-                <div class="col-12 col-sm-6 col-lg-3">
-                  <div
-                    class="red-border d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
-                    <p class="h6 font-red my-0 text-center">Total Current Paid</p>
-                    <p class="h3 font-red my-0 text-center">PHP 7,208.28</p>
-                  </div>
-                </div>
-
-                <div class="col-12 col-sm-6 col-lg-3">
-                  <div
-                    class="red-border d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
-                    <p class="h6 font-red my-0 text-center">Overpaid</p>
-                    <p class="h3 font-red my-0 text-center">PHP 7,208.28</p>
-                  </div>
-                </div>
-                <p class="h4 font-red-gradient">Individual Breakdown</p>
-                <div class="d-flex flex-wrap mt-2 justify-content-between">
-                  <div class="col-12 col-sm-6 col-lg-5">
-                    <div class="gradient-red-bg d-flex flex-column align-items-start rounded-4 p-4 px-4 h-100">
-                      <div class="d-flex justify-content-between align-items-start w-100">
-                        <div class="d-flex align-items-start">
-                          <p class="h4 font-white mb-3 me-2 align-self-start">Electric Bill</p>
-                          <svg xmlns="http://www.w3.org/2000/svg" class="align-self-start" height="24px"
-                            viewBox="0 -960 960 960" width="24px" fill="#FFFFFF">
-                            <path
-                              d="m422-232 207-248H469l29-227-185 267h139l-30 208ZM320-80l40-280H160l360-520h80l-40 320h240L400-80h-80Zm151-390Z" />
-                          </svg>
-                        </div>
-
-                        <div class="d-flex flex-row">
-                     
-                          <button type="button" class="btn-white d-flex align-items-center px-3 py-1 ms-2"
-                            data-bs-toggle="modal" data-bs-target="#modalViewElectricInfo">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                              fill="#FFFFFF">
-                              <g transform="scale(1, -1) translate(0, 960)">
-                                <path
-                                  d="M480-120q-33 0-56.5-23.5T400-200q0-33 23.5-56.5T480-280q33 0 56.5 23.5T560-200q0 33-23.5 56.5T480-120Zm-80-240v-480h160v480H400Z" />
-                              </g>
+                    <!-- CURRENT BILL SECTION -->
+                      <div class="date-input-container m-2 d-flex flex-row" style="transform: translateY(0%);">
+                        <label for="individual-month-due-renter-role-archive" class="date-label">Month Due</label>
+                        <label class="date-input-wrapper ms-2">
+                          <input type="month" id="individual-month-due-renter-role" class="custom-date-input" required="required"/>
+                          <span class="calendar-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px"
+                                 viewBox="0 -960 960 960" width="24px" fill="#8B0000">
+                              <path
+                                d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Zm280 240q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm-160 0q-17 0-28.5-11.5T280-440q0-17 11.5-28.5T320-480q17 0 28.5 11.5T360-440q0 17-11.5 28.5T320-400Zm320 0q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400ZM480-240q-17 0-28.5-11.5T440-280q0-17 11.5-28.5T480-320q17 0 28.5 11.5T520-280q0 17-11.5 28.5T480-240Zm-160 0q-17 0-28.5-11.5T280-280q0-17 11.5-28.5T320-320q17 0 28.5 11.5T360-280q0 17-11.5 28.5T320-240Zm320 0q-17 0-28.5-11.5T600-280q0-17 11.5-28.5T640-320q17 0 28.5 11.5T680-280q0 17-11.5 28.5T640-240Z" />
                             </svg>
-                          </button>
-
+                          </span>
+                        </label>
+                      </div>
+                      <!-- METRICS -->
+                      <div class="row gx-3 gy-3">
+                        <div class="col-12 col-sm-6 col-lg-3">
+                          <div class="gradient-red-bg d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
+                            <p class="h6 font-white my-0 text-center">Total Unpaid Bill</p>
+                            <p class="h3 font-white my-0 text-center">PHP <span id="individual-total-unpaid-renter-role" class="h3">0.00</span></p>
+                          </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-lg-3">
+                          <div class="gradient-red-bg d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
+                            <p class="h6 font-white my-0 text-center">Total Current Bill</p>
+                            <p class="h3 font-white my-0 text-center">PHP <span id="individual-current-bill-renter-role" class="h3">0.00</span></p>
+                          </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-lg-3">
+                          <div class="red-border d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
+                            <p class="h6 font-red my-0 text-center">Total Current Paid</p>
+                            <p class="h3 font-red my-0 text-center">PHP <span id="individual-current-paid-renter-role" class="h3">0.00</span></p>
+                          </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-lg-3">
+                          <div class="red-border d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
+                            <p class="h6 font-red my-0 text-center">Overpaid</p>
+                            <p class="h3 font-red my-0 text-center">PHP <span id="individual-overpaid-renter-role" class="h3">0.00</span></p>
+                          </div>
                         </div>
                       </div>
-                      <div class="d-flex flex-row">
-                        <p class="h6 font-white me-2">Reading Date:</p>
-                        <p class="font-white"></p>
-                      </div>
-                      <div class="d-flex flex-row">
-                        <p class="h6 font-white me-2">Due Date:</p>
-                        <p class="font-white"></p>
-                      </div>
-                      <div class="d-flex flex-row">
-                        <p class="h6 font-white me-2">Current Reading:</p>
-                        <p class="font-white"></p>
-                      </div>
-                      <div class="d-flex flex-row">
-                        <p class="h6 font-white me-2">Previous Reading:</p>
-                        <p class="font-white"></p>
-                      </div>
-                      <div class="d-flex flex-row">
-                        <p class="h6 font-white me-2">Consumed Kwh:</p>
-                        <p class="font-white"></p>
-                      </div>
-                      <div class="d-flex flex-row">
-                        <p class="h6 font-white me-2">Amount per Kwh:</p>
-                        <p class="font-white"></p>
-                      </div>
-                      <div class="d-flex flex-row justify-content-between w-100">
-                        <div class="d-flex flex-row">
-                          <p class="h4 font-white me-2">Your Bill:</p>
-                          <p class="font-white"></p>
-                        </div>
-                       
-                      </div>
-                    </div>
-                  </div>
-
-
-
-                  <div class="col-12 col-sm-6 col-lg-5">
-                    <div class="gradient-red-bg d-flex flex-column align-items-start rounded-4 p-4 px-4 h-100">
-                      <div class="d-flex justify-content-between align-items-start w-100">
-                        <div class="d-flex align-items-start">
-                          <p class="h4 font-white mb-3 me-2 align-self-start">Water Bill</p>
-                          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                            fill="#FFFFFF">
-                            <path
-                              d="M491-200q12-1 20.5-9.5T520-230q0-14-9-22.5t-23-7.5q-41 3-87-22.5T343-375q-2-11-10.5-18t-19.5-7q-14 0-23 10.5t-6 24.5q17 91 80 130t127 35ZM480-80q-137 0-228.5-94T160-408q0-100 79.5-217.5T480-880q161 137 240.5 254.5T800-408q0 140-91.5 234T480-80Zm0-80q104 0 172-70.5T720-408q0-73-60.5-165T480-774Q361-665 300.5-573T240-408q0 107 68 177.5T480-160Zm0-320Z" />
-                          </svg>
-                        </div>
-
-                        <div class="d-flex flex-row">
-                          
-                          <button type="button" class="btn-white d-flex align-items-center px-3 py-1 ms-2"
-                            data-bs-toggle="modal" data-bs-target="#modalViewWaterInfo">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                              fill="#FFFFFF">
-                              <g transform="scale(1, -1) translate(0, 960)">
-                                <path
-                                  d="M480-120q-33 0-56.5-23.5T400-200q0-33 23.5-56.5T480-280q33 0 56.5 23.5T560-200q0 33-23.5 56.5T480-120Zm-80-240v-480h160v480H400Z" />
-                              </g>
-                            </svg>
-                          </button>
-
-                        </div>
-                      </div>
-                      <div class="d-flex flex-row">
-                        <p class="h6 font-white me-2">Reading Date:</p>
-                        <p class="font-white"></p>
-                      </div>
-                      <div class="d-flex flex-row">
-                        <p class="h6 font-white me-2">Due Date:</p>
-                        <p class="font-white"></p>
-                      </div>
-                      <div class="d-flex flex-row">
-                        <p class="h6 font-white me-2">Current Reading:</p>
-                        <p class="font-white"></p>
-                      </div>
-                      <div class="d-flex flex-row">
-                        <p class="h6 font-white me-2">Previous Reading:</p>
-                        <p class="font-white"></p>
-                      </div>
-                      <div class="d-flex flex-row">
-                        <p class="h6 font-white me-2">Consumed m<sup>3</sup>:</p>
-                        <p class="font-white"></p>
-                      </div>
-                      <div class="d-flex flex-row">
-                        <p class="h6 font-white me-2">Amount per m<sup>3</sup>:</p>
-                        <p class="font-white"></p>
-                      </div>
-                      <div class="d-flex flex-row justify-content-between w-100">
-                        <div class="d-flex flex-row">
-                          <p class="h4 font-white me-2">Your Bill:</p>
-                          <p class="font-white"></p>
-                        </div>
-                  
-                      </div>
-                    </div>
-                  </div>
-
-
-
-                  <div class="col-12 col-sm-6 col-lg-5 mt-5">
-                    <div class="gradient-red-bg d-flex flex-column align-items-start rounded-4 p-4 px-4 h-100">
-                      <div class="d-flex justify-content-between align-items-start w-100">
-                        <div class="d-flex align-items-start">
-                          <p class="h4 font-white mb-3 me-2 align-self-start">Rent</p>
-                          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                            fill="#FFFFFF">
-                            <path
-                              d="M760-400v-260L560-800 360-660v60h-80v-100l280-200 280 200v300h-80ZM560-800Zm20 160h40v-40h-40v40Zm-80 0h40v-40h-40v40Zm80 80h40v-40h-40v40Zm-80 0h40v-40h-40v40ZM280-220l278 76 238-74q-5-9-14.5-15.5T760-240H558q-27 0-43-2t-33-8l-93-31 22-78 81 27q17 5 40 8t68 4q0-11-6.5-21T578-354l-234-86h-64v220ZM40-80v-440h304q7 0 14 1.5t13 3.5l235 87q33 12 53.5 42t20.5 66h80q50 0 85 33t35 87v40L560-60l-280-78v58H40Zm80-80h80v-280h-80v280Z" />
-                          </svg>
-                        </div>
-
                       
-                      </div>
-                      <div class="d-flex flex-row">
-                        <p class="h6 font-white me-2">Start amp; Due Date:</p>
-                        <p class="font-white"></p>
-                      </div>
-                      <div class="d-flex flex-row">
-                        <p class="h6 font-white me-2">End Date:</p>
-                        <p class="font-white"></p>
-                      </div>
-                      <div class="d-flex flex-row justify-content-between w-100">
-                        <div class="d-flex flex-row">
-                          <p class="h4 font-white me-2">Your Bill:</p>
-                          <p class="font-white"></p>
+                      <p class="h4 font-red-gradient mt-2">Individual Breakdown</p>
+                      <div class="d-flex flex-wrap mt-2 justify-content-between">
+                        <!-- Electric Bill -->
+                        <div class="col-12 col-sm-6 col-lg-5 electric-bill-card">
+                          <div class="gradient-red-bg d-flex flex-column align-items-start rounded-4 p-4 px-4">
+                            <div class="d-flex justify-content-between align-items-start w-100">
+                              <div class="d-flex align-items-start">
+                                <p class="h4 font-white mb-3 me-2 align-self-start">Electric Bill</p>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="align-self-start" height="24px"
+                                     viewBox="0 -960 960 960" width="24px" fill="#FFFFFF">
+                                  <path
+                                    d="m422-232 207-248H469l29-227-185 267h139l-30 208ZM320-80l40-280H160l360-520h80l-40 320h240L400-80h-80Zm151-390Z" />
+                                </svg>
+                              </div>
+                              <div class="d-flex flex-row">
+                                <button type="button" class="btn-white d-flex align-items-center px-3 py-1 ms-2"
+                                        data-bs-toggle="modal" data-bs-target="#modalViewElectricInfo">
+                                  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                                       fill="#FFFFFF">
+                                    <g transform="scale(1, -1) translate(0, 960)">
+                                      <path
+                                        d="M480-120q-33 0-56.5-23.5T400-200q0-33 23.5-56.5T480-280q33 0 56.5 23.5T560-200q0 33-23.5 56.5T480-120Zm-80-240v-480h160v480H400Z" />
+                                    </g>
+                                  </svg>
+                                </button>
+                              </div>
+                            </div>
+                            <div class="d-flex flex-row">
+                              <p class="h6 font-white me-2">Reading Date:</p>
+                              <p class="font-white" id="electric-reading-date-renter-role"></p>
+                            </div>
+                            <div class="d-flex flex-row">
+                              <p class="h6 font-white me-2">Due Date:</p>
+                              <p class="font-white" id="electric-due-date-renter-role"></p>
+                            </div>
+                            <div class="d-flex flex-row">
+                              <p class="h6 font-white me-2">Current Reading:</p>
+                              <p class="font-white" id="electric-current-reading-renter-role"></p>
+                            </div>
+                            <div class="d-flex flex-row">
+                              <p class="h6 font-white me-2">Previous Reading:</p>
+                              <p class="font-white" id="electric-previous-reading-renter-role"></p>
+                            </div>
+                            <div class="d-flex flex-row">
+                              <p class="h6 font-white me-2">Consumed Kwh:</p>
+                              <p class="font-white" id="electric-consumed-kwh-renter-role"></p>
+                            </div>
+                            <div class="d-flex flex-row">
+                              <p class="h6 font-white me-2">Amount per Kwh:</p>
+                              <p class="font-white" id="electric-amount-per-kwh-renter-role"></p>
+                            </div>
+                            <div class="d-flex flex-row justify-content-between w-100">
+                              <div class="d-flex flex-row">
+                                <p class="h4 font-white me-2">Your Bill:</p>
+                                <p class="font-white" id="electric-your-bill-renter-role"></p>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                     
-                      </div>
-                    </div>
-                  </div>
-
-
-                  <div class="col-12 col-sm-6 col-lg-5 mt-5">
-                    <div class="gradient-red-bg d-flex flex-column align-items-start rounded-4 p-4 px-4 h-100">
-                      <div class="d-flex justify-content-between align-items-start w-100">
-                        <div class="d-flex align-items-start">
-                          <p class="h4 font-white mb-3 me-2 align-self-start">Overdue Bills</p>
-                          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                            fill="#FFFFFF">
-                            <path
-                              d="m40-120 440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Zm40-100Z" />
-                          </svg>
+                        
+                        <!-- Water Bill -->
+                        <div class="col-12 col-sm-6 col-lg-5 water-bill-card">
+                          <div class="gradient-red-bg d-flex flex-column align-items-start rounded-4 p-4 px-4">
+                            <div class="d-flex justify-content-between align-items-start w-100">
+                              <div class="d-flex align-items-start">
+                                <p class="h4 font-white mb-3 me-2 align-self-start">Water Bill</p>
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                                     fill="#FFFFFF">
+                                  <path
+                                    d="M491-200q12-1 20.5-9.5T520-230q0-14-9-22.5t-23-7.5q-41 3-87-22.5T343-375q-2-11-10.5-18t-19.5-7q-14 0-23 10.5t-6 24.5q17 91 80 130t127 35ZM480-80q-137 0-228.5-94T160-408q0-100 79.5-217.5T480-880q161 137 240.5 254.5T800-408q0 140-91.5 234T480-80Zm0-80q104 0 172-70.5T720-408q0-73-60.5-165T480-774Q361-665 300.5-573T240-408q0 107 68 177.5T480-160Zm0-320Z" />
+                                </svg>
+                              </div>
+                              <div class="d-flex flex-row">
+                                <button type="button" class="btn-white d-flex align-items-center px-3 py-1 ms-2"
+                                        data-bs-toggle="modal" data-bs-target="#modalViewWaterInfo">
+                                  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                                       fill="#FFFFFF">
+                                    <g transform="scale(1, -1) translate(0, 960)">
+                                      <path
+                                        d="M480-120q-33 0-56.5-23.5T400-200q0-33 23.5-56.5T480-280q33 0 56.5 23.5T560-200q0 33-23.5 56.5T480-120Zm-80-240v-480h160v480H400Z" />
+                                    </g>
+                                  </svg>
+                                </button>
+                              </div>
+                            </div>
+                            <div class="d-flex flex-row">
+                              <p class="h6 font-white me-2">Reading Date:</p>
+                              <p class="font-white" id="water-reading-date-renter-role"></p>
+                            </div>
+                            <div class="d-flex flex-row">
+                              <p class="h6 font-white me-2">Due Date:</p>
+                              <p class="font-white" id="water-due-date-renter-role"></p>
+                            </div>
+                            <div class="d-flex flex-row">
+                              <p class="h6 font-white me-2">Current Reading:</p>
+                              <p class="font-white" id="water-current-reading-renter-role"></p>
+                            </div>
+                            <div class="d-flex flex-row">
+                              <p class="h6 font-white me-2">Previous Reading:</p>
+                              <p class="font-white" id="water-previous-reading-renter-role"></p>
+                            </div>
+                            <div class="d-flex flex-row">
+                              <p class="h6 font-white me-2">Consumed Cbm:</p>
+                              <p class="font-white" id="water-consumed-cbm-renter-role"></p>
+                            </div>
+                            <div class="d-flex flex-row">
+                              <p class="h6 font-white me-2">Amount per Cbm:</p>
+                              <p class="font-white" id="water-amount-per-cbm-renter-role"></p>
+                            </div>
+                            <div class="d-flex flex-row justify-content-between w-100">
+                              <div class="d-flex flex-row">
+                                <p class="h4 font-white me-2">Your Bill:</p>
+                                <p class="font-white" id="water-your-bill-renter-role"></p>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-
-                       
-                      </div>
-                      <div class="d-flex flex-row">
-                        <p class="h6 font-white me-2">Electric Overdue:</p>
-                        <p class="font-white"></p>
-                      </div>
-                      <div class="d-flex flex-row">
-                        <p class="h6 font-white me-2">Water Overdue:</p>
-                        <p class="font-white"></p>
-                      </div>
-                      <div class="d-flex flex-row">
-                        <p class="h6 font-white me-2">Rent Overdue:</p>
-                        <p class="font-white"></p>
-                        <div class="d-flex flex-row ms-5">
-                          <p class="h6 font-white me-2">Due Date:</p>
-                          <p class="font-white"></p>
+                        
+                        <div class="col-12 col-sm-6 col-lg-5 mt-5 rent-bill-card">
+                          <div class="gradient-red-bg d-flex flex-column align-items-start rounded-4 p-4 px-4">
+                            <div class="d-flex justify-content-between align-items-start w-100">
+                              <div class="d-flex align-items-start">
+                                <p class="h4 font-white mb-3 me-2 align-self-start">Rent</p>
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                                     fill="#FFFFFF">
+                                  <path
+                                    d="M760-400v-260L560-800 360-660v60h-80v-100l280-200 280 200v300h-80ZM560-800Zm20 160h40v-40h-40v40Zm-80 0h40v-40h-40v40Zm80 80h40v-40h-40v40Zm-80 0h40v-40h-40v40ZM280-220l278 76 238-74q-5-9-14.5-15.5T760-240H558q-27 0-43-2t-33-8l-93-31 22-78 81 27q17 5 40 8t68 4q0-11-6.5-21T578-354l-234-86h-64v220ZM40-80v-440h304q7 0 14 1.5t13 3.5l235 87q33 12 53.5 42t20.5 66h80q50 0 85 33t35 87v40L560-60l-280-78v58H40Zm80-80h80v-280h-80v280Z" />
+                                </svg>
+                              </div>
+                              
+                              
+                            </div>
+                            <div class="d-flex flex-row">
+                              <p class="h6 font-white me-2">Start &amp; Due Date:</p>
+                              <p class="font-white" id="rent-start-due-date-renter-role"></p>
+                            </div>
+                            <div class="d-flex flex-row">
+                              <p class="h6 font-white me-2">End Date:</p>
+                              <p class="font-white" id="rent-end-date-renter-role"></p>
+                            </div>
+                            <div id="record-payment-breakdown-renter-role" style="margin-top: 0.5em;"></div>
+                            
+                            <div class="d-flex flex-row justify-content-between w-100">
+                              <div class="d-flex flex-row">
+                                <p class="h4 font-white me-2">Your Bill:</p>
+                                <p class="font-white" id="rent-your-bill"></p>
+                              </div>
+                              
+                            </div>
+                            
+                          </div>
+                        </div>
+                        
+                        
+                        <div class="col-12 col-sm-6 col-lg-5 mt-5 overdue-bill-card">
+                          <div class="gradient-red-bg d-flex flex-column align-items-start rounded-4 p-4 px-4">
+                            <div class="d-flex justify-content-between align-items-start w-100">
+                              <div class="d-flex align-items-start">
+                                <p class="h4 font-white mb-3 me-2 align-self-start">Overdue Bills</p>
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                                     fill="#FFFFFF">
+                                  <path
+                                    d="m40-120 440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Zm40-100Z" />
+                                </svg>
+                              </div>
+                              
+                              
+                            </div>
+                            <div class="d-flex flex-row">
+                              <p class="h6 font-white me-2">Electric Overdue:</p>
+                              <p class="font-white" id="overdue-electric-renter-role"></p>
+                              <div class="d-flex flex-row ms-5" id="overdue-electric-due-date-container-renter-role" style="display:none;">
+                                <p class="h6 font-white me-2">Due Date:</p>
+                                <p class="font-white" id="overdue-electric-due-date-renter-role"></p>
+                              </div>
+                            </div>
+                            <div class="d-flex flex-row">
+                              <p class="h6 font-white me-2">Water Overdue:</p>
+                              <p class="font-white" id="overdue-water-renter-role"></p>
+                              <div class="d-flex flex-row ms-5" id="overdue-water-due-date-container-renter-role" style="display:none;">
+                                <p class="h6 font-white me-2">Due Date:</p>
+                                <p class="font-white" id="overdue-water-due-date-renter-role"></p>
+                              </div>
+                            </div>
+                            <div class="d-flex flex-row">
+                              <p class="h6 font-white me-2">Rent Overdue:</p>
+                              <p class="font-white" id="overdue-rent-renter-role"></p>
+                              <div class="d-flex flex-row ms-5" id="overdue-rent-due-date-container-renter-role" style="display:none;">
+                                <p class="h6 font-white me-2">Due Date:</p>
+                                <p class="font-white" id="overdue-rent-due-date-renter-role"></p>
+                              </div>
+                            </div>
+                            
+                            <div class="d-flex flex-row justify-content-between w-100">
+                              <div class="d-flex flex-row">
+                                <p class="h4 font-white me-2">Your Bill:</p>
+                                <p class="font-white" id="overdue-total-renter-role"></p>
+                              </div>
+                              <!-- <button type="button"
+                                   class="btn-white pay-btn d-flex align-items-center px-3 py-1"
+                                   data-type="Overdue"  
+                                   data-reading-id="1"
+                                   data-renter-id="1"
+                                   data-bs-toggle="modal"
+                                   data-bs-target="#modalRecordPayment">
+                                   Pay
+                                   </button> -->
+                               </div>
+                            
+                          </div>
                         </div>
                       </div>
-                      <div class="d-flex flex-row justify-content-between w-100">
-                        <div class="d-flex flex-row">
-                          <p class="h4 font-white me-2">Your Bill:</p>
-                          <p class="font-white"></p>
-                        </div>
-                     
-                      </div>
-                    </div>
-                  </div>
-
-
-
-
-
-                </div>
-
-              </div>
-            </div>
-       
-
 
             </div>
             <div class="tab-pane container fade" id="paymentsArchive">
-
-              <div
-                class="d-flex flex-sm-row flex-column justify-content-between align-items-start mt-3">
-                <!-- TODO: Populate from XML -->
-                <div class="d-flex flex-column align-items-start w-100">
-                  <p class="font-red mt-2">As of <span
-                      class="current-date"></span></p>
-
+                <!-- Header -->
+                <div class="d-flex flex-sm-row flex-column justify-content-between align-items-start mt-3">
+                    <p class="h2 font-red-gradient">Payments</p>
+                    <p class="font-red">as of <span class="view-archive-renter-leaseEnd"></span></p>
+                </div>
+                <div class="horizontal mt-1 mb-2"></div>
+                
                   <!-- METRICS -->
                   <div class="row gx-3 gy-3 w-100">
-                    <div class="col-12 col-sm-6 col-lg-3">
-                      <div
-                        class="gradient-red-bg d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
-                        <p class="h6 font-white my-0 text-center">Total
-                          Unpaid</p>
-                        <p class="h3 font-white my-0 text-center">PHP
-                          7,208.28</p>
+                      <div class="col-12 col-sm-6 col-lg-3">
+                          <div class="gradient-red-bg d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
+                              <p class="h6 font-white my-0 text-center">Total Unpaid</p>
+                              <p class="h3 font-white my-0 text-center" id="renter-role-total-unpaid">PHP 0.00</p>
+                          </div>
                       </div>
-                    </div>
-
-                    <div class="col-12 col-sm-6 col-lg-3">
-                      <div
-                        class="gradient-red-bg d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
-                        <p class="h6 font-white my-0 text-center">Total Current
-                          Inflows</p>
-                        <p class="h3 font-white my-0 text-center">PHP
-                          7,208.28</p>
+                      
+                      
+                      <div class="col-12 col-sm-6 col-lg-3">
+                          <div class="gradient-red-bg d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
+                              <p class="h6 font-white my-0 text-center">Total Payments</p>
+                              <p class="h3 font-white my-0 text-center" id="renter-role-total-payments">PHP 0.00</p>
+                          </div>
                       </div>
-                    </div>
-
-                    <div class="col-12 col-sm-6 col-lg-3">
-                      <div
-                        class="red-border d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
-                        <p class="h6 font-red my-0 text-center">Total Current
-                          Paid</p>
-                        <p class="h3 font-red my-0 text-center">PHP 7,208.28</p>
+                      
+                      
+                      
+                      <div class="col-12 col-sm-6 col-lg-3">
+                          <div class="red-border d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
+                              <p class="h6 font-red my-0 text-center">Total Current Paid</p>
+                              <p class="h3 font-red my-0 text-center" id="renter-role-total-current-paid">PHP 0.00</p>
+                          </div>
                       </div>
-                    </div>
-
-                    <div class="col-12 col-sm-6 col-lg-3">
-                      <div
-                        class="red-border d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
-                        <p class="h6 font-red my-0 text-center">Overpaid</p>
-                        <p class="h3 font-red my-0 text-center">PHP 7,208.28</p>
+                      
+                      <div class="col-12 col-sm-6 col-lg-3">
+                          <div class="red-border d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
+                              <p class="h6 font-red my-0 text-center">Overpaid</p>
+                              <p class="h3 font-red my-0 text-center" id="renter-role-overpaid-amount">PHP 0.00</p>
+                          </div>
                       </div>
-                    </div>
-
+                        
+                      
                   </div>
-
+                  
                   <div class="col-12 col-sm-6 col-lg-6 mt-4">
-                    <div
-                      class="red-border d-flex flex-row align-items-center justify-content-between rounded-4 p-3 px-4 h-100">
-                      <p class="h6 font-red my-0 me-1 text-center">Overdue</p>
-                      <p class="h3 font-red my-0 me-1 text-center">PHP
-                        7,208.28</p>
-                    
-                    </div>
+                      <div class="red-border d-flex flex-row align-items-center justify-content-between rounded-4 p-3 px-4">
+                          <p class="h6 font-red my-0 me-1 text-center">Overdue</p>
+                          <p class="h3 font-red my-0 me-1 text-center" id="renter-role-overdue-amount">PHP 0.00</p>
+                      </div>
                   </div>
-
-                  <p class="h3 font-red-gradient me-2 mt-3">Payments History</p>
-                  <div class="horizontal mt-1 w-100"></div>
-
-                  <!-- TABLE -->
-                  <!-- TODO: XML Connect -->
-                  <table class="custom-table" id="payments-summary-individual">
-                    <thead>
-                      <tr>
-                        <th>Receipt No.</th>
-                        <th>Room No.</th>
-                        <th>Renter Name</th>
-                        <th>Payment Date</th>
-                        <th>Payment Amount</th>
-                        <th>Payment Type</th>
-                        <th>Payment Amount Type</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>R25000001</td>
-                        <td>1A</td>
-                        <td>Dave Alon</td>
-                        <td>02/12/2025</td>
-                        <td>PHP 4,291.18</td>
-                        <td>Rent</td>
-                        <td>Full Payment</td>
-                      </tr>
-                    </tbody>
-                  </table>
-
-                </div>
-
-              </div>
-
-            </div>
-          </div>
+                    
+                              
+                              <div class="d-flex flex-sm-row flex-column justify-content-between align-items-start mt-4">
+                                  <p class="h3 font-red-gradient me-2">Payment History</p>
+                              </div>
+                              <div class="horizontal mt-1"></div>
+                          
+                                  <!-- Table -->
+                                  <table class="custom-table mt-3" id="payments-history">
+                                      <thead>
+                                          <tr>
+                                              <th>Receipt No.</th>
+                                              <th>Payment Type</th>
+                                              <th>Payment Date</th>
+                                              <th>Amount</th>
+                                              <th>Method</th>
+                                              <th>Remarks</th>
+                                          </tr>
+                                      </thead>
+                                      <tbody id="payment-history-tbody">
+                                      <!-- Rows will be dynamically inserted here -->
+                                      </tbody>
+                                      <!-- <tbody>
+                                          <tr>
+                                              <td class="text-danger">R25000001</td>
+                                              <td>Water Utility, Rent</td>
+                                              <td>02/12/2025</td>
+                                              <td>PHP 1,281.27</td>
+                                              <td>GCash</td>
+                                              <td>79317644112</td>
+                                              <td><span class="badge rounded-pill bg-success">Full Payment</span></td>
+                                          </tr>
+                                      </tbody> -->
+                                  </table>
+                          </div>
+                        </div>
 
 
 

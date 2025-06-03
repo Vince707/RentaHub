@@ -326,6 +326,7 @@
                                                 <div class="d-flex flex-row justify-content-center align-items-center align-self-center">
                                                     <!-- VIEW button -->
                                                     <button
+                                                        title="View Room Information"
                                                         type="button"
                                                         class="ms-1 btn-red-fill d-flex align-items-center px-3 py-1 button-view-room"
                                                         data-bs-toggle="modal"
@@ -341,6 +342,7 @@
                                                     
                                                     <!-- EDIT button -->
                                                     <button
+                                                        title="Modify Room Information"
                                                         type="button"
                                                         class="ms-1 btn-red-fill d-flex align-items-center px-3 py-1 button-edit-room"
                                                         data-bs-toggle="modal"
@@ -356,6 +358,7 @@
                                                     
                                                     <!-- DELETE button -->
                                                     <button
+                                                        title="Remove Room"
                                                         type="button"
                                                         class="ms-1 btn-red-fill d-flex align-items-center px-3 py-1 button-delete-room"
                                                         data-bs-toggle="modal"

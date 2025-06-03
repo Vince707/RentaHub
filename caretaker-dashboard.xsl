@@ -642,7 +642,7 @@
                                                                             <!-- Modal footer -->
                                                                             <div class="modal-footer d-flex justify-content-between">
                                                                                 <div id="error-box-add-renter"
-                                                                                        class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-10 col-lg-6"
+                                                                                        class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-9"
                                                                                         style="color:white; background-color: #a6192e;">
                                                                                     <i class="bi bi-exclamation-triangle-fill fs-3"></i>
                                                                                     <div>

@@ -422,9 +422,9 @@ $.ajax({
                                                                            data-bs-target="#modalViewTerms" style="cursor: pointer;">Agree to the Terms and Conditions. *</a>
                                                                     </label>
                                                                 </div>
-                                                                <div class="d-flex flex-row justify-content-between mt-3">
+                                                                <div class="d-flex flex-column justify-content-between mt-3">
                                                                     <div id="login-error-box"
-                                                                         class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-10 col-lg-6"
+                                                                         class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-12"
                                                                          style="color:#a6192e; background-color: white;">
                                                                         <i class="bi bi-exclamation-triangle-fill fs-3"></i>
                                                                         <div>
@@ -433,7 +433,7 @@ $.ajax({
                                                                         </div>
                                                                     </div>
                                                                     <div class="d-flex justify-content-center align-items-end ms-auto">
-                                                                        <button class="btn-white-fill mt-5 d-flex ms-auto align-items-center align-self-end px-4 py-1"
+                                                                        <button class="btn-white-fill d-flex ms-auto align-items-center align-self-end px-4 py-1"
                                                                                 id="button-login">Log In</button>
                                                                         
                                                                     </div>
@@ -461,7 +461,7 @@ $.ajax({
                                                                         </button>
                                                                     </div>
                                                                     <div id="error-box-otp-email"
-                                                                         class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-10 col-lg-6"
+                                                                         class="alert d-none flex-column align-items-start gap-3 p-3 border-0 rounded-3 col-12"
                                                                          style="color:#a6192e; background-color: white;">
                                                                         <i class="bi bi-exclamation-triangle-fill fs-3"></i>
                                                                         <div>
@@ -497,7 +497,7 @@ $.ajax({
                                                                             <a class="d-flex small font-white" id="btn-resend-otp" style="cursor: pointer;">Resend Again</a>
                                                                         </div>
                                                                         <div id="error-box-otp"
-                                                                             class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-10 col-lg-6"
+                                                                             class="alert d-none flex-column align-items-start gap-3 p-3 border-0 rounded-3 col-12"
                                                                              style="color:#a6192e; background-color: white;">
                                                                             <i class="bi bi-exclamation-triangle-fill fs-3"></i>
                                                                             <div>
@@ -534,7 +534,7 @@ $.ajax({
                                                                                         </button>
                                                                                     </div>
                                                                                     <div id="error-box-change-pass"
-                                                                                         class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-10 col-lg-6"
+                                                                                         class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-12"
                                                                                          style="color:#a6192e; background-color: white;">
                                                                                         <i class="bi bi-exclamation-triangle-fill fs-3"></i>
                                                                                         <div>

@@ -358,15 +358,15 @@
                                                                             <div
                                                                                 class="gradient-red-bg d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
                                                                                 <p class="h6 font-white my-0">Total Unpaid</p>
-                                                                                <p class="h3 font-white my-0">PHP 7,208.28</p>
+                                                                                <p class="h3 font-white my-0" id="total-unpaid-in-payments">PHP 7,208.28</p>
                                                                             </div>
                                                                         </div>
                                                                         
                                                                         <div class="col-12 col-sm-6 col-lg-4">
                                                                             <div
                                                                                 class="gradient-red-bg d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
-                                                                                <p class="h6 font-white my-0">Total Current Inflows</p>
-                                                                                <p class="h3 font-white my-0">PHP 7,208.28</p>
+                                                                                <p class="h6 font-white my-0">Total Current Payments</p>
+                                                                                <p class="h3 font-white my-0" id="total-current-in-payments">PHP 7,208.28</p>
                                                                             </div>
                                                                         </div>
                                                                         
@@ -374,7 +374,7 @@
                                                                             <div
                                                                                 class="red-border d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
                                                                                 <p class="h6 font-red my-0">Overdues</p>
-                                                                                <p class="h3 font-red my-0">2</p>
+                                                                                <p class="h3 font-red my-0" id="total-overdue-in-payments">2</p>
                                                                             </div>
                                                                         </div>
                                                                         

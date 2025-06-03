@@ -381,7 +381,13 @@
                                             <td><xsl:value-of select="@id"/></td>
                                             <td><xsl:value-of select="title"/></td>
                                             <td><xsl:value-of select="type"/></td>
-                                            <td><xsl:value-of select="concernedWith"/></td>
+                                            <td>
+                                                <xsl:variable name="concernedIndividual" select='concernedWith' />
+                                                <xsl:value-of select="$data///renter[@id=$concernedIndividual]//firstName"/>&#160;
+                                                <xsl:value-of select="$data///renter[@id=$concernedIndividual]//middleName"/>&#160;
+                                                <xsl:value-of select="$data///renter[@id=$concernedIndividual]//surname"/>&#160;
+                                                <xsl:value-of select="$data///renter[@id=$concernedIndividual]//extension"/>
+                                            </td>
                                             <td><xsl:value-of select="dueDate"/></td>
                                             <td>
                                                 <div class="d-flex justify-content-center align-items-center">
@@ -526,7 +532,7 @@
                                                         
                                                         <!-- Modal footer -->
                                                         <div class="modal-footer d-flex justify-content-between">
-                                                            <div id="error-box-add-task" class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-10 col-lg-6" style="color:white; background-color: #a6192e;">
+                                                            <div id="error-box-add-task" class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-9" style="color:white; background-color: #a6192e;">
                                                                 <i class="bi bi-exclamation-triangle-fill fs-3"></i>
                                                                 <div>
                                                                     <strong class="fs-5">Warning!</strong><br/>
@@ -698,7 +704,7 @@
                                                                     
                                                                     <!-- Modal footer -->
                                                                     <div class="modal-footer d-flex justify-content-between">
-                                                                        <div id="error-box-modify-task" class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-10 col-lg-6" style="color:white; background-color: #a6192e;">
+                                                                        <div id="error-box-modify-task" class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-9" style="color:white; background-color: #a6192e;">
                                                                             <i class="bi bi-exclamation-triangle-fill fs-3"></i>
                                                                             <div>
                                                                                 <strong class="fs-5">Warning!</strong><br/>
@@ -921,19 +927,26 @@
                                                                     </div>
                                                                     
                                                                     <!-- Modal footer -->
-                                                                    <div class="modal-footer">
-                                                                        <button type="button" class="btn-red" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalDeleteTask">Cancel</button>
-                                                                        <form id="delete-task" method="POST" action="functions/delete-task.php">
-                                                                            <input type="hidden" id="hidden-delete-task-task-id" name="task_id" />
-                                                                            <input type="hidden" id="hidden-delete-task-title" name="title" />
-                                                                            <input type="hidden" id="hidden-delete-task-type" name="type" />
-                                                                            <input type="hidden" id="hidden-delete-task-due-date" name="due_date" />
-                                                                            <input type="hidden" id="hidden-delete-task-concerned-with" name="concerned_with" />
-                                                                            <input type="hidden" id="hidden-delete-task-reason" name="delete_reason" />
-
-
-                                                                            <button type="submit" class="btn-red-fill" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalDeleteTaskSuccess" id="button-confirm-delete-task">Delete</button>
-                                                                        </form>
+                                                                    <div class="modal-footer d-flex align-items-end">
+                                                                        <div id="error-box-delete-task" class="me-auto alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-7" style="color:white; background-color: #a6192e;">
+                                                                            <i class="bi bi-exclamation-triangle-fill fs-3"></i>
+                                                                            <div>
+                                                                                <strong class="fs-5">Warning!</strong><br/>
+                                                                                <span class="small" id="error-text-delete-task"></span>
+                                                                            </div>
+                                                                        </div>
+                                                                            <button type="button" class="btn-red" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalDeleteTask">Cancel</button>
+                                                                            <form id="delete-task" method="POST" action="functions/delete-task.php">
+                                                                                <input type="hidden" id="hidden-delete-task-task-id" name="task_id" />
+                                                                                <input type="hidden" id="hidden-delete-task-title" name="title" />
+                                                                                <input type="hidden" id="hidden-delete-task-type" name="type" />
+                                                                                <input type="hidden" id="hidden-delete-task-due-date" name="due_date" />
+                                                                                <input type="hidden" id="hidden-delete-task-concerned-with" name="concerned_with" />
+                                                                                <input type="hidden" id="hidden-delete-task-reason" name="delete_reason" />
+                                                                                
+                                                                                
+                                                                                <button type="button" class="btn-red-fill" id="button-confirm-delete-task">Delete</button>
+                                                                            </form>
                                                                     </div>
                                                                 </div>
                                                             </div>
