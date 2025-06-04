@@ -927,7 +927,7 @@
             <deleteReason/>
 
         </room>
-    </rooms>
+    <room id="26"><roomNo>12Z</roomNo><floorNo>3</floorNo><roomType>2BR</roomType><sizeSQM>19</sizeSQM><rentPrice>1900</rentPrice><status>Unavailable</status><deleteReason>not-available</deleteReason><dateDeleted>2025-06-04</dateDeleted></room></rooms>
 
     <billing>
         <utilityBills>
@@ -2362,218 +2362,8 @@
                 </reading>
 
 
-                <reading id="6">
-                    <readingDate>2025-06-04</readingDate>
-                    <periodEnd>2025-06-10</periodEnd>
-                    <dueDate>2025-06-18</dueDate>
-                    <consumedKwhTotal>30525</consumedKwhTotal>
-                    <totalBill>20000</totalBill>
-                    <status>Unpaid</status>
-                    <bills>
-                        <bill id="E26">
-                            <renterId>1</renterId>
-                            <currentReading>4000</currentReading>
-                            <previousReading>3000</previousReading>
-                            <consumedKwh>1000</consumedKwh>
-                            <amount>655.20</amount>
-                            <overpaid>0</overpaid>
-                            <debt>0</debt>
-                            <status>Unpaid</status>
-                        </bill>
-                        <bill id="E27">
-                            <renterId>2</renterId>
-                            <currentReading>4000</currentReading>
-                            <previousReading>1100</previousReading>
-                            <consumedKwh>2900</consumedKwh>
-                            <amount>1900.08</amount>
-                            <overpaid>0</overpaid>
-                            <debt>0</debt>
-                            <status>Unpaid</status>
-                        </bill>
-                        <bill id="E28">
-                            <renterId>3</renterId>
-                            <currentReading>4000</currentReading>
-                            <previousReading>1215</previousReading>
-                            <consumedKwh>2785</consumedKwh>
-                            <amount>1824.73</amount>
-                            <overpaid>0</overpaid>
-                            <debt>0</debt>
-                            <status>Unpaid</status>
-                        </bill>
-                        <bill id="E29">
-                            <renterId>5</renterId>
-                            <currentReading>4000</currentReading>
-                            <previousReading>1430</previousReading>
-                            <consumedKwh>2570</consumedKwh>
-                            <amount>1683.87</amount>
-                            <overpaid>0</overpaid>
-                            <debt>0</debt>
-                            <status>Unpaid</status>
-                        </bill>
-                        <bill id="E30">
-                            <renterId>6</renterId>
-                            <currentReading>4000</currentReading>
-                            <previousReading>1545</previousReading>
-                            <consumedKwh>2455</consumedKwh>
-                            <amount>1608.52</amount>
-                            <overpaid>0</overpaid>
-                            <debt>0</debt>
-                            <status>Unpaid</status>
-                        </bill>
-                        <bill id="E31">
-                            <renterId>8</renterId>
-                            <currentReading>4000</currentReading>
-                            <previousReading>1770</previousReading>
-                            <consumedKwh>2230</consumedKwh>
-                            <amount>1461.10</amount>
-                            <overpaid>0</overpaid>
-                            <debt>0</debt>
-                            <status>Unpaid</status>
-                        </bill>
-                        <bill id="E32">
-                            <renterId>10</renterId>
-                            <currentReading>4000</currentReading>
-                            <previousReading>1990</previousReading>
-                            <consumedKwh>2010</consumedKwh>
-                            <amount>1316.95</amount>
-                            <overpaid>0</overpaid>
-                            <debt>0</debt>
-                            <status>Unpaid</status>
-                        </bill>
-                        <bill id="E33">
-                            <renterId>11</renterId>
-                            <currentReading>4000</currentReading>
-                            <previousReading>2100</previousReading>
-                            <consumedKwh>1900</consumedKwh>
-                            <amount>1244.88</amount>
-                            <overpaid>0</overpaid>
-                            <debt>0</debt>
-                            <status>Unpaid</status>
-                        </bill>
-                        <bill id="E34">
-                            <renterId>12</renterId>
-                            <currentReading>4000</currentReading>
-                            <previousReading>2215</previousReading>
-                            <consumedKwh>1785</consumedKwh>
-                            <amount>1169.53</amount>
-                            <overpaid>0</overpaid>
-                            <debt>0</debt>
-                            <status>Unpaid</status>
-                        </bill>
-                        <bill id="E35">
-                            <renterId>13</renterId>
-                            <currentReading>4000</currentReading>
-                            <previousReading>2330</previousReading>
-                            <consumedKwh>1670</consumedKwh>
-                            <amount>1094.19</amount>
-                            <overpaid>0</overpaid>
-                            <debt>0</debt>
-                            <status>Unpaid</status>
-                        </bill>
-                        <bill id="E36">
-                            <renterId>14</renterId>
-                            <currentReading>4000</currentReading>
-                            <previousReading>2440</previousReading>
-                            <consumedKwh>1560</consumedKwh>
-                            <amount>1022.11</amount>
-                            <overpaid>0</overpaid>
-                            <debt>0</debt>
-                            <status>Unpaid</status>
-                        </bill>
-                        <bill id="E37">
-                            <renterId>16</renterId>
-                            <currentReading>4000</currentReading>
-                            <previousReading>2660</previousReading>
-                            <consumedKwh>1340</consumedKwh>
-                            <amount>877.97</amount>
-                            <overpaid>0</overpaid>
-                            <debt>0</debt>
-                            <status>Unpaid</status>
-                        </bill>
-                        <bill id="E38">
-                            <renterId>17</renterId>
-                            <currentReading>4000</currentReading>
-                            <previousReading>2770</previousReading>
-                            <consumedKwh>1230</consumedKwh>
-                            <amount>805.90</amount>
-                            <overpaid>0</overpaid>
-                            <debt>0</debt>
-                            <status>Unpaid</status>
-                        </bill>
-                        <bill id="E39">
-                            <renterId>18</renterId>
-                            <currentReading>4000</currentReading>
-                            <previousReading>2880</previousReading>
-                            <consumedKwh>1120</consumedKwh>
-                            <amount>733.82</amount>
-                            <overpaid>0</overpaid>
-                            <debt>0</debt>
-                            <status>Unpaid</status>
-                        </bill>
-                        <bill id="E40">
-                            <renterId>19</renterId>
-                            <currentReading>4000</currentReading>
-                            <previousReading>2990</previousReading>
-                            <consumedKwh>1010</consumedKwh>
-                            <amount>661.75</amount>
-                            <overpaid>0</overpaid>
-                            <debt>0</debt>
-                            <status>Unpaid</status>
-                        </bill>
-                        <bill id="E41">
-                            <renterId>20</renterId>
-                            <currentReading>4000</currentReading>
-                            <previousReading>3100</previousReading>
-                            <consumedKwh>900</consumedKwh>
-                            <amount>589.68</amount>
-                            <overpaid>0</overpaid>
-                            <debt>0</debt>
-                            <status>Unpaid</status>
-                        </bill>
-                        <bill id="E42">
-                            <renterId>22</renterId>
-                            <currentReading>4000</currentReading>
-                            <previousReading>3320</previousReading>
-                            <consumedKwh>680</consumedKwh>
-                            <amount>445.54</amount>
-                            <overpaid>0</overpaid>
-                            <debt>0</debt>
-                            <status>Unpaid</status>
-                        </bill>
-                        <bill id="E43">
-                            <renterId>23</renterId>
-                            <currentReading>4000</currentReading>
-                            <previousReading>3430</previousReading>
-                            <consumedKwh>570</consumedKwh>
-                            <amount>373.46</amount>
-                            <overpaid>0</overpaid>
-                            <debt>0</debt>
-                            <status>Unpaid</status>
-                        </bill>
-                        <bill id="E44">
-                            <renterId>24</renterId>
-                            <currentReading>4000</currentReading>
-                            <previousReading>3540</previousReading>
-                            <consumedKwh>460</consumedKwh>
-                            <amount>301.39</amount>
-                            <overpaid>0</overpaid>
-                            <debt>0</debt>
-                            <status>Unpaid</status>
-                        </bill>
-                        <bill id="E45">
-                            <renterId>25</renterId>
-                            <currentReading>4000</currentReading>
-                            <previousReading>3650</previousReading>
-                            <consumedKwh>350</consumedKwh>
-                            <amount>229.32</amount>
-                            <overpaid>0</overpaid>
-                            <debt>0</debt>
-                            <status>Unpaid</status>
-                        </bill>
-                    </bills>
-                    <amountPerKwh>0.66</amountPerKwh>
-                </reading>
-            </utility>
+                
+            <reading id="6"><readingDate>2025-06-04</readingDate><periodEnd>2025-06-10</periodEnd><dueDate>2025-06-18</dueDate><consumedKwhTotal>30525</consumedKwhTotal><totalBill>20000</totalBill><status>Unpaid</status><bills><bill id="E26"><renterId>1</renterId><currentReading>4000</currentReading><previousReading>3000</previousReading><consumedKwh>1000</consumedKwh><amount>655.20</amount><overpaid>0</overpaid><debt>0</debt><status>Unpaid</status></bill><bill id="E27"><renterId>2</renterId><currentReading>4000</currentReading><previousReading>1100</previousReading><consumedKwh>2900</consumedKwh><amount>1900.08</amount><overpaid>0</overpaid><debt>0</debt><status>Unpaid</status></bill><bill id="E28"><renterId>3</renterId><currentReading>4000</currentReading><previousReading>1215</previousReading><consumedKwh>2785</consumedKwh><amount>1824.73</amount><overpaid>0</overpaid><debt>0</debt><status>Unpaid</status></bill><bill id="E29"><renterId>5</renterId><currentReading>4000</currentReading><previousReading>1430</previousReading><consumedKwh>2570</consumedKwh><amount>1683.87</amount><overpaid>0</overpaid><debt>0</debt><status>Unpaid</status></bill><bill id="E30"><renterId>6</renterId><currentReading>4000</currentReading><previousReading>1545</previousReading><consumedKwh>2455</consumedKwh><amount>1608.52</amount><overpaid>0</overpaid><debt>0</debt><status>Unpaid</status></bill><bill id="E31"><renterId>8</renterId><currentReading>4000</currentReading><previousReading>1770</previousReading><consumedKwh>2230</consumedKwh><amount>1461.10</amount><overpaid>0</overpaid><debt>0</debt><status>Unpaid</status></bill><bill id="E32"><renterId>10</renterId><currentReading>4000</currentReading><previousReading>1990</previousReading><consumedKwh>2010</consumedKwh><amount>1316.95</amount><overpaid>0</overpaid><debt>0</debt><status>Unpaid</status></bill><bill id="E33"><renterId>11</renterId><currentReading>4000</currentReading><previousReading>2100</previousReading><consumedKwh>1900</consumedKwh><amount>1244.88</amount><overpaid>0</overpaid><debt>0</debt><status>Unpaid</status></bill><bill id="E34"><renterId>12</renterId><currentReading>4000</currentReading><previousReading>2215</previousReading><consumedKwh>1785</consumedKwh><amount>1169.53</amount><overpaid>0</overpaid><debt>0</debt><status>Unpaid</status></bill><bill id="E35"><renterId>13</renterId><currentReading>4000</currentReading><previousReading>2330</previousReading><consumedKwh>1670</consumedKwh><amount>1094.19</amount><overpaid>0</overpaid><debt>0</debt><status>Unpaid</status></bill><bill id="E36"><renterId>14</renterId><currentReading>4000</currentReading><previousReading>2440</previousReading><consumedKwh>1560</consumedKwh><amount>1022.11</amount><overpaid>0</overpaid><debt>0</debt><status>Unpaid</status></bill><bill id="E37"><renterId>16</renterId><currentReading>4000</currentReading><previousReading>2660</previousReading><consumedKwh>1340</consumedKwh><amount>877.97</amount><overpaid>0</overpaid><debt>0</debt><status>Unpaid</status></bill><bill id="E38"><renterId>17</renterId><currentReading>4000</currentReading><previousReading>2770</previousReading><consumedKwh>1230</consumedKwh><amount>805.90</amount><overpaid>0</overpaid><debt>0</debt><status>Unpaid</status></bill><bill id="E39"><renterId>18</renterId><currentReading>4000</currentReading><previousReading>2880</previousReading><consumedKwh>1120</consumedKwh><amount>733.82</amount><overpaid>0</overpaid><debt>0</debt><status>Unpaid</status></bill><bill id="E40"><renterId>19</renterId><currentReading>4000</currentReading><previousReading>2990</previousReading><consumedKwh>1010</consumedKwh><amount>661.75</amount><overpaid>0</overpaid><debt>0</debt><status>Unpaid</status></bill><bill id="E41"><renterId>20</renterId><currentReading>4000</currentReading><previousReading>3100</previousReading><consumedKwh>900</consumedKwh><amount>589.68</amount><overpaid>0</overpaid><debt>0</debt><status>Unpaid</status></bill><bill id="E42"><renterId>22</renterId><currentReading>4000</currentReading><previousReading>3320</previousReading><consumedKwh>680</consumedKwh><amount>445.54</amount><overpaid>0</overpaid><debt>0</debt><status>Unpaid</status></bill><bill id="E43"><renterId>23</renterId><currentReading>4000</currentReading><previousReading>3430</previousReading><consumedKwh>570</consumedKwh><amount>373.46</amount><overpaid>0</overpaid><debt>0</debt><status>Unpaid</status></bill><bill id="E44"><renterId>24</renterId><currentReading>4000</currentReading><previousReading>3540</previousReading><consumedKwh>460</consumedKwh><amount>301.39</amount><overpaid>0</overpaid><debt>0</debt><status>Unpaid</status></bill><bill id="E45"><renterId>25</renterId><currentReading>4000</currentReading><previousReading>3650</previousReading><consumedKwh>350</consumedKwh><amount>229.32</amount><overpaid>0</overpaid><debt>0</debt><status>Unpaid</status></bill></bills><amountPerKwh>0.66</amountPerKwh></reading></utility>
 
             <utility type="Water">
                 <accountInfo>
@@ -4815,7 +4605,7 @@
     <users>
         <user id="1">
             <email>juan@gmail.com</email>
-            <password>NewPass#123</password>
+            <password>PAAZJAAbBkFDV10=</password>
             <dateGenerated>2025-05-10</dateGenerated>
             <userRole>renter</userRole>
             <status>Active</status>
@@ -4823,7 +4613,7 @@
         </user>
         <user id="2">
             <email>makotobluemazing707@gmail.com</email>
-            <password>Bluemazing707@</password>
+            <password>MAkbEQwJDwscAllEVig=</password>
             <dateGenerated>2025-05-15</dateGenerated>
             <userRole>caretaker</userRole>
             <status>Active</status>
@@ -4831,7 +4621,7 @@
         </user>
         <user id="3">
             <email>rontaniegra707@gmail.com</email>
-            <password>Bluemazing707@</password>
+            <password>MAkbEQwJDwscAllEVig=</password>
             <dateGenerated>2025-05-15</dateGenerated>
             <userRole>renter</userRole>
             <status>Active</status>
@@ -4839,7 +4629,7 @@
         </user>
         <user id="4">
             <email>mattabion@gmail.com</email>
-            <password>Bluemazing707@</password>
+            <password>MAkbEQwJDwscAllEVig=</password>
             <dateGenerated>2025-05-15</dateGenerated>
             <userRole>renter</userRole>
             <status>Archived</status>
@@ -4847,7 +4637,7 @@
         </user>
         <user id="5">
             <email>mariasantos@gmail.com</email>
-            <password>Bluemazing707@</password>
+            <password>MAkbEQwJDwscAllEVig=</password>
             <dateGenerated>2025-05-15</dateGenerated>
             <userRole>admin</userRole>
             <status>Active</status>
@@ -4855,7 +4645,7 @@
         </user>
         <user id="6">
             <email>reyesssma@gmail.com</email>
-            <password>Bluemazing707@</password>
+            <password>MAkbEQwJDwscAllEVig=</password>
             <dateGenerated>2025-05-15</dateGenerated>
             <userRole>renter</userRole>
             <status>Active</status>
@@ -4863,7 +4653,7 @@
         </user>
         <user id="7">
             <email>lopezmaee@gmail.com</email>
-            <password>Bluemazing707@</password>
+            <password>MAkbEQwJDwscAllEVig=</password>
             <dateGenerated>2025-05-15</dateGenerated>
             <userRole>renter</userRole>
             <status>Archived</status>
@@ -4871,7 +4661,7 @@
         </user>
         <user id="8">
             <email>leodavid@gmail.com</email>
-            <password>Bluemazing707@</password>
+            <password>MAkbEQwJDwscAllEVig=</password>
             <dateGenerated>2025-05-15</dateGenerated>
             <userRole>renter</userRole>
             <status>Active</status>
@@ -4879,7 +4669,7 @@
         </user>
         <user id="9">
             <email>marrieangel@gmail.com</email>
-            <password>Bluemazing707@</password>
+            <password>MAkbEQwJDwscAllEVig=</password>
             <dateGenerated>2025-05-15</dateGenerated>
             <userRole>renter</userRole>
             <status>Archived</status>
@@ -4887,7 +4677,7 @@
         </user>
         <user id="10">
             <email>Brian@gmail.com</email>
-            <password>Bluemazing707@</password>
+            <password>MAkbEQwJDwscAllEVig=</password>
             <dateGenerated>2025-05-15</dateGenerated>
             <userRole>renter</userRole>
             <status>Active</status>
@@ -4895,7 +4685,7 @@
         </user>
         <user id="11">
             <email>karengrace@gmail.com</email>
-            <password>Bluemazing707@</password>
+            <password>MAkbEQwJDwscAllEVig=</password>
             <dateGenerated>2025-05-15</dateGenerated>
             <userRole>renter</userRole>
             <status>Active</status>
@@ -4903,7 +4693,7 @@
         </user>
         <user id="12">
             <email>cheska01@gmail.com</email>
-            <password>Bluemazing707@</password>
+            <password>MAkbEQwJDwscAllEVig=</password>
             <dateGenerated>2025-05-15</dateGenerated>
             <userRole>renter</userRole>
             <status>Active</status>
@@ -4911,7 +4701,7 @@
         </user>
         <user id="13">
             <email>macruz@gmail.com</email>
-            <password>Bluemazing707@</password>
+            <password>MAkbEQwJDwscAllEVig=</password>
             <dateGenerated>2025-05-15</dateGenerated>
             <userRole>renter</userRole>
             <status>Active</status>
@@ -4919,7 +4709,7 @@
         </user>
         <user id="14">
             <email>sarahjanemu@gmail.com</email>
-            <password>Bluemazing707@</password>
+            <password>MAkbEQwJDwscAllEVig=</password>
             <dateGenerated>2025-05-15</dateGenerated>
             <userRole>renter</userRole>
             <status>Active</status>
@@ -4927,7 +4717,7 @@
         </user>
         <user id="15">
             <email>jasonlee@gmail.com</email>
-            <password>Bluemazing707@</password>
+            <password>MAkbEQwJDwscAllEVig=</password>
             <dateGenerated>2025-05-15</dateGenerated>
             <userRole>renter</userRole>
             <status>Archived</status>
@@ -4935,7 +4725,7 @@
         </user>
         <user id="16">
             <email>emilyramos@gmail.com</email>
-            <password>Bluemazing707@</password>
+            <password>MAkbEQwJDwscAllEVig=</password>
             <dateGenerated>2025-05-15</dateGenerated>
             <userRole>renter</userRole>
             <status>Active</status>
@@ -4943,7 +4733,7 @@
         </user>
         <user id="17">
             <email>Markanthonydc@gmail.com</email>
-            <password>Bluemazing707@</password>
+            <password>MAkbEQwJDwscAllEVig=</password>
             <dateGenerated>2025-05-15</dateGenerated>
             <userRole>renter</userRole>
             <status>Active</status>
@@ -4951,7 +4741,7 @@
         </user>
         <user id="18">
             <email>beaaa@gmail.com</email>
-            <password>Bluemazing707@</password>
+            <password>MAkbEQwJDwscAllEVig=</password>
             <dateGenerated>2025-05-15</dateGenerated>
             <userRole>renter</userRole>
             <status>Active</status>
@@ -4959,7 +4749,7 @@
         </user>
         <user id="19">
             <email>Joshuareyes@gmail.com</email>
-            <password>Bluemazing707@</password>
+            <password>MAkbEQwJDwscAllEVig=</password>
             <dateGenerated>2025-05-15</dateGenerated>
             <userRole>renter</userRole>
             <status>Active</status>
@@ -4967,7 +4757,7 @@
         </user>
         <user id="20">
             <email>Ella_Francisco@gmail.com</email>
-            <password>Bluemazing707@</password>
+            <password>MAkbEQwJDwscAllEVig=</password>
             <dateGenerated>2025-05-15</dateGenerated>
             <userRole>renter</userRole>
             <status>Active</status>
@@ -4975,7 +4765,7 @@
         </user>
         <user id="21">
             <email>Ignacio12@gmail.com</email>
-            <password>Bluemazing707@</password>
+            <password>MAkbEQwJDwscAllEVig=</password>
             <dateGenerated>2025-05-15</dateGenerated>
             <userRole>renter</userRole>
             <status>Archived</status>
@@ -4983,7 +4773,7 @@
         </user>
         <user id="22">
             <email>juancruz11@gmail.com</email>
-            <password>Bluemazing707@</password>
+            <password>MAkbEQwJDwscAllEVig=</password>
             <dateGenerated>2025-05-15</dateGenerated>
             <userRole>renter</userRole>
             <status>Active</status>
@@ -4991,7 +4781,7 @@
         </user>
         <user id="23">
             <email>maria@gmail.com</email>
-            <password>Bluemazing707@</password>
+            <password>MAkbEQwJDwscAllEVig=</password>
             <dateGenerated>2025-05-15</dateGenerated>
             <userRole>renter</userRole>
             <status>Active</status>
@@ -4999,7 +4789,7 @@
         </user>
         <user id="24">
             <email>cruzcarlos@gmail.com</email>
-            <password>Bluemazing707@</password>
+            <password>MAkbEQwJDwscAllEVig=</password>
             <dateGenerated>2025-05-15</dateGenerated>
             <userRole>renter</userRole>
             <status>Active</status>
@@ -5007,7 +4797,7 @@
         </user>
         <user id="25">
             <email>garciana@gmail.com</email>
-            <password>Bluemazing707@</password>
+            <password>MAkbEQwJDwscAllEVig=</password>
             <dateGenerated>2025-05-15</dateGenerated>
             <userRole>renter</userRole>
             <status>Active</status>
@@ -5016,7 +4806,7 @@
 
         <user id="26">
             <email>lopez_novielei@plpasig.edu.ph</email>
-            <password>LopezLei123@</password>
+            <password>PgoeERskEAtDV100</password>
             <dateGenerated>2025-05-29</dateGenerated>
             <userRole>Renter</userRole>
             <status>Archived</status>
@@ -5024,13 +4814,13 @@
         </user>
         <user id="27">
             <email>new@gmail.com</email>
-            <password>NewAccount@123</password>
+            <password>PAAZNQILGhccES5FU1s=</password>
             <dateGenerated>2025-06-03</dateGenerated>
             <userRole>Renter</userRole>
             <status>Archived</status>
             <lastLogin>2025-06-03</lastLogin>
         </user>
-    </users>
+<user id="28"><email>makokyoti@gmail.com</email><password>Qmx1ZW1hemluZzcwN0A=</password><dateGenerated>2025-06-04</dateGenerated><userRole>renter</userRole><status>Archived</status><lastLogin/><dateModified>2025-06-04</dateModified><deleteReason/><dateDeleted>2025-06-04</dateDeleted></user></users>
 
     <caretakers>
         <caretaker id="501">
@@ -5116,7 +4906,7 @@
             <message>Pay your Overdue Bills</message>
             <isRead>false</isRead>
         </notification>
-    </notifications>
+    <notification id="6"><renterId>3</renterId><message>Pay your Overdue Bills</message><isRead>false</isRead></notification><notification id="7"><renterId>1</renterId><message>Electric Bill is Modified</message><isRead>false</isRead></notification><notification id="8"><renterId>2</renterId><message>Electric Bill is Modified</message><isRead>false</isRead></notification><notification id="9"><renterId>3</renterId><message>Electric Bill is Modified</message><isRead>false</isRead></notification><notification id="10"><renterId>4</renterId><message>Electric Bill is Modified</message><isRead>false</isRead></notification><notification id="11"><renterId>5</renterId><message>Electric Bill is Modified</message><isRead>false</isRead></notification><notification id="12"><renterId>6</renterId><message>Electric Bill is Modified</message><isRead>false</isRead></notification><notification id="13"><renterId>7</renterId><message>Electric Bill is Modified</message><isRead>false</isRead></notification><notification id="14"><renterId>8</renterId><message>Electric Bill is Modified</message><isRead>false</isRead></notification><notification id="15"><renterId>9</renterId><message>Electric Bill is Modified</message><isRead>false</isRead></notification><notification id="16"><renterId>10</renterId><message>Electric Bill is Modified</message><isRead>false</isRead></notification><notification id="17"><renterId>11</renterId><message>Electric Bill is Modified</message><isRead>false</isRead></notification><notification id="18"><renterId>12</renterId><message>Electric Bill is Modified</message><isRead>false</isRead></notification><notification id="19"><renterId>13</renterId><message>Electric Bill is Modified</message><isRead>false</isRead></notification><notification id="20"><renterId>14</renterId><message>Electric Bill is Modified</message><isRead>false</isRead></notification><notification id="21"><renterId>15</renterId><message>Electric Bill is Modified</message><isRead>false</isRead></notification><notification id="22"><renterId>16</renterId><message>Electric Bill is Modified</message><isRead>false</isRead></notification><notification id="23"><renterId>17</renterId><message>Electric Bill is Modified</message><isRead>false</isRead></notification><notification id="24"><renterId>18</renterId><message>Electric Bill is Modified</message><isRead>false</isRead></notification><notification id="25"><renterId>19</renterId><message>Electric Bill is Modified</message><isRead>false</isRead></notification><notification id="26"><renterId>20</renterId><message>Electric Bill is Modified</message><isRead>false</isRead></notification><notification id="27"><renterId>21</renterId><message>Electric Bill is Modified</message><isRead>false</isRead></notification><notification id="28"><renterId>22</renterId><message>Electric Bill is Modified</message><isRead>false</isRead></notification><notification id="29"><renterId>23</renterId><message>Electric Bill is Modified</message><isRead>false</isRead></notification><notification id="30"><renterId>24</renterId><message>Electric Bill is Modified</message><isRead>false</isRead></notification><notification id="31"><renterId>25</renterId><message>Electric Bill is Modified</message><isRead>false</isRead></notification><notification id="32"><renterId>26</renterId><message>Electric Bill is Modified</message><isRead>false</isRead></notification><notification id="33"><renterId>27</renterId><message>Electric Bill is Modified</message><isRead>false</isRead></notification></notifications>
 
     <!-- <auditTrail>
         <action id="601">

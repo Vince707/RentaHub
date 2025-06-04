@@ -204,6 +204,30 @@
                                                 </a>
                                             </li>
                                         </ul>
+                            <div class="d-flex mt-auto align-items-center align-self-center flex-column ">
+                                <div class=" bg-white p-1 px-5 rounded-2 d-flex flex-row">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#8E1616"><path d="M160-200v-60h80v-304q0-84 49.5-150.5T420-798v-22q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v22q81 17 130.5 83.5T720-564v304h80v60H160Zm320-302Zm0 422q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM300-260h360v-304q0-75-52.5-127.5T480-744q-75 0-127.5 52.5T300-564v304Z"/></svg>
+                                    <p class="h6 align-self-center mb-0 pb-0 fw-bold font-red-gradient ms-1">Notifications!</p>
+                                </div>
+                                
+                                <div id="notifications-list" class="col-12 overflow-auto d-flex flex-row" style="min-width: 32vh; max-width: 32vh; min-height: 24vh; max-height: 24vh;">
+                                    <div 
+                                        class="alert d-flex flex-row align-items-start justify-content-between gap-3 p-3 border-0 rounded-3 col-12 notification-item bg-white mt-1">
+                                        
+                                        <div>
+                                            <strong class="fs-5 font-red"></strong>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            class="btn-red-fill d-flex align-items-center p-1 button-notif-read">
+                                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
+                                                <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                            </div>
                                         <div class="d-flex mt-auto align-items-center align-self-center flex-column">
                                             <p class="small align-self-center fw-bold mb-0 pb-0 current-date"></p>
                                             <p class="align-self-center pt-0 mt-0" style="font-size: 0.6rem">

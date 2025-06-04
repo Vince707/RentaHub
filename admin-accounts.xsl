@@ -375,24 +375,33 @@
                                             </td>
                                             <td>
                                                 <div class="d-flex flex-row justify-content-center align-items-center align-self-center">
-                                                    <!-- Edit button -->
-                                                    <button type="button" class="ms-1 btn-red-fill d-flex align-items-center px-3 py-1" id="button-edit"
-                                                            data-bs-toggle="modal" data-bs-target="#modalModifyAccount">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                                                             fill="#FFFFFF">
-                                                            <path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z" />
-                                                        </svg>
-                                                    </button>
-                                                    <!-- Delete button -->
-                                                    <button type="button" class="ms-1 btn-red-fill d-flex align-items-center px-3 py-1" id="button-delete"
-                                                            data-bs-toggle="modal" data-bs-target="#modalDeleteAccount">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                                                             fill="#e3e3e3">
-                                                            <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
-                                                        </svg>
-                                                    </button>
+                                                    <xsl:if test="status != 'Archived'">
+                                                        <!-- Edit button -->
+                                                        <button type="button" class="ms-1 btn-red-fill d-flex align-items-center px-3 py-1" id="account-button-account-edit"
+                                                                data-bs-toggle="modal" data-bs-target="#modalModifyAccount">
+                                                            <xsl:attribute name="data-account-id">
+                                                                <xsl:value-of select="@id"/>
+                                                            </xsl:attribute>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                                                                 fill="#FFFFFF">
+                                                                <path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z" />
+                                                            </svg>
+                                                        </button>
+                                                        <!-- Delete button -->
+                                                        <button type="button" class="ms-1 btn-red-fill d-flex align-items-center px-3 py-1" id="account-button-account-delete"
+                                                                data-bs-toggle="modal" data-bs-target="#modalDeleteAccountConfirmation">
+                                                            <xsl:attribute name="data-account-id">
+                                                                <xsl:value-of select="@id"/>
+                                                            </xsl:attribute>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                                                                 fill="#e3e3e3">
+                                                                <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+                                                            </svg>
+                                                        </button>
+                                                    </xsl:if>
                                                 </div>
                                             </td>
+                                              
                                         </tr>
                                     </xsl:for-each>
                                 </tbody>
@@ -414,7 +423,6 @@
                                         
                                         <!-- Modal body -->
                                         <div class="modal-body d-flex flex-column">
-                                            <p class="h4 font-red-gradient">A25000001</p>
                                             <div class="d-flex flex-row mb-3 flex-wrap">
                                                 <div class="form-floating me-2 flex-fill">
                                                     <input type="text" class="form-control" id="add-account-email-address" placeholder="" required="required"/>
@@ -443,7 +451,7 @@
                                                 <!-- Modal footer -->
                                                 <div class="modal-footer d-flex justify-content-between">
                                                     <div id="error-box-add-account"
-                                                         class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-10 col-lg-6"
+                                                         class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-9"
                                                          style="color:white; background-color: #a6192e;">
                                                         <i class="bi bi-exclamation-triangle-fill fs-3"></i>
                                                         <div>
@@ -474,20 +482,16 @@
                                                 <div class="modal-body d-flex justify-content-center text-center">
                                                     <div class="d-flex flex-column align-items-center gap-2">
                                                         <div>
-                                                            <p class="h5 font-red-gradient mb-1">Account ID:</p>
-                                                            <p id="confirm-add-account-account-id" class="font-red mb-2"></p>
-                                                        </div>
-                                                        <div>
                                                             <p class="h5 font-red-gradient mb-1">Username:</p>
-                                                            <p id="confirm-add-account-username" class="font-red mb-2"></p>
+                                                            <span id="confirm-add-account-username" class="font-red mb-2"></span>
                                                         </div>
                                                         <div>
                                                             <p class="h5 font-red-gradient mb-1">Password:</p>
-                                                            <p id="confirm-add-account-password" class="font-red mb-2"></p>
+                                                            <span id="confirm-add-account-password" class="font-red mb-2"></span>
                                                         </div>
                                                         <div>
                                                             <p class="h5 font-red-gradient mb-1">Account Role:</p>
-                                                            <p id="confirm-add-account-account-role" class="font-red mb-2"></p>
+                                                            <span id="confirm-add-account-account-role" class="font-red mb-2"></span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -495,7 +499,13 @@
                                                 <!-- Modal Footer -->
                                                 <div class="modal-footer justify-content-center">
                                                     <button type="button" class="btn-red me-2" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalAddAccount">Cancel</button>
-                                                    <button type="button" class="btn-green-fill" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalAddAccountSuccess" id="button-confirm-add-account">Confirm</button>
+                                                    <form id="form-add-account" method="POST" action="functions/add-account.php">
+                                                        <input type="hidden" name="email" id="hidden-add-account-email" />
+                                                        <input type="hidden" name="password" id="hidden-add-account-password" />
+                                                        <input type="hidden" name="account_role" id="hidden-add-account-role" />
+                                                        <button type="submit" class="btn-green-fill" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalAddAccountSuccess" id="button-confirm-add-account">Confirm</button>
+                                                    </form>
+                                                      
                                                 </div>
                                                 
                                             </div>
@@ -538,7 +548,6 @@
                                                 
                                                 <!-- Modal body -->
                                                 <div class="modal-body d-flex flex-column">
-                                                    <p class="h4 font-red-gradient">A25000001</p>
                                                     <div class="d-flex flex-row mb-3 flex-wrap">
                                                         <!-- Email Address Field -->
                                                         <div class="form-floating me-2 flex-fill">
@@ -585,7 +594,7 @@
                                                                 <i class="bi bi-exclamation-triangle-fill fs-3"></i>
                                                                 <div>
                                                                     <strong class="fs-5">Warning!</strong><br />
-                                                                    <span class="small" id="error-text-modify-room"></span>
+                                                                    <span class="small" id="error-text-modify-account"></span>
                                                                 </div>
                                                             </div>
                                                             <div class="ms-auto">
@@ -612,10 +621,6 @@
                                                 <div class="modal-body d-flex justify-content-center text-center">
                                                     <div class="d-flex flex-column align-items-center">
                                                         <div class="d-flex">
-                                                            <p class="h5 font-red-gradient me-2 mb-1">Account ID:</p>
-                                                            <p id="confirm-modify-account-account-id" class="font-red mb-1"></p>
-                                                        </div>
-                                                        <div class="d-flex">
                                                             <p class="h5 font-red-gradient me-2 mb-1">Username:</p>
                                                             <p id="confirm-modify-account-username" class="font-red mb-1"></p>
                                                         </div>
@@ -637,7 +642,16 @@
                                                 <!-- Modal Footer -->
                                                 <div class="modal-footer justify-content-center">
                                                     <button type="button" class="btn-red" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalModifyAccount">Return</button>
-                                                    <button type="button" class="btn-green-fill" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalModifyAccountSuccess" id="button-confirm-modify-account">Confirm</button>
+                                                    <form id="form-modify-account" method="POST" action="functions/modify-account.php">
+                                                        <input type="hidden" name="account_id" id="hidden-modify-account-id" />
+                                                        <input type="hidden" name="email" id="hidden-modify-account-email" />
+                                                        <input type="hidden" name="password" id="hidden-modify-account-password" />
+                                                        <input type="hidden" name="account_role" id="hidden-modify-account-role" />
+                                                        <input type="hidden" name="status" id="hidden-modify-account-status" />
+                                                        <button type="submit" class="btn-green-fill" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalModifyAccountSuccess" id="button-confirm-modify-account">Confirm</button>
+
+                                                    </form>
+                                                      
                                                 </div>
                                             </div>
                                         </div>
@@ -682,7 +696,7 @@
                                                     <div class="d-flex flex-column align-items-center">
                                                         <div class="d-flex">
                                                             <p class="h5 font-red-gradient me-2 mb-1">Account ID:</p>
-                                                            <p id="confirm-delete-account-account-id" class="font-red mb-1"></p>
+                                                            <span id="confirm-delete-account-account-id" class="font-red mb-1"></span>
                                                         </div>
                                                         <div class="d-flex">
                                                             <p class="h5 font-red-gradient me-2 mb-1">Username:</p>
@@ -706,7 +720,11 @@
                                                 <!-- Modal Footer -->
                                                 <div class="modal-footer justify-content-center">
                                                     <button type="button" class="btn-red" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalDeleteAccount">Cancel</button>
-                                                    <button type="button" class="btn-green-fill" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalDeleteAccountSuccess" id="button-confirm-delete-account">Confirm</button>
+                                                    <form id="form-delete-account" method="POST" action="functions/delete-account.php">
+                                                        <input type="hidden" name="account_id" id="hidden-delete-account-id" />
+                                                        <button type="submit" class="btn-green-fill" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalDeleteAccountSuccess" id="button-confirm-delete-account">Confirm</button>
+                                                    </form>
+                                                      
                                                 </div>
                                             </div>
                                         </div>

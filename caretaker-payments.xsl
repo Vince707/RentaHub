@@ -517,12 +517,10 @@
                                                                         </div>
                                             
                                                                         <div class="col-12 col-sm-6 col-lg-6 mt-4">
-                                                                            <div class="red-border d-flex flex-row align-items-center justify-content-between rounded-4 p-3 px-4 h-100">
+                                                                            <div class="red-border d-flex flex-row align-items-center justify-content-between rounded-4 p-3 px-4 h-100 overdue-send-notif-button">
                                                                                 <p class="h6 font-red my-0 me-1 text-center">Overdue</p>
                                                                                 <p class="h3 font-red my-0 me-1 text-center" id="total-overdue-value-individual-payments">PHP 0.00</p>
-                                                                                <button type="button" class="btn-red-fill"
-                                                                                        data-bs-toggle="modal"
-                                                                                        data-bs-target="#modalSendNotificationConfirmation">Notify</button>
+                                                                         
                                                                             </div>
                                                                         </div>
                                                                                                     
@@ -749,72 +747,67 @@
                         </div>
                     </div>
                 </div>
-  
+                
+                
+                <!-- Modal Send Notification Confirmation -->
+                <div class="modal fade" id="modalSendNotificationConfirmation" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content p-4">
+                            
+                            <!-- Modal Header -->
+                            <div class="modal-header d-flex align-items-center justify-content-center">
+                                <p class="modal-title h2 font-red text-center">Confirm Send Notification?</p>
+                            </div>
+                            
+                            <!-- Modal body -->
+                            <div class="modal-body d-flex align-items-center justify-content-center">
+                                <!-- TODO: NAME -->
+                                Do you want to notify&#160;<span class="renter-to-notify"></span>?
+                            </div>
+                            
+                            <!-- Modal footer -->
+                            <div class="modal-footer d-flex align-items-center justify-content-center">
+                                <button type="button" class="btn-red" data-bs-dismiss="modal">Cancel</button>
+                                <form id="hidden-form-billings-notify" method="post" action="functions/sendNotification.php">
+                                    <input type="hidden" id="hidden-renter-id" name="renter_id" />
+                                    <input type="hidden" id="hidden-message" name="message" />
+                                    <input type="hidden" id="hidden-current-page" name="current_page" value="payments"></input>
+                                    <button type="submit" class="btn-green-fill" id="button-confirm-send-notif" data-bs-dismiss="modal" data-bs-toggle="modal"
+                                            data-bs-target="#modalSendNotificationSuccess">Confirm</button>
+                                </form>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Modal Send Notification Success -->
+                <div class="modal fade" id="modalSendNotificationSuccess" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered modal-md">
+                        <div class="modal-content p-4">
+                            
+                            <!-- Modal Header -->
+                            <div class="modal-header d-flex align-items-center justify-content-center">
+                                <p class="modal-title h2 font-green text-center">Renter Notified Successfully!</p>
+                            </div>
+                            
+                            <!-- Modal body -->
+                            <div class="modal-body d-flex align-items-center justify-content-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="200px" viewBox="0 -960 960 960" width="200px"
+                                     fill="#6EC456">
+                                    <path
+                                        d="m421-298 283-283-46-45-237 237-120-120-45 45 165 166Zm59 218q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-156t86-127Q252-817 325-848.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 82-31.5 155T763-197.5q-54 54.5-127 86T480-80Zm0-60q142 0 241-99.5T820-480q0-142-99-241t-241-99q-141 0-240.5 99T140-480q0 141 99.5 240.5T480-140Zm0-340Z" />
+                                </svg>
+                            </div>
+                            
+                            <!-- Modal footer -->
+                            <div class="modal-footer d-flex align-items-center justify-content-center">
+                                <button type="button" class="btn-green-fill" data-bs-dismiss="modal">Confirm</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                                                                                    <!-- Modal Send Notification Confirmation -->
-                                                                                    <div class="modal fade" id="modalSendNotificationConfirmation"
-                                                                                         tabindex="-1">
-                                                                                        <div class="modal-dialog modal-dialog-centered modal-lg">
-                                                                                            <div class="modal-content p-4">
-                                                                                                
-                                                                                                <!-- Modal Header -->
-                                                                                                <div
-                                                                                                    class="modal-header d-flex align-items-center justify-content-center">
-                                                                                                    <p class="modal-title h2 font-red text-center">Confirm Send
-                                                                                                        Notification?</p>
-                                                                                                </div>
-                                                                                                
-                                                                                                <!-- Modal body -->
-                                                                                                <div
-                                                                                                    class="modal-body d-flex align-items-center justify-content-center">
-                                                                                                    Do you want to notify David Alon?
-                                                                                                </div>
-                                                                                                
-                                                                                                <!-- Modal footer -->
-                                                                                                <div
-                                                                                                    class="modal-footer d-flex align-items-center justify-content-center">
-                                                                                                    <button type="button" class="btn-red"
-                                                                                                            data-bs-dismiss="modal">Cancel</button>
-                                                                                                    <button type="button" class="btn-green-fill"
-                                                                                                            id="button-confirm-send-notif">Confirm</button>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    
-                                                                                    <!-- Modal Send Notification Success -->
-                                                                                    <div class="modal fade" id="modalSendNotificationSuccess"
-                                                                                         tabindex="-1">
-                                                                                        <div class="modal-dialog modal-dialog-centered modal-md">
-                                                                                            <div class="modal-content p-4">
-                                                                                                
-                                                                                                <!-- Modal Header -->
-                                                                                                <div
-                                                                                                    class="modal-header d-flex align-items-center justify-content-center">
-                                                                                                    <p class="modal-title h2 font-green text-center">Renter
-                                                                                                        Notified Successfully!</p>
-                                                                                                </div>
-                                                                                                
-                                                                                                <!-- Modal body -->
-                                                                                                <div
-                                                                                                    class="modal-body d-flex align-items-center justify-content-center">
-                                                                                                    <svg xmlns="http://www.w3.org/2000/svg" height="200px"
-                                                                                                         viewBox="0 -960 960 960" width="200px"
-                                                                                                         fill="#6EC456">
-                                                                                                        <path
-                                                                                                            d="m421-298 283-283-46-45-237 237-120-120-45 45 165 166Zm59 218q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-156t86-127Q252-817 325-848.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 82-31.5 155T763-197.5q-54 54.5-127 86T480-80Zm0-60q142 0 241-99.5T820-480q0-142-99-241t-241-99q-141 0-240.5 99T140-480q0 141 99.5 240.5T480-140Zm0-340Z" />
-                                                                                                    </svg>
-                                                                                                </div>
-                                                                                                
-                                                                                                <!-- Modal footer -->
-                                                                                                <div
-                                                                                                    class="modal-footer d-flex align-items-center justify-content-center">
-                                                                                                    <button type="button" class="btn-green-fill"
-                                                                                                            data-bs-dismiss="modal">Confirm</button>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
                                                                                     
                                                                                 </body>
                                                                                 

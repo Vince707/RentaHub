@@ -747,10 +747,23 @@
           <div class="d-flex flex-row mb-3 flex-wrap">
            <div class="me-2 mb-3 flex-fill">
             <select class="form-select custom-select" id="modify-renter-room-number" required="required" style="height: 3.5rem;">
-              <option selected="selected" disabled="disabled" hidden="hidden">Room Number *</option> 
-              <option value="1A">1A</option>
-              <!-- TODO: FROM XML -->
-            </select>
+              <option selected="selected" disabled="disabled" hidden="hidden" value="">Room Number *</option>
+              
+              <xsl:for-each select="$data/apartmentManagement/rooms/room[roomNo != '']">
+                <xsl:variable name="roomNo" select="roomNo"/>
+
+                <!-- Display room only if status is NOT 'Unavailable' AND NOT 'Occupied' -->
+                <xsl:if test="status != 'Unavailable' and status != 'Occupied'">
+                  <option value="{roomNo}">
+                    <xsl:value-of select="roomNo"/>
+                  </option>
+                </xsl:if>
+              </xsl:for-each>
+                      
+              
+  
+          </select>
+  
            </div>
             <div class="form-floating me-2 flex-fill">
               <input type="text" class="form-control" id="modify-renter-contract-term" placeholder="" required="required"/>

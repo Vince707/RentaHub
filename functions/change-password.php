@@ -43,7 +43,7 @@
     // Save updated XML
     if ($xml->asXML($xmlFile)) {
         // Redirect to login with success flag
-        header("Location: ../login.html?login=changePassSuccess");
+        header("Location: ../login.xml?login=changePassSuccess");
         exit();
     } else {
         die("Failed to save changes.");

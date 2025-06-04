@@ -324,7 +324,7 @@
                                             </td>
                                             <td>
                                                 <div class="d-flex flex-row justify-content-center align-items-center align-self-center">
-                                                    <!-- VIEW button -->
+                                                    <!-- VIEW button (always shown) -->
                                                     <button
                                                         title="View Room Information"
                                                         type="button"
@@ -340,39 +340,44 @@
                                                         </svg>
                                                     </button>
                                                     
-                                                    <!-- EDIT button -->
-                                                    <button
-                                                        title="Modify Room Information"
-                                                        type="button"
-                                                        class="ms-1 btn-red-fill d-flex align-items-center px-3 py-1 button-edit-room"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#modalModifyRoom"
-                                                        >
-                                                        <xsl:attribute name="data-room-id">
-                                                            <xsl:value-of select="@id"/>
-                                                        </xsl:attribute>
-                                                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF">
-                                                            <path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/>
-                                                        </svg>
-                                                    </button>
+                                                    <!-- EDIT button (hide if status='Unavailable') -->
+                                                    <xsl:if test="status != 'Unavailable'">
+                                                        <button
+                                                            title="Modify Room Information"
+                                                            type="button"
+                                                            class="ms-1 btn-red-fill d-flex align-items-center px-3 py-1 button-edit-room"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#modalModifyRoom"
+                                                            >
+                                                            <xsl:attribute name="data-room-id">
+                                                                <xsl:value-of select="@id"/>
+                                                            </xsl:attribute>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF">
+                                                                <path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/>
+                                                            </svg>
+                                                        </button>
+                                                    </xsl:if>
                                                     
-                                                    <!-- DELETE button -->
-                                                    <button
-                                                        title="Remove Room"
-                                                        type="button"
-                                                        class="ms-1 btn-red-fill d-flex align-items-center px-3 py-1 button-delete-room"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#modalDeleteRoomConfirmation"
-                                                        >
-                                                        <xsl:attribute name="data-room-id">
-                                                            <xsl:value-of select="@id"/>
-                                                        </xsl:attribute>
-                                                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
-                                                            <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
-                                                        </svg>
-                                                    </button>
+                                                    <!-- DELETE button (hide if status='Unavailable' or 'Occupied') -->
+                                                    <xsl:if test="status != 'Unavailable' and status != 'Occupied'">
+                                                        <button
+                                                            title="Remove Room"
+                                                            type="button"
+                                                            class="ms-1 btn-red-fill d-flex align-items-center px-3 py-1 button-delete-room"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#modalDeleteRoomConfirmation"
+                                                            >
+                                                            <xsl:attribute name="data-room-id">
+                                                                <xsl:value-of select="@id"/>
+                                                            </xsl:attribute>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
+                                                                <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
+                                                            </svg>
+                                                        </button>
+                                                    </xsl:if>
                                                 </div>
                                             </td>
+                                              
                                         </tr>
                                     </xsl:for-each>
                                                   
@@ -423,7 +428,7 @@
                                             </select>
                                                     </div>
                                                     <div class="me-2 mb-3 flex-fill">
-                                        <select class="form-select custom-select" id="modify-room-room-type" required="required" style="height: 3.5rem;">
+                                        <select class="form-select custom-select" id="add-room-room-type" required="required" style="height: 3.5rem;">
                                             <option selected="selected" disabled="disabled " hidden="hidden">Room Type</option> 
                                             <option value="Studio">Studio</option>
                                             <option value="1BR">1 Bedroom</option>
@@ -445,7 +450,7 @@
                                                     
                                                     <!-- Modal footer -->
                                                     <div class="modal-footer d-flex justify-content-between">
-                                                        <div id="error-box-add-room" class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-10 col-lg-6" style="color:white; background-color: #a6192e;">
+                                                        <div id="error-box-add-room" class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-9" style="color:white; background-color: #a6192e;">
                                                             <i class="bi bi-exclamation-triangle-fill fs-3"></i>
                                                             <div>
                                                                 <strong class="fs-5">Warning!</strong><br/>
@@ -500,7 +505,15 @@
                                                     <!-- Modal footer -->
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn-red" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalAddRoom">Cancel</button>
-                                                        <button type="button" class="btn-green-fill" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalAddRoomSuccess" id="button-confirm-add-room">Confirm</button>
+                                                        <form id="add-room-form" method="POST" action="functions/add-room.php">
+                                                            <input type="hidden" name="room_number" id="hidden-add-room-room-number" />
+                                                            <input type="hidden" name="floor_number" id="hidden-add-room-floor-number" />
+                                                            <input type="hidden" name="room_type" id="hidden-add-room-room-type" />
+                                                            <input type="hidden" name="size" id="hidden-add-room-size" />
+                                                            <input type="hidden" name="rent_price" id="hidden-add-room-rent-price" />
+                                                            <button type="submit" class="btn-green-fill" id="button-confirm-add-room">Confirm</button>
+                                                        </form>
+                                                          
                                                     </div>
                                                 </div>
                                             </div>
@@ -616,7 +629,7 @@
                                                                 </div>
                                                                 <div class="me-2 mb-3 flex-fill">
                                                                     <select class="form-select custom-select" id="modify-room-room-type" required="required" style="height: 3.5rem;">
-                                                                        <option selected="selected" disabled="disabled " hidden="hidden">Room Type</option> 
+                                                                        <!-- <option selected="" disabled="disabled " hidden="hidden">Room Type</option>  -->
                                                                         <option value="Studio">Studio</option>
                                                                         <option value="1BR">1 Bedroom</option>
                                                                         <option value="2BR">2 Bedrooms</option>
@@ -637,7 +650,7 @@
                                                                 
                                                                 <!-- Modal footer -->
                                                                 <div class="modal-footer d-flex justify-content-between">
-                                                                    <div id="error-box-modify-room" class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-10 col-lg-6" style="color:white; background-color: #a6192e;">
+                                                                    <div id="error-box-modify-room" class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-9" style="color:white; background-color: #a6192e;">
                                                                         <i class="bi bi-exclamation-triangle-fill fs-3"></i>
                                                                         <div>
                                                                             <strong class="fs-5">Warning!</strong><br/>
@@ -692,7 +705,17 @@
                                                                 <!-- Modal footer -->
                                                                 <div class="modal-footer">
                                                                     <button type="button" class="btn-red" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalModifyRoom">Return</button>
-                                                                    <button type="button" class="btn-green-fill" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalModifyRoomSuccess" id="button-confirm-modify-room">Confirm</button>
+                                <form id="form-modify-room" method="POST" action="functions/modify-room.php" >
+                                    <input type="hidden" name="room_id" id="hidden-modify-room-room-id" />
+                                    <input type="hidden" name="room_number" id="hidden-modify-room-room-number" />
+                                    <input type="hidden" name="floor_number" id="hidden-modify-room-floor-number" />
+                                    <input type="hidden" name="room_type" id="hidden-modify-room-room-type" />
+                                    <input type="hidden" name="size" id="hidden-modify-room-size" />
+                                    <input type="hidden" name="rent_price" id="hidden-modify-room-rent-price" />
+                                    <button type="submit" class="btn-green-fill" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalModifyRoomSuccess" id="button-confirm-modify-room">Confirm</button>
+                                </form>
+                                                                      
+
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -771,9 +794,25 @@
                             </div>
                             
                             <!-- Modal footer -->
-                            <div class="modal-footer">
-                                <button type="button" class="btn-red" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalDeleteRoom">Cancel</button>
-                                <button type="button" class="btn-red-fill" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalDeleteRoomSuccess" id="button-confirm-delete-room">Delete</button>
+                            <div class="modal-footer d-flex flex-row align-items-end">
+                                <div id="error-box-delete-room" class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-8" style="color:white; background-color: #a6192e;">
+                                    <i class="bi bi-exclamation-triangle-fill fs-3"></i>
+                                    <div>
+                                        <strong class="fs-5">Warning!</strong><br/>
+                                        <span class="small" id="error-text-delete-room"></span>
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-row">
+                                    <button type="button" class="btn-red me-2" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalDeleteRoom">Cancel</button>
+                                    <form id="form-delete-room" method="POST" action="functions/delete-room.php" >
+                                        <input type="hidden" name="room_id" id="hidden-delete-room-room-id" />
+                                        <input type="hidden" name="delete_reason" id="hidden-delete-room-reason" />
+                                    </form>
+                                    <button type="button" class="btn-red-fill" id="button-confirm-delete-room">Delete</button>
+
+                                </div>
+                                  
+
                             </div>
                         </div>
                     </div>

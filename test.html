@@ -3,9 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Simple XOR Cipher</title>
+    <!-- jQuery (latest) -->
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        textarea { width: 400px; height: 100px; margin-bottom: 10px; }
+        input[type="text"] { width: 200px; }
+        button { margin-right: 10px; }
+        .result { margin-top: 10px; font-weight: bold; }
+    </style>
 </head>
 <body>
-    TEST
+    <select id="test-select">
+        <option value="Studio">Studio</option>
+        <option value="1BR">1 Bedroom</option>
+        <option value="2BR">2 Bedrooms</option>
+        </select>
+
+    <h1>Simple XOR Cipher</h1>
+
+    <p>This is for demonstration/fun, not for actual security. Easily crackable, especially with short keys.</p>
+
+    <div>
+        <label for="xorInput">Input Text:</label><br>
+        <textarea id="xorInput" placeholder="Enter text"></textarea>
+    </div>
+    <div>
+        <label for="xorKey">Key (e.g., "secret"):</label>
+        <input type="text" id="xorKey" value="mykey"><br><br>
+        <button id="encryptXOR">Encrypt</button>
+        <button id="decryptXOR">Decrypt</button>
+    </div>
+    <div class="result">
+        Result: <span id="xorResult"></span>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#test-select').val('1BR');
+
+            // XOR encryption/decryption (it's the same operation)
+            function xorCipher(str, key) {
+                let result = '';
+                for (let i = 0; i < str.length; i++) {
+                    const charCode = str.charCodeAt(i);
+                    const keyCode = key.charCodeAt(i % key.length); // Cycle through the key
+                    // Perform XOR operation
+                    result += String.fromCharCode(charCode ^ keyCode);
+                }
+                // For display, it's common to Base64 encode the XOR result
+                // because XOR might produce non-printable characters.
+                return btoa(result);
+            }
+
+            // XOR decryption (decode Base64 first, then XOR)
+            function xorDecipher(base64Str, key) {
+                try {
+                    const decodedBase64 = atob(base64Str);
+                    let result = '';
+                    for (let i = 0; i < decodedBase64.length; i++) {
+                        const charCode = decodedBase64.charCodeAt(i);
+                        const keyCode = key.charCodeAt(i % key.length);
+                        result += String.fromCharCode(charCode ^ keyCode);
+                    }
+                    return result;
+                } catch (e) {
+                    return "Error: Invalid Base64 or key mismatch.";
+                }
+            }
+
+
+            $('#encryptXOR').on('click', function() {
+                const inputText = $('#xorInput').val();
+                const key = $('#xorKey').val();
+                if (!key) {
+                    alert("Please enter a key!");
+                    return;
+                }
+                const encryptedText = xorCipher(inputText, key);
+                $('#xorResult').text(encryptedText);
+            });
+
+            $('#decryptXOR').on('click', function() {
+                const inputText = $('#xorInput').val(); // This should be the Base64 XORed string
+                const key = $('#xorKey').val();
+                if (!key) {
+                    alert("Please enter a key!");
+                    return;
+                }
+                const decryptedText = xorDecipher(inputText, key);
+                $('#xorResult').text(decryptedText);
+            });
+        });
+    </script>
+
 </body>
 </html>

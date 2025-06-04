@@ -153,7 +153,8 @@ $.ajax({
     
     $(xml).find("user").each(function() {
       const storedEmail = $(this).find("email").text().trim();
-      const storedPassword = $(this).find("password").text().trim();
+        const uncrypted = $(this).find("password").text().trim();
+      const storedPassword = xorDecipher(uncrypted, 'rentahub');
       const role = $(this).find("userRole").text().trim();
       const status = $(this).find("status").text().trim();
       const id = $(this).attr('id'); 
@@ -176,6 +177,7 @@ $.ajax({
     });
 
     if (!userFound) {
+        
       showError("Email or password not found.", "#login-error-box", "#login-error-msg");
     }
   },
@@ -332,7 +334,7 @@ $.ajax({
                                     $("#login-confirm-password").val('');
                                     
                                     // Set the password into the hidden field so it can be submitted
-                                    $("#hidden-login-change-pass").val(password);
+                                    $("#hidden-login-change-pass").val(xorCipher(password, 'rentahub'));
                                     $("#hidden-login-change-pass-email").val(otpEmail);
                                     
                                     // Manually submit if needed (optional)

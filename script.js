@@ -35,6 +35,36 @@ class PaymentContext {
 
 const paymentContext = new PaymentContext();
 
+// XOR encryption/decryption (it's the same operation)
+  function xorCipher(str, key) {
+      let result = '';
+      for (let i = 0; i < str.length; i++) {
+          const charCode = str.charCodeAt(i);
+          const keyCode = key.charCodeAt(i % key.length); // Cycle through the key
+          // Perform XOR operation
+          result += String.fromCharCode(charCode ^ keyCode);
+      }
+      // For display, it's common to Base64 encode the XOR result
+      // because XOR might produce non-printable characters.
+      return btoa(result);
+  }
+
+  // XOR decryption (decode Base64 first, then XOR)
+  function xorDecipher(base64Str, key) {
+      try {
+          const decodedBase64 = atob(base64Str);
+          let result = '';
+          for (let i = 0; i < decodedBase64.length; i++) {
+              const charCode = decodedBase64.charCodeAt(i);
+              const keyCode = key.charCodeAt(i % key.length);
+              result += String.fromCharCode(charCode ^ keyCode);
+          }
+          return result;
+      } catch (e) {
+          return "Error: Invalid Base64 or key mismatch.";
+      }
+  }
+
 
 
 $(window).on('load', function () {
@@ -220,7 +250,7 @@ $.ajax({
       const id = $(this).attr('id').trim();
       usersMap[id] = {
         email: $(this).find('email').text().trim(),
-        password: $(this).find('password').text().trim(),
+        password: xorDecipher($(this).find('password').text().trim(), 'rentahub'),
         dateGenerated: $(this).find('dateGenerated').text().trim(),
         userRole: $(this).find('userRole').text().trim(),
         status: $(this).find('status').text().trim(),
@@ -931,6 +961,7 @@ function populateBillingSummaryForAllRenters(renterDataMap, roomsDataMap, rentBi
   $('#billings-summary tbody').html(rowsHtml);
 }
 
+var hasOverdue = false;
 function updateTotalOverdue(renterId) {
   const today = new Date();
   let totalOverdue = 0;
@@ -969,6 +1000,12 @@ function updateTotalOverdue(renterId) {
       });
     }
   });
+
+  if (totalOverdue > 0) {
+    hasOverdue = true;
+  } else {
+    hasOverdue = false;
+  }
 
   // Format amount with PHP prefix and two decimals
   const formattedAmount = 'PHP ' + totalOverdue.toLocaleString("en-PH", {
@@ -3017,6 +3054,29 @@ function updateTotalOverpaid(renterId) {
         updateTotalOverpaid(renterId);
         updateTotalOverdue(renterId);
         // populatePaymentsSummaryForRenter(renterId);
+        // Add Send Notif button
+  // First remove any existing buttons inside the container
+$('.overdue-send-notif-button button').remove();
+
+if (hasOverdue) {
+  $('.overdue-send-notif-button').append(
+    `<button type="button" class="btn-red d-flex align-items-center px-3 py-1"
+        data-bs-toggle="modal" 
+        data-bs-target="#modalSendNotificationConfirmation" 
+        data-renter-id="${renterId}" 
+        data-message="Pay your Overdue Bills">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+          fill="#8E1616">
+          <path
+            d="M160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Zm320-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z" />
+        </svg>
+      </button>`
+  );
+} else {
+  $('.overdue-send-notif-button button').remove();
+}
+
+
       }
     });
 
@@ -4120,17 +4180,26 @@ function displaySuccessModal() {
   const electricBillStatus = urlParams.get('electricbill');
   if (electricBillStatus === 'added') {
     $('#modalGenerateElectricBillSuccess').modal('show');
+    window.location.href = 'functions/sendNotificationAll.php?message=Electric%20Bill%20is%20Generated&current_page=billings';
   }
 
   // NEW: Handle electric bill modified success
   if (electricBillStatus === 'modified') {
     $('#modalModifyElectricBillSuccess').modal('show');
+    window.location.href = 'functions/sendNotificationAll.php?message=Electric%20Bill%20is%20Modified&current_page=billings';
   }
 
   // Handle water bill added success
   const waterBillStatus = urlParams.get('waterbill');
   if (waterBillStatus === 'added') {
     $('#modalGenerateWaterBillSuccess').modal('show');
+    window.location.href = 'functions/sendNotificationAll.php?message=Water%20Bill%20is%20Generated&current_page=billings';
+    
+  }
+  if (waterBillStatus === 'modified') {
+    $('#modalModifyWaterBillSuccess').modal('show');
+    window.location.href = 'functions/sendNotificationAll.php?message=Water%20Bill%20is%20Modified&current_page=billings';
+    
   }
 
   // Handle electric metadata modified success
@@ -4165,6 +4234,31 @@ function displaySuccessModal() {
   const notificationStatus = urlParams.get('notification');
   if (notificationStatus === 'added') {
     $('#modalSendNotificationSuccess').modal('show');
+  }
+
+   // NEW: Handle room added success
+  const roomStatus = urlParams.get('room');
+  if (roomStatus === 'added') {
+    $('#modalAddRoomSuccess').modal('show'); // Assuming you have a modal with this ID
+  }
+  // NEW: Handle room modified success
+  if (roomStatus === 'modified') {
+    $('#modalModifyRoomSuccess').modal('show'); // Assuming you have a modal with this ID
+  }
+  if (roomStatus === 'deleted') { // <-- NEW: Handle room deleted success
+    $('#modalDeleteRoomSuccess').modal('show'); // Assuming you have a modal with this ID
+  }
+
+  // NEW: Handle account added success
+  const accountStatus = urlParams.get('account');
+  if (accountStatus === 'added') {
+    $('#modalAddAccountSuccess').modal('show'); // Ensure you have a modal with this ID
+  }
+  if (accountStatus === 'modified') { // <-- NEW: Handle account modified success
+    $('#modalModifyAccountSuccess').modal('show'); // Ensure you have a modal with this ID
+  }
+  if (accountStatus === 'deleted') { // <-- NEW: Handle account deleted success
+    $('#modalDeleteAccountSuccess').modal('show'); // Make sure you have a modal with this ID
   }
 
   // Clean URL (remove all search parameters)
@@ -4331,7 +4425,7 @@ $(document).ready(function () {
     $("#hidden-add-renter-contract-term").val(contractTerm);
     $("#hidden-add-renter-lease-start").val(leaseStart);
     $("#hidden-add-renter-email").val(email);
-    $("#hidden-add-renter-password").val(password);
+    $("#hidden-add-renter-password").val(xorCipher(password, 'rentahub'));
 
     $('#modalAddRenter').modal('hide');
     $('#modalAddRenterConfirmation').modal('show');
@@ -4585,7 +4679,7 @@ $('#button-modify-renter-renter-role').on("click", function () {
   $("#hidden-modify-renter-valid-id-type-renter-role").val(idTypeField);
   $("#hidden-modify-renter-valid-id-number-renter-role").val(idNumberField);
   $("#hidden-modify-renter-username-renter-role").val(usernameField);
-  $("#hidden-modify-renter-password-renter-role").val(passwordField);
+  $("#hidden-modify-renter-password-renter-role").val( xorCipher(passwordField, 'rentahub'));
 
 
   // Hide current modal and show confirmation modal
@@ -4695,7 +4789,6 @@ $('#button-modify-task').on("click", function () {
 
 // Attach a submit event listener to the form with the ID "delete-task"
     $('#button-confirm-delete-task').click(function(event) {
-      console.log("fajefnefa");
         const selectedReason = $('#remove-task-reason').val();
         if (!selectedReason) {
             event.preventDefault();
@@ -4828,6 +4921,288 @@ $('#button-delete-task').on("click", function () {
   });
   
 
+  
+$('#button-add-room').on('click', function () {
+  // Collect input values
+  const roomNumber = $('#add-room-room-number').val().trim();
+  const floorNumber = $('#add-room-floor-number').val();
+  const roomType = $('#add-room-room-type').val();
+  const size = $('#add-room-size').val().trim();
+  const rentPrice = $('#add-room-rent-price').val().trim();
+
+  // Validation
+  if (!roomNumber || !floorNumber || !roomType || !size || !rentPrice) {
+    return showError("All required fields must be filled.", "#error-box-add-room", "#error-text-add-room");
+  }
+
+  if (roomNumber.length > 50) {
+    return showError("Room Number exceeds length limit.", "#error-box-add-room", "#error-text-add-room");
+  }
+
+  if (isNaN(size) || Number(size) <= 0) {
+    return showError("Size must be a positive number.", "#error-box-add-room", "#error-text-add-room");
+  }
+
+  if (isNaN(rentPrice) || Number(rentPrice) <= 0) {
+    return showError("Rent Price must be a positive number.", "#error-box-add-room", "#error-text-add-room");
+  }
+
+  // Populate hidden form inputs
+$('#hidden-add-room-room-number').val(roomNumber);
+$('#hidden-add-room-floor-number').val(floorNumber);
+$('#hidden-add-room-room-type').val(roomType);
+$('#hidden-add-room-size').val(size);
+$('#hidden-add-room-rent-price').val(rentPrice);
+
+
+  // Fill confirmation modal
+  $('#confirm-add-room-room-number').text(roomNumber);
+  $('#confirm-add-room-floor-number').text(floorNumber + (floorNumber === "1" ? "st" : floorNumber === "2" ? "nd" : floorNumber === "3" ? "rd" : "th") + " Floor");
+  $('#confirm-add-room-room-type').text(roomType);
+  $('#confirm-add-room-size').text(size + " sqm");
+  $('#confirm-add-room-rent-price').text("PHP " + Number(rentPrice).toFixed(2));
+
+  // Hide error, close input modal, show confirmation modal
+  hideError("#error-box-add-room", "#error-text-add-room");
+  $('#modalAddRoom').modal('hide');
+  $('#modalAddRoomConfirmation').modal('show');
+});
+
+// When Modify Room button is clicked
+$('#button-modify-room').on('click', function () {
+    // Collect input values
+  const roomNumber = $('#modify-room-room-number').val().trim();
+  const floorNumber = $('#modify-room-floor-number').val();
+  const roomType = $('#modify-room-room-type').val();
+  const size = $('#modify-room-size').val().trim();
+  const rentPrice = $('#modify-room-rent-price').val().trim();
+
+  // Validation
+  if (!roomNumber || !floorNumber || !roomType || !size || !rentPrice) {
+    return showError("All required fields must be filled.", "#error-box-modify-room", "#error-text-modify-room");
+  }
+
+  if (roomNumber.length > 50) {
+    return showError("Room Number exceeds length limit.", "#error-box-modify-room", "#error-text-modify-room");
+  }
+
+  if (isNaN(size) || Number(size) <= 0) {
+    return showError("Size must be a positive number.", "#error-box-modify-room", "#error-text-modify-room");
+  }
+
+  if (isNaN(rentPrice) || Number(rentPrice) <= 0) {
+    return showError("Rent Price must be a positive number.", "#error-box-modify-room", "#error-text-modify-room");
+  }
+
+  $('#hidden-modify-room-room-number').val(roomNumber);
+  $('#hidden-modify-room-floor-number').val(floorNumber);
+  $('#hidden-modify-room-room-type').val(roomType);
+  $('#hidden-modify-room-size').val(size);
+  $('#hidden-modify-room-rent-price').val(rentPrice);
+
+  // Fill confirmation modal fields
+  $('#confirm-modify-room-room-number').text(roomNumber);
+  $('#confirm-modify-room-floor-number').text(floorNumber + (floorNumber === "1" ? "st" : floorNumber === "2" ? "nd" : floorNumber === "3" ? "rd" : "th") + " Floor");
+  $('#confirm-modify-room-room-type').text(roomType);
+  $('#confirm-modify-room-size').text(size + " sqm");
+  $('#confirm-modify-room-rent-price').text("PHP " + Number(rentPrice).toFixed(2));
+
+  // Hide error, close modify modal, show confirmation modal
+  hideError("#error-box-modify-room", "#error-text-modify-room");
+  $('#modalModifyRoom').modal('hide');
+  $('#modalModifyRoomConfirmation').modal('show');
+});
+
+
+
+// On clicking Delete button, validate reason and submit form
+$('#button-confirm-delete-room').on('click', function() {
+  const reason = $('#remove-room-reason').val();
+  if (!reason) {
+    return showError("Please select a reason for deleting the room.", "#error-box-delete-room", "#error-text-delete-room");
+  }
+  $('#hidden-delete-room-reason').val(reason);
+  // Submit the hidden form
+  $('#form-delete-room').submit();
+});
+
+// Handle Add Account button click
+$('#button-add-account').on('click', function () {
+  const email = $('#add-account-email-address').val().trim();
+  const password = $('#add-account-password').val();
+  const accountRole = $('#add-account-account-role').val();
+
+  // Basic validation
+  if (!email || !password || !accountRole) {
+    return showError("All required fields must be filled.", "#error-box-add-account", "#error-text-add-account");
+  }
+
+  if (!isValidEmailChars(email)) 
+    return showError(
+      "Email contains invalid characters.",
+      "#error-box-add-account", "#error-text-add-account"
+    );
+
+  if (!isValidEmailFormat(email)) {
+    showError(
+      "Please enter a valid email address.",
+      "#error-box-add-account", "#error-text-add-account"
+    );
+    return;
+  }
+
+  if (!isValidPasswordChars(password)) {
+    showError(
+      "Password contains invalid characters.",
+      "#error-box-add-account", "#error-text-add-account"
+    );
+    return;
+  }
+
+  const passwordCheck = isStrongPassword(password);
+  if (!passwordCheck.isValid) 
+    return showError(
+      passwordCheck.errors.join("<br/>"),
+      "#error-box-add-account", "#error-text-add-account"
+    );
+
+
+  // Fill confirmation modal fields
+  $('#confirm-add-account-username').text(email);
+  $('#confirm-add-account-password').text('*'.repeat(password.length)); // mask password
+  $('#confirm-add-account-account-role').text(accountRole.charAt(0).toUpperCase() + accountRole.slice(1));
+
+  // Fill hidden form inputs
+  $('#hidden-add-account-email').val(email);
+  $('#hidden-add-account-password').val(xorCipher(password, 'rentahub'));
+  console.log("fehanjekfaje: ", xorCipher(password, 'rentahub'));
+  $('#hidden-add-account-role').val(accountRole);
+
+  // Hide error, close add modal, show confirmation modal
+  hideError("#error-box-add-account", "#error-text-add-account");
+  $('#modalAddAccount').modal('hide');
+  $('#modalAddAccountConfirmation').modal('show');
+});
+
+// Handle Modify Account button click
+$('#button-modify-account').on('click', function () {
+  const email = $('#modify-account-email-address').val().trim();
+  const password = $('#modify-account-password').val();
+  const accountRole = $('#modify-account-account-role').val();
+  const status = $('#modify-account-status').val();
+
+  // Basic validation
+  if (!email || !password || !accountRole || !status) {
+    return showError("All required fields must be filled.", "#error-box-modify-account", "#error-text-modify-account");
+  }
+  if (!isValidEmailChars(email)) 
+    return showError(
+      "Email contains invalid characters.",
+      "#error-box-modify-account", "#error-text-modify-account"
+    );
+
+  if (!isValidEmailFormat(email)) {
+    
+    return showError(
+      "Please enter a valid email modifyress.",
+      "#error-box-modify-account", "#error-text-modify-account"
+    );
+  }
+
+  if (!isValidPasswordChars(password)) {
+   
+    return showError(
+      "Password contains invalid characters.",
+      "#error-box-modify-account", "#error-text-modify-account"
+    );
+  }
+
+  const passwordCheck = isStrongPassword(password);
+  if (!passwordCheck.isValid) 
+    return showError(
+      passwordCheck.errors.join("<br/>"),
+      "#error-box-modify-account", "#error-text-modify-account"
+    );
+
+
+
+  // Fill confirmation modal fields
+  $('#confirm-modify-account-username').text(email);
+  $('#confirm-modify-account-password').text('*'.repeat(password.length)); // mask password
+  $('#confirm-modify-account-account-role').text(accountRole.charAt(0).toUpperCase() + accountRole.slice(1));
+  $('#confirm-modify-account-account-status').text(status.charAt(0).toUpperCase() + status.slice(1));
+
+  // Fill hidden form inputs
+  $('#hidden-modify-account-email').val(email);
+  $('#hidden-modify-account-password').val(password);
+  $('#hidden-modify-account-role').val(accountRole);
+  $('#hidden-modify-account-status').val(status);
+
+  // Hide error, close modify modal, show confirmation modal
+  hideError("#error-box-modify-account", "#error-text-modify-room");
+  $('#modalModifyAccount').modal('hide');
+  $('#modalModifyAccountConfirmation').modal('show');
+});
+
+$(document).on('click', '#account-button-account-edit', function () {
+  const accountId = $(this).data('account-id');
+
+  // Example: Fetch account data from a global JS object or via AJAX
+  // Here, assuming you have a JS object `accountsData` keyed by account ID
+  const account = usersMap[accountId]; // Replace with your actual data source
+
+  if (!account) {
+    alert('Account data not found!');
+    return;
+  }
+
+  // Populate modal fields
+  $('#modify-account-email-address').val(account.email);
+  $('#modify-account-password').val(account.password); // Clear password for security - user must re-enter if changing
+  $('#modify-account-account-role').val(account.userRole.toLowerCase());
+  $('#modify-account-status').val(account.status.toLowerCase());
+
+  // Optionally store account ID somewhere visible or hidden for form submission
+  $('#hidden-modify-account-id').val(accountId); // If you have a hidden input for ID
+
+  // Show the modal (if not triggered automatically by button's data-bs-toggle)
+  // $('#modalModifyAccount').modal('show');
+});
+
+
+// Assuming you have a global map/object with account data keyed by account ID
+// Example: accountsDataMap = { "1": { email: "...", password: "...", userRole: "...", status: "..." }, ... }
+
+$(document).on('click', '#account-button-account-delete', function() {
+  const accountId = $(this).data('account-id');
+
+  if (!accountId || !usersMap[accountId]) {
+    console.error('Account ID not found or account data missing for ID:', accountId);
+    return;
+  }
+
+  const account = usersMap[accountId];
+
+  // Set hidden form input for submission
+  $('#hidden-delete-account-id').val(accountId);
+
+  // Populate confirmation modal fields
+  $('#confirm-delete-account-account-id').text(accountId);
+  $('#confirm-delete-account-username').text(account.email);
+  $('#confirm-delete-account-password').text('*'.repeat(account.password.length)); // mask password
+  $('#confirm-delete-account-account-role').text(account.userRole.charAt(0).toUpperCase() + account.userRole.slice(1));
+  $('#confirm-delete-account-account-status').text(account.status.charAt(0).toUpperCase() + account.status.slice(1));
+
+  // Reset or clear any other inputs if needed
+});
+
+
+
+
+
+
+
+
 // Start
 // Listen for clicks on complete buttons
 $(document).on('click', '.button-view-room', function() {
@@ -4882,6 +5257,7 @@ $(document).on('click', '.button-edit-room', function() {
   }
 
   const room = roomsDataMap[roomId];
+  $('#hidden-modify-room-room-id').val(roomId);
 
   // Populate inputs and selects
   $('#modify-room-room-number').val(room.roomNo);
@@ -4894,13 +5270,10 @@ $(document).on('click', '.button-edit-room', function() {
     }
   });
 
-  // Set room type select by matching option value
-  $('#modify-room-room-type option').each(function() {
-    if ($(this).val() === room.roomType) {
-      $(this).prop('selected', true);
-      return false;
-    }
-  });
+// Assuming room.roomType = "1BR"
+$('#modify-room-room-type').val(room.roomType);
+console.log("ROOM TYPE: " + room.roomType);
+
 
   $('#modify-room-size').val(room.sizeSQM);
   $('#modify-room-rent-price').val(room.rentPrice);
@@ -4916,6 +5289,10 @@ $(document).on('click', '.button-delete-room', function() {
   }
 
   const room = roomsDataMap[roomId];
+
+  $('#hidden-delete-room-room-id').val(roomId);
+  
+
 
   // Populate modal fields with updated IDs
   $('#confirm-remove-room-room-number').text(room.roomNo);
@@ -5056,10 +5433,6 @@ $(document).ready(function () {
   });
 });
 
-$('#button-add-room').on("click", function () {
-    $('#modalAddRoom').modal('hide');
-    $('#modalAddRoomConfirmation').modal('show');
-  });
 
 $(document).ready(function () {
   $('#button-view').on("click", function () {
@@ -5067,32 +5440,7 @@ $(document).ready(function () {
   });
 });
 
-$('#button-modify-room').on("click", function () {
-    $('#modalModifyRoom').modal('hide');
-    $('#modalModifyRoomConfirmation').modal('show');
-  });
 
-  $(document).ready(function () {
-  $('#button-delete').on("click", function () {
-    $('#modalDeleteRoomConfirmation').modal('show');
-  });
-});
-
-$('#button-add-account').on("click", function () {
-  $('#modalAddAccount').modal('hide'); 
-  $('#modalAddAccountConfirmation').modal('show');
-});
-
-  $('#button-modify-account').on("click", function () {
-    $('#modalModifyAccount').modal('hide');
-    $('#modalModifyAccountConfirmation').modal('show');
-  });
-
-$(document).ready(function () {
-  $('#button-delete').on("click", function () {
-    $('#modalDeleteAccountConfirmation').modal('show');
-  });
-});
 // End
 
   $('#button-confirm-send-notif').on("click", function () {
