@@ -72,6 +72,7 @@ let inquiriesMap = {};
 let usersMap = {};
 let caretakersMap = {};
 let auditTrailMap = {};
+let notificationDataMap = {};
 
 $.ajax({
   url: 'apartment.xml',
@@ -264,6 +265,19 @@ $.ajax({
         timestamp: $(this).find('timestamp').text().trim()
       };
     });
+
+    $(xml).find('notifications > notification').each(function () {
+      const id = $(this).attr('id').trim();
+      notificationDataMap[id] = {
+        renterId: $(this).find('renterId').text().trim(),
+        message: $(this).find('message').text().trim(),
+        isRead: $(this).find('isRead').text().trim()
+      };
+    });
+
+
+
+    
     
 
     function calculateTotalUnpaidDebt() {
@@ -2645,6 +2659,61 @@ if (currentUserStr) {
           }
         }
       }
+
+$('#notifications-list').empty(); // Clear existing notifications
+
+let hasNotifications = false;
+
+Object.entries(notificationDataMap).forEach(([notifId, notif]) => {
+  // Only show if:
+  // - message exists
+  // - renterId matches current renter
+  // - isRead is exactly "false" (string)
+  if (!notif.message) return;
+  if (notif.renterId !== renterId) return;
+  if (notif.isRead.toLowerCase() !== 'false') return;
+
+  hasNotifications = true;
+
+  // Compose notification HTML
+  const notifHtml = `
+    <div 
+      class="alert d-flex flex-row align-items-start justify-content-between gap-3 p-3 me-2 border-0 rounded-2 col-10 notification-item bg-white mt-1"
+      data-notification-id="${notifId}">
+      <div>
+        <p class="small font-red">${notif.message}</p>
+      </div>
+      <form class="form-read-notif" method="POST" action="functions/readNotification.php">
+          <input type="hidden" id="hidden-renter-notif-id" name="notif_id" value="${notifId}"/>
+          <input type="hidden" id="hidden-renter-current-page" name="current_page" value="dashboard"/>
+
+          <button
+            type="submit"
+            class="btn-red-fill d-flex align-items-center p-1 button-notif-read"
+            data-notification-id="${notifId}">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
+              <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/>
+            </svg>
+          </button>
+
+      </form>
+    </div>
+  `;
+
+  $('#notifications-list').append(notifHtml);
+});
+
+if (!hasNotifications) {
+  $('#notifications-list').append(`
+    <div class="d-flex flex-column bg-white text-center align-items-center justify-content-center font-red mt-3 col-12 rounded-2" >
+      <p class="m-0">No notifications available.</p>
+    </div>
+
+  `);
+}
+
+
+
       // Table
       populatePaymentHistoryForRenter(renterId, paymentsMap);
       populateBillingSummary(renterDataMap, roomsDataMap, rentBillsMap, utilityBillsMap);
@@ -3040,7 +3109,7 @@ function updateTotalOverpaid(renterId) {
     function updateElectricBillCard(bill, reading, renterId) {
   // Remove any existing Pay or Paid button
   $('.electric-pay-button .pay-btn, .electric-pay-button .paid-btn').remove();
-  // $('.electric-bill-card .send-notification-billings').hide();
+  $('.electric-send-notif-button button').remove();
 
   // Get the card container
   const $card = $('.electric-bill-card .gradient-red-bg, .electric-bill-card .gradient-green-bg');
@@ -3050,7 +3119,21 @@ function updateTotalOverpaid(renterId) {
     $card.removeClass('gradient-green-bg').addClass('gradient-red-bg');
 
   // $('.electric-bill-card .send-notification-billings').show();
-
+    // Add Send Notif button
+    $('.electric-send-notif-button').append(
+      ` <button type="button" class="btn-white d-flex align-items-center px-3 py-1"
+          data-bs-toggle="modal" 
+          data-bs-target="#modalSendNotificationConfirmation" 
+          data-renter-id="${renterId}" 
+          data-message="Pay your Electric Bill Due amounting to PHP ${bill.amount}">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+            fill="#FFFFFF">
+            <path
+              d="M160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Zm320-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z" />
+          </svg>
+        </button>`
+      
+    );
 
     // Add Pay button
     $('.electric-pay-button').append(
@@ -3087,6 +3170,17 @@ function updateTotalOverpaid(renterId) {
     $('.electric-bill-card .btn-white[data-bs-target="#modalSendNotificationConfirmation"]').remove();
   }
 }
+
+// Delegate click event to dynamically added buttons inside .electric-send-notif-button
+$('.electric-send-notif-button').on('click', 'button', function() {
+  const renterId = $(this).data('renter-id');
+  const message = $(this).data('message');
+
+  $(".renter-to-notify").html(renterDataMap[renterId].firstName + " " + renterDataMap[renterId].middleName + " " + renterDataMap[renterId].surname + " " + renterDataMap[renterId].extension);
+
+  $("#hidden-renter-id").val(renterId);
+  $("#hidden-message").val(message);
+});
 
 
 
@@ -3174,6 +3268,7 @@ function updateTotalOverpaid(renterId) {
 function updateWaterBillCard(bill, reading, renterId) {
   // Remove any existing Pay or Paid button
   $('.water-pay-button .pay-btn, .water-pay-button .paid-btn').remove();
+  $('.water-send-notif-button button').remove();
 
   // Get the card container
   const $card = $('.water-bill-card .gradient-red-bg, .water-bill-card .gradient-green-bg');
@@ -3181,6 +3276,21 @@ function updateWaterBillCard(bill, reading, renterId) {
   if (bill && bill.status !== 'Paid') {
     // Ensure card is red
     $card.removeClass('gradient-green-bg').addClass('gradient-red-bg');
+    // Add Send Notif button
+    $('.water-send-notif-button').append(
+      ` <button type="button" class="btn-white d-flex align-items-center px-3 py-1"
+          data-bs-toggle="modal" 
+          data-bs-target="#modalSendNotificationConfirmation" 
+          data-renter-id="${renterId}" 
+          data-message="Pay your Water Bill Due amounting to PHP ${bill.amount}">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+            fill="#FFFFFF">
+            <path
+              d="M160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Zm320-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z" />
+          </svg>
+        </button>`
+      
+    );
 
     // Add Pay button
     $('.water-pay-button').append(
@@ -3218,6 +3328,20 @@ function updateWaterBillCard(bill, reading, renterId) {
 }
 
 
+// Delegate click event to dynamically added buttons inside .electric-send-notif-button
+$('.water-send-notif-button').on('click', 'button', function() {
+  const renterId = $(this).data('renter-id');
+  const message = $(this).data('message');
+
+  $(".renter-to-notify").html(renterDataMap[renterId].firstName + " " + renterDataMap[renterId].middleName + " " + renterDataMap[renterId].surname + " " + renterDataMap[renterId].extension);
+
+  $("#hidden-renter-id").val(renterId);
+  $("#hidden-message").val(message);
+});
+
+
+
+
 function populateWaterBillCard(renterId, selectedMonth) {
   const waterUtility = utilityBillsMap['Water'];
   if (!waterUtility) {
@@ -3243,12 +3367,13 @@ function populateWaterBillCard(renterId, selectedMonth) {
 
   // Get previous reading
   const previousReading = getPreviousWaterReading(renterId, selectedMonth);
+  const consumed = parseFloat(bill.currentReading) - parseFloat(previousReading);
 
   $('#water-reading-date').text(reading.readingDate || '');
   $('#water-due-date').text(reading.dueDate || '');
   $('#water-current-reading').text(bill.currentReading || '');
   $('#water-previous-reading').text(previousReading || '');
-  $('#water-consumed-cubic').text(bill.consumedKwh || reading.consumedKwhTotal || ''); // for water, this is cubic meters
+  $('#water-consumed-cubic').text(consumed); // for water, this is cubic meters
   $('#water-amount-per-cubic').text(reading.amountPerKwh || ''); // for water, this is amountPerCubicM
   $('#water-your-bill').text('PHP ' + Number(bill.amount || 0).toLocaleString('en-PH', {minimumFractionDigits:2}));
 }
@@ -3268,6 +3393,8 @@ function updateRentBillCard(bill, renterId) {
 
   // Remove any existing Pay or Paid button
   $('.rent-pay-button .pay-btn, .rent-pay-button .paid-btn').remove();
+  $('.rent-send-notif-button button').remove();
+
 
   // Get the card container (red or green)
   const $card = $('.rent-bill-card .gradient-red-bg, .rent-bill-card .gradient-green-bg');
@@ -3275,6 +3402,21 @@ function updateRentBillCard(bill, renterId) {
   if (bill && bill.status !== 'Paid') {
     // Ensure card is red
     $card.removeClass('gradient-green-bg').addClass('gradient-red-bg');
+     // Add Send Notif button
+    $('.rent-send-notif-button').append(
+      ` <button type="button" class="btn-white d-flex align-items-center px-3 py-1"
+          data-bs-toggle="modal" 
+          data-bs-target="#modalSendNotificationConfirmation" 
+          data-renter-id="${renterId}" 
+          data-message="Pay your Rent Bill Due amounting to PHP ${bill.amount}">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+            fill="#FFFFFF">
+            <path
+              d="M160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Zm320-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z" />
+          </svg>
+        </button>`
+      
+    );
 
     // Add Pay button
     $('.rent-pay-button').append(
@@ -3309,6 +3451,19 @@ function updateRentBillCard(bill, renterId) {
     $('.rent-bill-card .btn-white[data-bs-target="#modalSendNotificationConfirmation"]').remove();
   }
 }
+
+
+// Delegate click event to dynamically added buttons inside .electric-send-notif-button
+$('.rent-send-notif-button').on('click', 'button', function() {
+  const renterId = $(this).data('renter-id');
+  const message = $(this).data('message');
+
+  $(".renter-to-notify").html(renterDataMap[renterId].firstName + " " + renterDataMap[renterId].middleName + " " + renterDataMap[renterId].surname + " " + renterDataMap[renterId].extension);
+
+  $("#hidden-renter-id").val(renterId);
+  $("#hidden-message").val(message);
+});
+
 
 function populateRentCard(renterId, selectedMonth) {
   // Find the rent bill for this renter and month
@@ -3353,9 +3508,10 @@ $('#select-billings-renter, #individual-month-due').on('change input', function(
 });
 
 function updateOverdueBillCard(overdueBills, renterId) {
-  console.log("UPDATE OVERDUE BILL: ", overdueBills);
   // Remove any existing Pay or Paid button
   $('.overdue-pay-button .pay-btn, .overdue-pay-button .paid-btn').remove();
+  $('.overdue-send-notif-button button').remove();
+
 
   // Get the card container
   const $card = $('.overdue-bill-card .gradient-red-bg, .overdue-bill-card .gradient-green-bg');
@@ -3378,6 +3534,21 @@ function updateOverdueBillCard(overdueBills, renterId) {
       .filter(id => id)                   // remove empty strings
       .join(',');
     console.log("Reading IDs: " + readingIds);
+    // Add Send Notif button
+    $('.overdue-send-notif-button').append(
+      ` <button type="button" class="btn-white d-flex align-items-center px-3 py-1"
+          data-bs-toggle="modal" 
+          data-bs-target="#modalSendNotificationConfirmation" 
+          data-renter-id="${renterId}" 
+          data-message="Pay your Overdue Bills">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+            fill="#FFFFFF">
+            <path
+              d="M160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Zm320-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z" />
+          </svg>
+        </button>`
+      
+    );
 
     // Add Pay button (could be for all overdue bills at once)
     $('.overdue-pay-button').append(
@@ -3413,6 +3584,20 @@ function updateOverdueBillCard(overdueBills, renterId) {
     $('.overdue-bill-card .btn-white[data-bs-target="#modalSendNotificationConfirmation"]').remove();
   }
 }
+
+
+// Delegate click event to dynamically added buttons inside .electric-send-notif-button
+$('.overdue-send-notif-button').on('click', 'button', function() {
+  const renterId = $(this).data('renter-id');
+  const message = $(this).data('message');
+
+  $(".renter-to-notify").html(renterDataMap[renterId].firstName + " " + renterDataMap[renterId].middleName + " " + renterDataMap[renterId].surname + " " + renterDataMap[renterId].extension);
+
+  $("#hidden-renter-id").val(renterId);
+  $("#hidden-message").val(message);
+});
+
+
 
 function getOverdueBillsForRenter(renterId) {
   let overdueBills = [];
@@ -3976,7 +4161,11 @@ function displaySuccessModal() {
     $('#modalDeleteTaskSuccess').modal('show');  // <-- New block for deleted task
   }
 
-
+  // Handle notification added success
+  const notificationStatus = urlParams.get('notification');
+  if (notificationStatus === 'added') {
+    $('#modalSendNotificationSuccess').modal('show');
+  }
 
   // Clean URL (remove all search parameters)
   url.search = '';
@@ -6827,21 +7016,8 @@ $(document).on("click", ".button-table-view-archive-renter", function () {
 
 
 
-function sendNotification(renterID) {
-  const renterEmail = renterDataMap[renterID]?.email;
-  if (!renterEmail) {
-    console.error("No email found for renterID:", renterID);
-    return;
-  }
-  const templateParams = {
-    to_email: renterEmail,
-  };
-  emailjs.send('service_8p2cgis', 'template_1glsq68', templateParams)
-    .then(function(response) {
-      console.log('Notification email sent!', response.status, response.text);
-    }, function(error) {
-      console.error('Failed to send notification email:', error);
-    });
+function sendNotification(renterID, action, message) {
+
 }
 
   

@@ -767,7 +767,6 @@
                                                                                                 <!-- Modal body -->
                                                                                                 <div
                                                                                                     class="modal-body d-flex align-items-center justify-content-center">
-                                                                                                    <!-- TODO: NAME -->
                                                                                                     Do you want to notify David Alon?
                                                                                                 </div>
                                                                                                 
