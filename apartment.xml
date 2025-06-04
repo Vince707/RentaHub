@@ -35,7 +35,7 @@
                     <surname>Taniegra</surname>
                     <firstName>Ron</firstName>
                     <middleName>Diego</middleName>
-                    <extension/>
+                    <extension />
                 </name>
                 <contact>09090925793</contact>
                 <birthDate>2004-01-22</birthDate>
@@ -49,7 +49,7 @@
                 <leaseStart>2025-05-27</leaseStart>
                 <leaseEnd>2026-05-27</leaseEnd>
                 <contractTermInMonths>12</contractTermInMonths>
-                <leavingReason/>
+                <leavingReason />
             </rentalInfo>
         </renter>
         <renter id="3">
@@ -59,8 +59,8 @@
                 <name>
                     <surname>Diego</surname>
                     <firstName>Ron Vincent</firstName>
-                    <middleName/>
-                    <extension/>
+                    <middleName />
+                    <extension />
                 </name>
                 <contact>09090925793</contact>
                 <birthDate>2002-05-21</birthDate>
@@ -74,7 +74,7 @@
                 <leaseStart>2025-05-26</leaseStart>
                 <leaseEnd>2025-09-26</leaseEnd>
                 <contractTermInMonths>4</contractTermInMonths>
-                <leavingReason/>
+                <leavingReason />
             </rentalInfo>
         </renter>
 
@@ -85,8 +85,8 @@
                 <name>
                     <surname>Abion</surname>
                     <firstName>Matt</firstName>
-                    <middleName/>
-                    <extension/>
+                    <middleName />
+                    <extension />
                 </name>
                 <contact>09090925794</contact>
                 <birthDate>1990-05-14</birthDate>
@@ -112,7 +112,7 @@
                     <surname>Santos</surname>
                     <firstName>Ana</firstName>
                     <middleName>Maria</middleName>
-                    <extension/>
+                    <extension />
                 </name>
                 <contact>09181234567</contact>
                 <birthDate>1998-10-10</birthDate>
@@ -126,7 +126,7 @@
                 <leaseStart>2025-06-01</leaseStart>
                 <leaseEnd>2026-06-01</leaseEnd>
                 <contractTermInMonths>12</contractTermInMonths>
-                <leavingReason/>
+                <leavingReason />
             </rentalInfo>
         </renter>
 
@@ -138,7 +138,7 @@
                     <surname>Reyes</surname>
                     <firstName>Mark</firstName>
                     <middleName>Anthony</middleName>
-                    <extension/>
+                    <extension />
                 </name>
                 <contact>09180000006</contact>
                 <birthDate>1994-06-15</birthDate>
@@ -152,7 +152,7 @@
                 <leaseStart>2025-07-01</leaseStart>
                 <leaseEnd>2026-07-01</leaseEnd>
                 <contractTermInMonths>12</contractTermInMonths>
-                <leavingReason/>
+                <leavingReason />
             </rentalInfo>
         </renter>
 
@@ -164,7 +164,7 @@
                     <surname>Lopez</surname>
                     <firstName>Carla</firstName>
                     <middleName>Mae</middleName>
-                    <extension/>
+                    <extension />
                 </name>
                 <contact>09181234007</contact>
                 <birthDate>1989-11-02</birthDate>
@@ -190,7 +190,7 @@
                     <surname>Tan</surname>
                     <firstName>Leo</firstName>
                     <middleName>David</middleName>
-                    <extension/>
+                    <extension />
                 </name>
                 <contact>09181234008</contact>
                 <birthDate>1992-08-20</birthDate>
@@ -204,7 +204,7 @@
                 <leaseStart>2025-06-15</leaseStart>
                 <leaseEnd>2026-06-15</leaseEnd>
                 <contractTermInMonths>12</contractTermInMonths>
-                <leavingReason/>
+                <leavingReason />
             </rentalInfo>
         </renter>
 
@@ -216,7 +216,7 @@
                     <surname>De la Cruz</surname>
                     <firstName>Angel</firstName>
                     <middleName>Marie</middleName>
-                    <extension/>
+                    <extension />
                 </name>
                 <contact>09181234009</contact>
                 <birthDate>1995-12-25</birthDate>
@@ -241,7 +241,7 @@
                     <surname>Mendoza</surname>
                     <firstName>Brian</firstName>
                     <middleName>Lopez</middleName>
-                    <extension/>
+                    <extension />
                 </name>
                 <contact>09181234010</contact>
                 <birthDate>1996-02-02</birthDate>
@@ -255,7 +255,7 @@
                 <leaseStart>2025-08-01</leaseStart>
                 <leaseEnd>2026-08-01</leaseEnd>
                 <contractTermInMonths>12</contractTermInMonths>
-                <leavingReason/>
+                <leavingReason />
             </rentalInfo>
         </renter>
 
@@ -267,7 +267,7 @@
                     <surname>Villanueva</surname>
                     <firstName>Karen</firstName>
                     <middleName>Grace</middleName>
-                    <extension/>
+                    <extension />
                 </name>
                 <contact>09181234011</contact>
                 <birthDate>1991-07-07</birthDate>
@@ -281,7 +281,7 @@
                 <leaseStart>2025-09-10</leaseStart>
                 <leaseEnd>2026-09-10</leaseEnd>
                 <contractTermInMonths>12</contractTermInMonths>
-                <leavingReason/>
+                <leavingReason />
             </rentalInfo>
         </renter>
 
@@ -293,7 +293,7 @@
                     <surname>Delos Reyes</surname>
                     <firstName>Cheska</firstName>
                     <middleName>Ann</middleName>
-                    <extension/>
+                    <extension />
                 </name>
                 <contact>09181234012</contact>
                 <birthDate>2000-03-19</birthDate>
@@ -307,7 +307,7 @@
                 <leaseStart>2025-05-20</leaseStart>
                 <leaseEnd>2026-05-20</leaseEnd>
                 <contractTermInMonths>12</contractTermInMonths>
-                <leavingReason/>
+                <leavingReason />
             </rentalInfo>
         </renter>
 
@@ -319,7 +319,7 @@
                     <surname>Cruz</surname>
                     <firstName>Michael</firstName>
                     <middleName>Angelo</middleName>
-                    <extension/>
+                    <extension />
                 </name>
                 <contact>09181234013</contact>
                 <birthDate>1993-11-11</birthDate>
@@ -333,7 +333,7 @@
                 <leaseStart>2025-07-05</leaseStart>
                 <leaseEnd>2026-07-05</leaseEnd>
                 <contractTermInMonths>12</contractTermInMonths>
-                <leavingReason/>
+                <leavingReason />
             </rentalInfo>
         </renter>
 
@@ -345,7 +345,7 @@
                     <surname>Bautista</surname>
                     <firstName>Sarah</firstName>
                     <middleName>Jane</middleName>
-                    <extension/>
+                    <extension />
                 </name>
                 <contact>09181234014</contact>
                 <birthDate>1997-12-30</birthDate>
@@ -359,7 +359,7 @@
                 <leaseStart>2025-06-10</leaseStart>
                 <leaseEnd>2026-06-10</leaseEnd>
                 <contractTermInMonths>12</contractTermInMonths>
-                <leavingReason/>
+                <leavingReason />
             </rentalInfo>
         </renter>
 
@@ -371,7 +371,7 @@
                     <surname>Navarro</surname>
                     <firstName>Jason</firstName>
                     <middleName>Lee</middleName>
-                    <extension/>
+                    <extension />
                 </name>
                 <contact>09181234015</contact>
                 <birthDate>1988-04-08</birthDate>
@@ -396,7 +396,7 @@
                     <surname>Lazaro</surname>
                     <firstName>Emily</firstName>
                     <middleName>Ramos</middleName>
-                    <extension/>
+                    <extension />
                 </name>
                 <contact>09181234016</contact>
                 <birthDate>1999-09-09</birthDate>
@@ -410,7 +410,7 @@
                 <leaseStart>2025-07-01</leaseStart>
                 <leaseEnd>2026-07-01</leaseEnd>
                 <contractTermInMonths>12</contractTermInMonths>
-                <leavingReason/>
+                <leavingReason />
             </rentalInfo>
         </renter>
 
@@ -422,7 +422,7 @@
                     <surname>Dela Cruz</surname>
                     <firstName>Mark</firstName>
                     <middleName>Anthony</middleName>
-                    <extension/>
+                    <extension />
                 </name>
                 <contact>09181234017</contact>
                 <birthDate>1994-02-14</birthDate>
@@ -436,7 +436,7 @@
                 <leaseStart>2025-06-15</leaseStart>
                 <leaseEnd>2026-06-15</leaseEnd>
                 <contractTermInMonths>12</contractTermInMonths>
-                <leavingReason/>
+                <leavingReason />
             </rentalInfo>
         </renter>
 
@@ -448,7 +448,7 @@
                     <surname>Agustin</surname>
                     <firstName>Bea</firstName>
                     <middleName>Lucero</middleName>
-                    <extension/>
+                    <extension />
                 </name>
                 <contact>09181234018</contact>
                 <birthDate>2001-08-25</birthDate>
@@ -462,7 +462,7 @@
                 <leaseStart>2025-06-20</leaseStart>
                 <leaseEnd>2026-06-20</leaseEnd>
                 <contractTermInMonths>12</contractTermInMonths>
-                <leavingReason/>
+                <leavingReason />
             </rentalInfo>
         </renter>
 
@@ -474,7 +474,7 @@
                     <surname>Reyes</surname>
                     <firstName>Joshua</firstName>
                     <middleName>Enriquez</middleName>
-                    <extension/>
+                    <extension />
                 </name>
                 <contact>09181234019</contact>
                 <birthDate>1995-03-10</birthDate>
@@ -488,7 +488,7 @@
                 <leaseStart>2025-07-25</leaseStart>
                 <leaseEnd>2026-07-25</leaseEnd>
                 <contractTermInMonths>12</contractTermInMonths>
-                <leavingReason/>
+                <leavingReason />
             </rentalInfo>
         </renter>
 
@@ -500,7 +500,7 @@
                     <surname>Francisco</surname>
                     <firstName>Ella</firstName>
                     <middleName>Joy</middleName>
-                    <extension/>
+                    <extension />
                 </name>
                 <contact>09181234020</contact>
                 <birthDate>2000-12-01</birthDate>
@@ -514,7 +514,7 @@
                 <leaseStart>2025-08-10</leaseStart>
                 <leaseEnd>2026-08-10</leaseEnd>
                 <contractTermInMonths>12</contractTermInMonths>
-                <leavingReason/>
+                <leavingReason />
             </rentalInfo>
         </renter>
 
@@ -526,7 +526,7 @@
                     <surname>Ramos</surname>
                     <firstName>Luis</firstName>
                     <middleName>Ignacio</middleName>
-                    <extension/>
+                    <extension />
                 </name>
                 <contact>09181234021</contact>
                 <birthDate>1985-11-15</birthDate>
@@ -551,7 +551,7 @@
                     <surname>Santos</surname>
                     <firstName>Juan</firstName>
                     <middleName>Cruz</middleName>
-                    <extension/>
+                    <extension />
                 </name>
                 <contact>09181234001</contact>
                 <birthDate>1995-05-10</birthDate>
@@ -565,7 +565,7 @@
                 <leaseStart>2025-01-01</leaseStart>
                 <leaseEnd>2026-01-01</leaseEnd>
                 <contractTermInMonths>12</contractTermInMonths>
-                <leavingReason/>
+                <leavingReason />
             </rentalInfo>
         </renter>
 
@@ -577,7 +577,7 @@
                     <surname>Reyes</surname>
                     <firstName>Maria</firstName>
                     <middleName>Lopez</middleName>
-                    <extension/>
+                    <extension />
                 </name>
                 <contact>09181234002</contact>
                 <birthDate>1998-03-22</birthDate>
@@ -591,7 +591,7 @@
                 <leaseStart>2025-02-01</leaseStart>
                 <leaseEnd>2026-02-01</leaseEnd>
                 <contractTermInMonths>12</contractTermInMonths>
-                <leavingReason/>
+                <leavingReason />
             </rentalInfo>
         </renter>
 
@@ -603,7 +603,7 @@
                     <surname>Cruz</surname>
                     <firstName>Carlos</firstName>
                     <middleName>Diaz</middleName>
-                    <extension/>
+                    <extension />
                 </name>
                 <contact>09181234003</contact>
                 <birthDate>1992-11-30</birthDate>
@@ -617,7 +617,7 @@
                 <leaseStart>2025-03-01</leaseStart>
                 <leaseEnd>2026-03-01</leaseEnd>
                 <contractTermInMonths>12</contractTermInMonths>
-                <leavingReason/>
+                <leavingReason />
             </rentalInfo>
         </renter>
 
@@ -629,7 +629,7 @@
                     <surname>Garcia</surname>
                     <firstName>Ana</firstName>
                     <middleName>Santos</middleName>
-                    <extension/>
+                    <extension />
                 </name>
                 <contact>09181234004</contact>
                 <birthDate>1997-07-07</birthDate>
@@ -643,7 +643,7 @@
                 <leaseStart>2025-04-01</leaseStart>
                 <leaseEnd>2026-04-01</leaseEnd>
                 <contractTermInMonths>12</contractTermInMonths>
-                <leavingReason/>
+                <leavingReason />
             </rentalInfo>
         </renter>
         <renter id="26">
@@ -654,7 +654,7 @@
                     <surname>Lopez</surname>
                     <firstName>Novie Lei</firstName>
                     <middleName>L</middleName>
-                    <extension/>
+                    <extension />
                 </name>
                 <contact>09090925793</contact>
                 <birthDate>2019-05-06</birthDate>
@@ -671,7 +671,32 @@
                 <leavingReason>others</leavingReason>
             </rentalInfo>
         </renter>
-    <renter id="27"><userId>27</userId><status>Archived</status><personalInfo><name><surname>New</surname><firstName>New</firstName><middleName>New</middleName><extension/></name><contact>09090925793</contact><birthDate>2025-01-08</birthDate><validId><validIdType>national-id</validIdType><validIdNumber>123-213-9431-3</validIdNumber></validId></personalInfo><rentalInfo><unitId>4A</unitId><leaseStart>2025-06-10</leaseStart><leaseEnd>2025-06-02</leaseEnd><contractTermInMonths>2</contractTermInMonths><leavingReason>rule-violation</leavingReason></rentalInfo></renter></renters>
+        <renter id="27">
+            <userId>27</userId>
+            <status>Archived</status>
+            <personalInfo>
+                <name>
+                    <surname>New</surname>
+                    <firstName>New</firstName>
+                    <middleName>New</middleName>
+                    <extension />
+                </name>
+                <contact>09090925793</contact>
+                <birthDate>2025-01-08</birthDate>
+                <validId>
+                    <validIdType>national-id</validIdType>
+                    <validIdNumber>123-213-9431-3</validIdNumber>
+                </validId>
+            </personalInfo>
+            <rentalInfo>
+                <unitId>4A</unitId>
+                <leaseStart>2025-06-10</leaseStart>
+                <leaseEnd>2025-06-02</leaseEnd>
+                <contractTermInMonths>2</contractTermInMonths>
+                <leavingReason>rule-violation</leavingReason>
+            </rentalInfo>
+        </renter>
+    </renters>
 
 
     <rooms>
@@ -682,7 +707,7 @@
             <sizeSQM>20</sizeSQM>
             <rentPrice>3500</rentPrice>
             <status>Occupied</status>
-            <deleteReason/>
+            <deleteReason />
         </room>
         <room id="2">
             <roomNo>2A</roomNo>
@@ -691,7 +716,7 @@
             <sizeSQM>22</sizeSQM>
             <rentPrice>3700</rentPrice>
             <status>Occupied</status>
-            <deleteReason/>
+            <deleteReason />
         </room>
         <room id="3">
             <roomNo>3A</roomNo>
@@ -700,7 +725,7 @@
             <sizeSQM>28</sizeSQM>
             <rentPrice>4200</rentPrice>
             <status>Occupied</status>
-            <deleteReason/>
+            <deleteReason />
         </room>
         <room id="4">
             <roomNo>4A</roomNo>
@@ -709,7 +734,7 @@
             <sizeSQM>35</sizeSQM>
             <rentPrice>5000</rentPrice>
             <status>Vacant</status>
-            <deleteReason/>
+            <deleteReason />
         </room>
         <room id="5">
             <roomNo>5A</roomNo>
@@ -718,7 +743,7 @@
             <sizeSQM>25</sizeSQM>
             <rentPrice>3900</rentPrice>
             <status>Occupied</status>
-            <deleteReason/>
+            <deleteReason />
         </room>
         <room id="6">
             <roomNo>6A</roomNo>
@@ -727,7 +752,7 @@
             <sizeSQM>20</sizeSQM>
             <rentPrice>3600</rentPrice>
             <status>Occupied</status>
-            <deleteReason/>
+            <deleteReason />
         </room>
         <room id="7">
             <roomNo>7A</roomNo>
@@ -736,7 +761,7 @@
             <sizeSQM>30</sizeSQM>
             <rentPrice>4500</rentPrice>
             <status>Vacant</status>
-            <deleteReason/>
+            <deleteReason />
         </room>
         <room id="8">
             <roomNo>8A</roomNo>
@@ -745,7 +770,7 @@
             <sizeSQM>40</sizeSQM>
             <rentPrice>5200</rentPrice>
             <status>Occupied</status>
-            <deleteReason/>
+            <deleteReason />
         </room>
         <room id="9">
             <roomNo>9A</roomNo>
@@ -754,7 +779,7 @@
             <sizeSQM>18</sizeSQM>
             <rentPrice>3300</rentPrice>
             <status>Vacant</status>
-            <deleteReason/>
+            <deleteReason />
         </room>
         <room id="10">
             <roomNo>10A</roomNo>
@@ -763,7 +788,7 @@
             <sizeSQM>26</sizeSQM>
             <rentPrice>4100</rentPrice>
             <status>Occupied</status>
-            <deleteReason/>
+            <deleteReason />
         </room>
         <room id="11">
             <roomNo>11A</roomNo>
@@ -772,7 +797,7 @@
             <sizeSQM>22</sizeSQM>
             <rentPrice>3500</rentPrice>
             <status>Occupied</status>
-            <deleteReason/>
+            <deleteReason />
         </room>
         <room id="12">
             <roomNo>12A</roomNo>
@@ -781,7 +806,7 @@
             <sizeSQM>28</sizeSQM>
             <rentPrice>4000</rentPrice>
             <status>Occupied</status>
-            <deleteReason/>
+            <deleteReason />
         </room>
         <room id="13">
             <roomNo>13A</roomNo>
@@ -790,7 +815,7 @@
             <sizeSQM>20</sizeSQM>
             <rentPrice>3400</rentPrice>
             <status>Occupied</status>
-            <deleteReason/>
+            <deleteReason />
         </room>
         <room id="14">
             <roomNo>14A</roomNo>
@@ -799,7 +824,7 @@
             <sizeSQM>38</sizeSQM>
             <rentPrice>5400</rentPrice>
             <status>Occupied</status>
-            <deleteReason/>
+            <deleteReason />
         </room>
         <room id="15">
             <roomNo>15A</roomNo>
@@ -817,7 +842,7 @@
             <sizeSQM>27</sizeSQM>
             <rentPrice>3900</rentPrice>
             <status>Occupied</status>
-            <deleteReason/>
+            <deleteReason />
         </room>
         <room id="17">
             <roomNo>17A</roomNo>
@@ -826,7 +851,7 @@
             <sizeSQM>36</sizeSQM>
             <rentPrice>5100</rentPrice>
             <status>Occupied</status>
-            <deleteReason/>
+            <deleteReason />
         </room>
         <room id="18">
             <roomNo>18A</roomNo>
@@ -835,7 +860,7 @@
             <sizeSQM>21</sizeSQM>
             <rentPrice>3650</rentPrice>
             <status>Occupied</status>
-            <deleteReason/>
+            <deleteReason />
         </room>
         <room id="19">
             <roomNo>19A</roomNo>
@@ -844,7 +869,7 @@
             <sizeSQM>29</sizeSQM>
             <rentPrice>4050</rentPrice>
             <status>Occupied</status>
-            <deleteReason/>
+            <deleteReason />
         </room>
         <room id="20">
             <roomNo>20A</roomNo>
@@ -853,7 +878,7 @@
             <sizeSQM>37</sizeSQM>
             <rentPrice>5300</rentPrice>
             <status>Occupied</status>
-            <deleteReason/>
+            <deleteReason />
         </room>
         <room id="21">
             <roomNo>21A</roomNo>
@@ -871,7 +896,7 @@
             <sizeSQM>28</sizeSQM>
             <rentPrice>4200</rentPrice>
             <status>Occupied</status>
-            <deleteReason/>
+            <deleteReason />
         </room>
         <room id="23">
             <roomNo>22B</roomNo>
@@ -880,7 +905,7 @@
             <sizeSQM>28</sizeSQM>
             <rentPrice>4200</rentPrice>
             <status>Occupied</status>
-            <deleteReason/>
+            <deleteReason />
         </room>
         <room id="24">
             <roomNo>22C</roomNo>
@@ -889,7 +914,7 @@
             <sizeSQM>28</sizeSQM>
             <rentPrice>4200</rentPrice>
             <status>Occupied</status>
-            <deleteReason/>
+            <deleteReason />
 
         </room>
         <room id="25">
@@ -899,7 +924,7 @@
             <sizeSQM>28</sizeSQM>
             <rentPrice>4200</rentPrice>
             <status>Occupied</status>
-            <deleteReason/>
+            <deleteReason />
 
         </room>
     </rooms>
@@ -1632,7 +1657,7 @@
                     <consumedKwhTotal>130</consumedKwhTotal>
                     <amountPerKwh>10</amountPerKwh>
                     <totalBill>1300</totalBill>
-                    <status>Paid</status>
+                    <status>Partial</status>
                     <bills>
                         <bill id="E3">
                             <renterId>3</renterId>
@@ -1658,7 +1683,7 @@
                             <consumedKwh>130</consumedKwh>
                             <amount>1300</amount>
                             <overpaid>0</overpaid>
-                            <debt>200</debt>
+                            <debt>0</debt>
                             <status>Unpaid</status>
                         </bill>
                         <bill id="E6">
@@ -1666,9 +1691,9 @@
                             <currentReading>1285</currentReading>
                             <consumedKwh>125</consumedKwh>
                             <amount>1250</amount>
-                            <overpaid>0</overpaid>
-                            <debt>50</debt>
-                            <status>Partial</status>
+                            <overpaid>1400</overpaid>
+                            <debt>0</debt>
+                            <status>Unpaid</status>
                         </bill>
                         <bill id="E7">
                             <renterId>7</renterId>
@@ -2335,19 +2360,22 @@
                         </bill>
                     </bills>
                 </reading>
+
+
                 <reading id="6">
-                    <readingDate>2025-06-03</readingDate>
+                    <readingDate>2025-06-04</readingDate>
                     <periodEnd>2025-06-10</periodEnd>
-                    <dueDate>2025-06-17</dueDate>
+                    <dueDate>2025-06-18</dueDate>
                     <consumedKwhTotal>30525</consumedKwhTotal>
-                    <totalBill>12000</totalBill>
+                    <totalBill>20000</totalBill>
                     <status>Unpaid</status>
                     <bills>
                         <bill id="E26">
                             <renterId>1</renterId>
                             <currentReading>4000</currentReading>
+                            <previousReading>3000</previousReading>
                             <consumedKwh>1000</consumedKwh>
-                            <amount>393.12</amount>
+                            <amount>655.20</amount>
                             <overpaid>0</overpaid>
                             <debt>0</debt>
                             <status>Unpaid</status>
@@ -2355,8 +2383,9 @@
                         <bill id="E27">
                             <renterId>2</renterId>
                             <currentReading>4000</currentReading>
+                            <previousReading>1100</previousReading>
                             <consumedKwh>2900</consumedKwh>
-                            <amount>1140.05</amount>
+                            <amount>1900.08</amount>
                             <overpaid>0</overpaid>
                             <debt>0</debt>
                             <status>Unpaid</status>
@@ -2364,8 +2393,9 @@
                         <bill id="E28">
                             <renterId>3</renterId>
                             <currentReading>4000</currentReading>
+                            <previousReading>1215</previousReading>
                             <consumedKwh>2785</consumedKwh>
-                            <amount>1094.84</amount>
+                            <amount>1824.73</amount>
                             <overpaid>0</overpaid>
                             <debt>0</debt>
                             <status>Unpaid</status>
@@ -2373,8 +2403,9 @@
                         <bill id="E29">
                             <renterId>5</renterId>
                             <currentReading>4000</currentReading>
+                            <previousReading>1430</previousReading>
                             <consumedKwh>2570</consumedKwh>
-                            <amount>1010.32</amount>
+                            <amount>1683.87</amount>
                             <overpaid>0</overpaid>
                             <debt>0</debt>
                             <status>Unpaid</status>
@@ -2382,8 +2413,9 @@
                         <bill id="E30">
                             <renterId>6</renterId>
                             <currentReading>4000</currentReading>
+                            <previousReading>1545</previousReading>
                             <consumedKwh>2455</consumedKwh>
-                            <amount>965.11</amount>
+                            <amount>1608.52</amount>
                             <overpaid>0</overpaid>
                             <debt>0</debt>
                             <status>Unpaid</status>
@@ -2391,8 +2423,9 @@
                         <bill id="E31">
                             <renterId>8</renterId>
                             <currentReading>4000</currentReading>
+                            <previousReading>1770</previousReading>
                             <consumedKwh>2230</consumedKwh>
-                            <amount>876.66</amount>
+                            <amount>1461.10</amount>
                             <overpaid>0</overpaid>
                             <debt>0</debt>
                             <status>Unpaid</status>
@@ -2400,8 +2433,9 @@
                         <bill id="E32">
                             <renterId>10</renterId>
                             <currentReading>4000</currentReading>
+                            <previousReading>1990</previousReading>
                             <consumedKwh>2010</consumedKwh>
-                            <amount>790.17</amount>
+                            <amount>1316.95</amount>
                             <overpaid>0</overpaid>
                             <debt>0</debt>
                             <status>Unpaid</status>
@@ -2409,8 +2443,9 @@
                         <bill id="E33">
                             <renterId>11</renterId>
                             <currentReading>4000</currentReading>
+                            <previousReading>2100</previousReading>
                             <consumedKwh>1900</consumedKwh>
-                            <amount>746.93</amount>
+                            <amount>1244.88</amount>
                             <overpaid>0</overpaid>
                             <debt>0</debt>
                             <status>Unpaid</status>
@@ -2418,8 +2453,9 @@
                         <bill id="E34">
                             <renterId>12</renterId>
                             <currentReading>4000</currentReading>
+                            <previousReading>2215</previousReading>
                             <consumedKwh>1785</consumedKwh>
-                            <amount>701.72</amount>
+                            <amount>1169.53</amount>
                             <overpaid>0</overpaid>
                             <debt>0</debt>
                             <status>Unpaid</status>
@@ -2427,8 +2463,9 @@
                         <bill id="E35">
                             <renterId>13</renterId>
                             <currentReading>4000</currentReading>
+                            <previousReading>2330</previousReading>
                             <consumedKwh>1670</consumedKwh>
-                            <amount>656.51</amount>
+                            <amount>1094.19</amount>
                             <overpaid>0</overpaid>
                             <debt>0</debt>
                             <status>Unpaid</status>
@@ -2436,8 +2473,9 @@
                         <bill id="E36">
                             <renterId>14</renterId>
                             <currentReading>4000</currentReading>
+                            <previousReading>2440</previousReading>
                             <consumedKwh>1560</consumedKwh>
-                            <amount>613.27</amount>
+                            <amount>1022.11</amount>
                             <overpaid>0</overpaid>
                             <debt>0</debt>
                             <status>Unpaid</status>
@@ -2445,8 +2483,9 @@
                         <bill id="E37">
                             <renterId>16</renterId>
                             <currentReading>4000</currentReading>
+                            <previousReading>2660</previousReading>
                             <consumedKwh>1340</consumedKwh>
-                            <amount>526.78</amount>
+                            <amount>877.97</amount>
                             <overpaid>0</overpaid>
                             <debt>0</debt>
                             <status>Unpaid</status>
@@ -2454,8 +2493,9 @@
                         <bill id="E38">
                             <renterId>17</renterId>
                             <currentReading>4000</currentReading>
+                            <previousReading>2770</previousReading>
                             <consumedKwh>1230</consumedKwh>
-                            <amount>483.54</amount>
+                            <amount>805.90</amount>
                             <overpaid>0</overpaid>
                             <debt>0</debt>
                             <status>Unpaid</status>
@@ -2463,8 +2503,9 @@
                         <bill id="E39">
                             <renterId>18</renterId>
                             <currentReading>4000</currentReading>
+                            <previousReading>2880</previousReading>
                             <consumedKwh>1120</consumedKwh>
-                            <amount>440.29</amount>
+                            <amount>733.82</amount>
                             <overpaid>0</overpaid>
                             <debt>0</debt>
                             <status>Unpaid</status>
@@ -2472,8 +2513,9 @@
                         <bill id="E40">
                             <renterId>19</renterId>
                             <currentReading>4000</currentReading>
+                            <previousReading>2990</previousReading>
                             <consumedKwh>1010</consumedKwh>
-                            <amount>397.05</amount>
+                            <amount>661.75</amount>
                             <overpaid>0</overpaid>
                             <debt>0</debt>
                             <status>Unpaid</status>
@@ -2481,8 +2523,9 @@
                         <bill id="E41">
                             <renterId>20</renterId>
                             <currentReading>4000</currentReading>
+                            <previousReading>3100</previousReading>
                             <consumedKwh>900</consumedKwh>
-                            <amount>353.81</amount>
+                            <amount>589.68</amount>
                             <overpaid>0</overpaid>
                             <debt>0</debt>
                             <status>Unpaid</status>
@@ -2490,8 +2533,9 @@
                         <bill id="E42">
                             <renterId>22</renterId>
                             <currentReading>4000</currentReading>
+                            <previousReading>3320</previousReading>
                             <consumedKwh>680</consumedKwh>
-                            <amount>267.32</amount>
+                            <amount>445.54</amount>
                             <overpaid>0</overpaid>
                             <debt>0</debt>
                             <status>Unpaid</status>
@@ -2499,8 +2543,9 @@
                         <bill id="E43">
                             <renterId>23</renterId>
                             <currentReading>4000</currentReading>
+                            <previousReading>3430</previousReading>
                             <consumedKwh>570</consumedKwh>
-                            <amount>224.08</amount>
+                            <amount>373.46</amount>
                             <overpaid>0</overpaid>
                             <debt>0</debt>
                             <status>Unpaid</status>
@@ -2508,8 +2553,9 @@
                         <bill id="E44">
                             <renterId>24</renterId>
                             <currentReading>4000</currentReading>
+                            <previousReading>3540</previousReading>
                             <consumedKwh>460</consumedKwh>
-                            <amount>180.84</amount>
+                            <amount>301.39</amount>
                             <overpaid>0</overpaid>
                             <debt>0</debt>
                             <status>Unpaid</status>
@@ -2517,14 +2563,15 @@
                         <bill id="E45">
                             <renterId>25</renterId>
                             <currentReading>4000</currentReading>
+                            <previousReading>3650</previousReading>
                             <consumedKwh>350</consumedKwh>
-                            <amount>137.59</amount>
+                            <amount>229.32</amount>
                             <overpaid>0</overpaid>
                             <debt>0</debt>
                             <status>Unpaid</status>
                         </bill>
                     </bills>
-                    <amountPerKwh>0.39</amountPerKwh>
+                    <amountPerKwh>0.66</amountPerKwh>
                 </reading>
             </utility>
 
@@ -2536,7 +2583,7 @@
                     <address>123 Main St</address>
                 </accountInfo>
 
-                <reading id="1">
+                <!-- <reading id="1">
                     <readingDate>2025-05-01</readingDate>
                     <periodEnd>2025-05-31</periodEnd>
                     <dueDate>2025-06-10</dueDate>
@@ -2771,7 +2818,7 @@
                             <status>Paid</status>
                         </bill>
                     </bills>
-                </reading>
+                </reading> -->
 
                 <reading id="2">
                     <readingDate>2025-04-01</readingDate>
@@ -2798,7 +2845,7 @@
                             <consumedCubic>18</consumedCubic>
                             <amount>900</amount>
                             <overpaid>0</overpaid>
-                            <debt>53</debt>
+                            <debt>0</debt>
                             <status>Unpaid</status>
                         </bill>
                         <bill id="W4">
@@ -3017,7 +3064,7 @@
                     <consumedCubicMTotal>18</consumedCubicMTotal>
                     <amountPerCubicM>50</amountPerCubicM>
                     <totalBill>900</totalBill>
-                    <status>Paid</status>
+                    <status>Unpaid</status>
                     <bills>
                         <bill id="W3">
                             <renterId>3</renterId>
@@ -3069,9 +3116,9 @@
                             <currentReading>144</currentReading>
                             <consumedCubic>9</consumedCubic>
                             <amount>450</amount>
-                            <overpaid>0</overpaid>
-                            <debt>197</debt>
-                            <status>Unpaid</status>
+                            <overpaid>1253</overpaid>
+                            <debt>0</debt>
+                            <status>Paid</status>
                         </bill>
                         <bill id="W7">
                             <renterId>7</renterId>
@@ -3720,6 +3767,218 @@
                         </bill>
                     </bills>
                 </reading>
+
+                <reading id="6">
+                    <readingDate>2025-06-04</readingDate>
+                    <periodEnd>2025-06-10</periodEnd>
+                    <dueDate>2025-06-20</dueDate>
+                    <consumedWaterTotal>974</consumedWaterTotal>
+                    <totalBill>15000</totalBill>
+                    <status>Unpaid</status>
+                    <bills>
+                        <bill id="W601">
+                            <renterId>1</renterId>
+                            <currentReading>200</currentReading>
+                            <previousReading>129</previousReading>
+                            <consumedM3>71</consumedM3>
+                            <amount>1093.43</amount>
+                            <overpaid>0</overpaid>
+                            <debt>0</debt>
+                            <status>Unpaid</status>
+                        </bill>
+                        <bill id="W602">
+                            <renterId>2</renterId>
+                            <currentReading>200</currentReading>
+                            <previousReading>120</previousReading>
+                            <consumedM3>80</consumedM3>
+                            <amount>1232.03</amount>
+                            <overpaid>0</overpaid>
+                            <debt>0</debt>
+                            <status>Unpaid</status>
+                        </bill>
+                        <bill id="W603">
+                            <renterId>3</renterId>
+                            <currentReading>200</currentReading>
+                            <previousReading>108</previousReading>
+                            <consumedM3>92</consumedM3>
+                            <amount>1416.84</amount>
+                            <overpaid>0</overpaid>
+                            <debt>0</debt>
+                            <status>Unpaid</status>
+                        </bill>
+                        <bill id="W605">
+                            <renterId>5</renterId>
+                            <currentReading>200</currentReading>
+                            <previousReading>155</previousReading>
+                            <consumedM3>45</consumedM3>
+                            <amount>693.02</amount>
+                            <overpaid>0</overpaid>
+                            <debt>0</debt>
+                            <status>Unpaid</status>
+                        </bill>
+                        <bill id="W606">
+                            <renterId>6</renterId>
+                            <currentReading>200</currentReading>
+                            <previousReading>130</previousReading>
+                            <consumedM3>70</consumedM3>
+                            <amount>1078.03</amount>
+                            <overpaid>0</overpaid>
+                            <debt>0</debt>
+                            <status>Unpaid</status>
+                        </bill>
+                        <bill id="W608">
+                            <renterId>8</renterId>
+                            <currentReading>200</currentReading>
+                            <previousReading>186</previousReading>
+                            <consumedM3>14</consumedM3>
+                            <amount>215.61</amount>
+                            <overpaid>0</overpaid>
+                            <debt>0</debt>
+                            <status>Unpaid</status>
+                        </bill>
+                        <bill id="W610">
+                            <renterId>10</renterId>
+                            <currentReading>200</currentReading>
+                            <previousReading>199</previousReading>
+                            <consumedM3>1</consumedM3>
+                            <amount>15.40</amount>
+                            <overpaid>0</overpaid>
+                            <debt>0</debt>
+                            <status>Unpaid</status>
+                        </bill>
+                        <bill id="W611">
+                            <renterId>11</renterId>
+                            <currentReading>200</currentReading>
+                            <previousReading>139</previousReading>
+                            <consumedM3>61</consumedM3>
+                            <amount>939.43</amount>
+                            <overpaid>0</overpaid>
+                            <debt>0</debt>
+                            <status>Unpaid</status>
+                        </bill>
+                        <bill id="W612">
+                            <renterId>12</renterId>
+                            <currentReading>200</currentReading>
+                            <previousReading>184</previousReading>
+                            <consumedM3>16</consumedM3>
+                            <amount>246.41</amount>
+                            <overpaid>0</overpaid>
+                            <debt>0</debt>
+                            <status>Unpaid</status>
+                        </bill>
+                        <bill id="W613">
+                            <renterId>13</renterId>
+                            <currentReading>200</currentReading>
+                            <previousReading>118</previousReading>
+                            <consumedM3>82</consumedM3>
+                            <amount>1262.83</amount>
+                            <overpaid>0</overpaid>
+                            <debt>0</debt>
+                            <status>Unpaid</status>
+                        </bill>
+                        <bill id="W614">
+                            <renterId>14</renterId>
+                            <currentReading>200</currentReading>
+                            <previousReading>147</previousReading>
+                            <consumedM3>53</consumedM3>
+                            <amount>816.22</amount>
+                            <overpaid>0</overpaid>
+                            <debt>0</debt>
+                            <status>Unpaid</status>
+                        </bill>
+                        <bill id="W616">
+                            <renterId>16</renterId>
+                            <currentReading>200</currentReading>
+                            <previousReading>124</previousReading>
+                            <consumedM3>76</consumedM3>
+                            <amount>1170.43</amount>
+                            <overpaid>0</overpaid>
+                            <debt>0</debt>
+                            <status>Unpaid</status>
+                        </bill>
+                        <bill id="W617">
+                            <renterId>17</renterId>
+                            <currentReading>200</currentReading>
+                            <previousReading>156</previousReading>
+                            <consumedM3>44</consumedM3>
+                            <amount>677.62</amount>
+                            <overpaid>0</overpaid>
+                            <debt>0</debt>
+                            <status>Unpaid</status>
+                        </bill>
+                        <bill id="W618">
+                            <renterId>18</renterId>
+                            <currentReading>200</currentReading>
+                            <previousReading>153</previousReading>
+                            <consumedM3>47</consumedM3>
+                            <amount>723.82</amount>
+                            <overpaid>0</overpaid>
+                            <debt>0</debt>
+                            <status>Unpaid</status>
+                        </bill>
+                        <bill id="W619">
+                            <renterId>19</renterId>
+                            <currentReading>200</currentReading>
+                            <previousReading>179</previousReading>
+                            <consumedM3>21</consumedM3>
+                            <amount>323.41</amount>
+                            <overpaid>0</overpaid>
+                            <debt>0</debt>
+                            <status>Unpaid</status>
+                        </bill>
+                        <bill id="W620">
+                            <renterId>20</renterId>
+                            <currentReading>200</currentReading>
+                            <previousReading>142</previousReading>
+                            <consumedM3>58</consumedM3>
+                            <amount>893.22</amount>
+                            <overpaid>0</overpaid>
+                            <debt>0</debt>
+                            <status>Unpaid</status>
+                        </bill>
+                        <bill id="W622">
+                            <renterId>22</renterId>
+                            <currentReading>200</currentReading>
+                            <previousReading>123</previousReading>
+                            <consumedM3>77</consumedM3>
+                            <amount>1185.83</amount>
+                            <overpaid>0</overpaid>
+                            <debt>0</debt>
+                            <status>Unpaid</status>
+                        </bill>
+                        <bill id="W623">
+                            <renterId>23</renterId>
+                            <currentReading>200</currentReading>
+                            <previousReading>170</previousReading>
+                            <consumedM3>30</consumedM3>
+                            <amount>462.01</amount>
+                            <overpaid>0</overpaid>
+                            <debt>0</debt>
+                            <status>Unpaid</status>
+                        </bill>
+                        <bill id="W624">
+                            <renterId>24</renterId>
+                            <currentReading>200</currentReading>
+                            <previousReading>195</previousReading>
+                            <consumedM3>5</consumedM3>
+                            <amount>77.00</amount>
+                            <overpaid>0</overpaid>
+                            <debt>0</debt>
+                            <status>Unpaid</status>
+                        </bill>
+                        <bill id="W625">
+                            <renterId>25</renterId>
+                            <currentReading>200</currentReading>
+                            <previousReading>169</previousReading>
+                            <consumedM3>31</consumedM3>
+                            <amount>477.41</amount>
+                            <overpaid>0</overpaid>
+                            <debt>0</debt>
+                            <status>Unpaid</status>
+                        </bill>
+                    </bills>
+                    <amountPerCubicM>15.40</amountPerCubicM>
+                </reading>
             </utility>
         </utilityBills>
 
@@ -4015,7 +4274,7 @@
             <paymentDate>2025-04-24</paymentDate>
             <amount>4300</amount>
             <paymentMethod>cash</paymentMethod>
-            <remarks/>
+            <remarks />
         </payment>
 
         <payment id="R25000007">
@@ -4025,7 +4284,7 @@
             <paymentDate>2025-05-24</paymentDate>
             <amount>1800</amount>
             <paymentMethod>cash</paymentMethod>
-            <remarks/>
+            <remarks />
         </payment>
 
         <payment id="R25000007">
@@ -4035,7 +4294,7 @@
             <paymentDate>2025-05-24</paymentDate>
             <amount>1800</amount>
             <paymentMethod>cash</paymentMethod>
-            <remarks/>
+            <remarks />
         </payment>
 
         <payment id="R25000008">
@@ -4045,7 +4304,7 @@
             <paymentDate>2025-05-24</paymentDate>
             <amount>2475</amount>
             <paymentMethod>cash</paymentMethod>
-            <remarks/>
+            <remarks />
         </payment>
 
         <payment id="R25000009">
@@ -4055,7 +4314,7 @@
             <paymentDate>2025-05-24</paymentDate>
             <amount>4800</amount>
             <paymentMethod>cash</paymentMethod>
-            <remarks/>
+            <remarks />
         </payment>
 
         <payment id="R25000010">
@@ -4228,6 +4487,16 @@
             <remarks>Rent for August</remarks>
         </payment>
 
+        <payment id="R25000028">
+            <renterId>6</renterId>
+            <paymentType>Electricity, Water</paymentType>
+            <paymentAmountType>full</paymentAmountType>
+            <paymentDate>2025-06-04</paymentDate>
+            <amount>1450</amount>
+            <paymentMethod>cash</paymentMethod>
+            <remarks />
+            <billIds>E6,E6,W6,W6,W6</billIds>
+        </payment>
     </payments>
 
     <tasks>
@@ -4238,7 +4507,7 @@
             <amountPaid>1200</amountPaid>
             <dueDate>2025-04-15</dueDate>
             <status>Completed</status>
-            <deleteReason/>
+            <deleteReason />
         </task>
         <task id="302">
             <title>Remind Juan Dela Cruz to pay rent</title>
@@ -4253,7 +4522,7 @@
             <amountPaid>0</amountPaid>
             <dueDate>2025-05-10</dueDate>
             <status>Pending</status>
-            <deleteReason/>
+            <deleteReason />
         </task>
         <task id="304">
             <title>Schedule Room Cleaning</title>
@@ -4274,7 +4543,7 @@
             <amountPaid>0</amountPaid>
             <dueDate>2025-06-05</dueDate>
             <status>Pending</status>
-            <deleteReason/>
+            <deleteReason />
         </task>
         <task id="307">
             <title>Remind Renter #5 for July Water Bill</title>
@@ -4282,7 +4551,7 @@
             <concernedWith>5</concernedWith>
             <dueDate>2025-07-01</dueDate>
             <status>Completed</status>
-            <deleteReason/>
+            <deleteReason />
         </task>
         <task id="308">
             <title>Submit Water Utility Report</title>
@@ -4291,7 +4560,7 @@
             <amountPaid>0</amountPaid>
             <dueDate>2025-06-30</dueDate>
             <status>Completed</status>
-            <deleteReason/>
+            <deleteReason />
         </task>
         <task id="309">
             <title>Check Renter #2 Payment History</title>
@@ -4299,7 +4568,7 @@
             <concernedWith>2</concernedWith>
             <dueDate>2025-05-20</dueDate>
             <status>Pending</status>
-            <deleteReason/>
+            <deleteReason />
         </task>
         <task id="310">
             <title>Follow-up on Unpaid Electricity for Renter #3</title>
@@ -4307,7 +4576,7 @@
             <concernedWith>3</concernedWith>
             <dueDate>2025-05-24</dueDate>
             <status>Completed</status>
-            <deleteReason/>
+            <deleteReason />
         </task>
         <task id="311">
             <title>Archive Old Task Logs</title>
@@ -4339,7 +4608,7 @@
             <concernedWith>Electricity</concernedWith>
             <dueDate>2025-06-20</dueDate>
             <status>Completed</status>
-            <deleteReason/>
+            <deleteReason />
         </task>
         <task id="315">
             <title>Update Tenant Contact Info</title>
@@ -4356,7 +4625,7 @@
             <amountPaid>0</amountPaid>
             <dueDate>2025-06-05</dueDate>
             <status>Deleted</status>
-            <deleteReason/>
+            <deleteReason />
             <dateDeleted>2025-06-03</dateDeleted>
         </task>
         <task id="317">
@@ -4366,7 +4635,7 @@
             <amountPaid>0</amountPaid>
             <dueDate>2025-01-15</dueDate>
             <status>Pending</status>
-            <deleteReason/>
+            <deleteReason />
             <dateModified>2025-05-30</dateModified>
         </task>
         <task id="318">
@@ -4375,14 +4644,14 @@
             <concernedWith>6</concernedWith>
             <dueDate>2025-06-25</dueDate>
             <status>Pending</status>
-            <deleteReason/>
+            <deleteReason />
         </task>
         <task id="319">
             <title>Prepare Receipts for July Rent</title>
             <type>Other</type>
             <dueDate>2025-07-01</dueDate>
             <status>Completed</status>
-            <deleteReason/>
+            <deleteReason />
         </task>
         <task id="320">
             <title>Contact Renter #7 for Payment Clarification</title>
@@ -4390,7 +4659,7 @@
             <concernedWith>10</concernedWith>
             <dueDate>2025-08-09</dueDate>
             <status>Deleted</status>
-            <deleteReason/>
+            <deleteReason>Already Done</deleteReason>
             <dateModified>2025-05-31</dateModified>
             <dateDeleted>2025-05-31</dateDeleted>
         </task>
@@ -4399,20 +4668,22 @@
             <type>Utility</type>
             <dueDate>2025-06-25</dueDate>
             <concernedWith>11</concernedWith>
-            <createdBy/>
+            <createdBy />
             <dateCreated>2025-05-30</dateCreated>
             <status>Deleted</status>
-        <deleteReason/><dateDeleted>2025-06-03</dateDeleted></task>
+            <deleteReason />
+            <dateDeleted>2025-06-03</dateDeleted>
+        </task>
         <task id="322">
             <title>NEW TASK 2</title>
             <type>Collection</type>
             <dueDate>2026-09-22</dueDate>
             <concernedWith>19</concernedWith>
-            <createdBy/>
+            <createdBy />
             <dateCreated>2025-05-30</dateCreated>
             <status>Deleted</status>
             <dateModified>2025-05-30</dateModified>
-            <deleteReason/>
+            <deleteReason />
             <dateDeleted>2025-06-03</dateDeleted>
         </task>
         <task id="323">
@@ -4420,7 +4691,7 @@
             <type>Utility</type>
             <dueDate>2025-06-25</dueDate>
             <concernedWith>13</concernedWith>
-            <createdBy/>
+            <createdBy />
             <dateCreated>2025-05-30</dateCreated>
             <status>Pending</status>
             <dateModified>2025-05-30</dateModified>
@@ -4430,11 +4701,11 @@
             <type>Utility</type>
             <dueDate>2025-06-30</dueDate>
             <concernedWith>19</concernedWith>
-            <createdBy/>
+            <createdBy />
             <dateCreated>2025-05-30</dateCreated>
             <status>Pending</status>
             <dateModified>2025-05-30</dateModified>
-            <deleteReason/>
+            <deleteReason />
             <dateDeleted>2025-05-30</dateDeleted>
         </task>
         <task id="325">
@@ -4442,10 +4713,10 @@
             <type>Utility</type>
             <dueDate>2025-06-07</dueDate>
             <concernedWith>8</concernedWith>
-            <createdBy/>
+            <createdBy />
             <dateCreated>2025-05-31</dateCreated>
             <status>Deleted</status>
-            <deleteReason/>
+            <deleteReason />
             <dateDeleted>2025-06-03</dateDeleted>
         </task>
     </tasks>
@@ -4457,7 +4728,7 @@
             <dateGenerated>2025-04-01</dateGenerated>
             <status>Pending</status>
             <response>Sent via email</response>
-            <deleteReason/>
+            <deleteReason />
         </inquiry>
         <inquiry id="402">
             <renterId>2</renterId>
@@ -4465,7 +4736,7 @@
             <dateGenerated>2025-04-02</dateGenerated>
             <status>Completed</status>
             <response>Instructions sent</response>
-            <deleteReason/>
+            <deleteReason />
         </inquiry>
         <inquiry id="403">
             <renterId>3</renterId>
@@ -4473,31 +4744,31 @@
             <dateGenerated>2025-04-03</dateGenerated>
             <status>Pending</status>
             <response>Scheduled</response>
-            <deleteReason/>
+            <deleteReason />
         </inquiry>
         <inquiry id="404">
             <renterId>4</renterId>
             <inquiryContent>Can I extend my lease?</inquiryContent>
             <dateGenerated>2025-04-04</dateGenerated>
             <status>Pending</status>
-            <response/>
-            <deleteReason/>
+            <response />
+            <deleteReason />
         </inquiry>
         <inquiry id="405">
             <renterId>5</renterId>
             <inquiryContent>Request for room transfer</inquiryContent>
             <dateGenerated>2025-04-05</dateGenerated>
             <status>Pending</status>
-            <response/>
-            <deleteReason/>
+            <response />
+            <deleteReason />
         </inquiry>
         <inquiry id="406">
             <renterId>1</renterId>
             <inquiryContent>Can I move out earlier than agreed?</inquiryContent>
             <dateGenerated>2025-04-06</dateGenerated>
             <status>Pending</status>
-            <response/>
-            <deleteReason/>
+            <response />
+            <deleteReason />
         </inquiry>
         <inquiry id="407">
             <renterId>2</renterId>
@@ -4505,15 +4776,15 @@
             <dateGenerated>2025-04-07</dateGenerated>
             <status>Completed</status>
             <response>Breakdown sent</response>
-            <deleteReason/>
+            <deleteReason />
         </inquiry>
         <inquiry id="408">
             <renterId>3</renterId>
             <inquiryContent>Can I delay payment until 15th?</inquiryContent>
             <dateGenerated>2025-04-08</dateGenerated>
             <status>Pending</status>
-            <response/>
-            <deleteReason/>
+            <response />
+            <deleteReason />
         </inquiry>
         <inquiry id="409">
             <renterId>4</renterId>
@@ -4521,14 +4792,14 @@
             <dateGenerated>2025-04-09</dateGenerated>
             <status>Completed</status>
             <response>Refund processed</response>
-            <deleteReason/>
+            <deleteReason />
         </inquiry>
         <inquiry id="410">
             <renterId>5</renterId>
             <inquiryContent>Need help updating my contact info</inquiryContent>
             <dateGenerated>2025-04-10</dateGenerated>
             <status>Deleted</status>
-            <response/>
+            <response />
             <deleteReason>Issue resolved in person</deleteReason>
         </inquiry>
         <inquiry id="411">
@@ -4536,7 +4807,7 @@
             <inquiryContent>Can I get a breakdown of my payments?</inquiryContent>
             <dateGenerated>2025-04-11</dateGenerated>
             <status>Deleted</status>
-            <response/>
+            <response />
             <deleteReason>Duplicate of inquiry #407</deleteReason>
         </inquiry>
     </inquiries>
@@ -4751,7 +5022,15 @@
             <status>Archived</status>
             <lastLogin>2025-05-29</lastLogin>
         </user>
-    <user id="27"><email>new@gmail.com</email><password>NewAccount@123</password><dateGenerated>2025-06-03</dateGenerated><userRole>Renter</userRole><status>Archived</status><lastLogin>2025-06-03</lastLogin></user></users>
+        <user id="27">
+            <email>new@gmail.com</email>
+            <password>NewAccount@123</password>
+            <dateGenerated>2025-06-03</dateGenerated>
+            <userRole>Renter</userRole>
+            <status>Archived</status>
+            <lastLogin>2025-06-03</lastLogin>
+        </user>
+    </users>
 
     <caretakers>
         <caretaker id="501">
@@ -4761,7 +5040,7 @@
                     <surname>Malala</surname>
                     <firstName>Luie</firstName>
                     <middleName>Diego</middleName>
-                    <extension/>
+                    <extension />
                 </name>
             </personalInfo>
         </caretaker>
@@ -4771,8 +5050,8 @@
                 <name>
                     <surname>Delos Santos</surname>
                     <firstName>Jose</firstName>
-                    <middleName/>
-                    <extension/>
+                    <middleName />
+                    <extension />
                 </name>
             </personalInfo>
         </caretaker>
@@ -4782,8 +5061,8 @@
                 <name>
                     <surname>Lim</surname>
                     <firstName>Anna</firstName>
-                    <middleName/>
-                    <extension/>
+                    <middleName />
+                    <extension />
                 </name>
             </personalInfo>
         </caretaker>
@@ -4793,8 +5072,8 @@
                 <name>
                     <surname>Tan</surname>
                     <firstName>Michael</firstName>
-                    <middleName/>
-                    <extension/>
+                    <middleName />
+                    <extension />
                 </name>
             </personalInfo>
         </caretaker>
@@ -4804,8 +5083,8 @@
                 <name>
                     <surname>Ocampo</surname>
                     <firstName>Grace</firstName>
-                    <middleName/>
-                    <extension/>
+                    <middleName />
+                    <extension />
                 </name>
             </personalInfo>
         </caretaker>

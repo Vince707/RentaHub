@@ -392,7 +392,10 @@
                                             <td>
                                                 <div class="d-flex justify-content-center align-items-center">
                                                     <span class="badge rounded-pill" data-due-date="{dueDate}" data-status="{status}">
-                                                        <xsl:value-of select="status"/>
+                                                        <xsl:value-of select="status"/>&#160;
+                                                        <xsl:if test="status = 'Deleted'">
+                                                            <xsl:value-of select="deleteReason"/>
+                                                        </xsl:if>
                                                     </span>
                                                 </div>
                                             </td>

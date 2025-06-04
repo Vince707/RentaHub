@@ -124,7 +124,7 @@ foreach ($renters as $renterId => $renter) {
     $bill->addChild('status', $status);
 
     if ($once) {
-        $newReading->addChild('amountPerM3', htmlspecialchars(str_replace(',', '', $renter['amountPerM3'] ?? '')));
+        $newReading->addChild('amountPerCubicM', htmlspecialchars(str_replace(',', '', $renter['amountPerCubicM'] ?? '')));
         $once = false;
     }
 }

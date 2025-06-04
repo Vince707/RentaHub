@@ -320,7 +320,7 @@
                                                                         <th>Rent</th>
                                                                         <th>Overdue</th>
                                                                         <th>Total Bill</th>
-                                                                        <th>Total Unpaid</th>
+                                                                        <th>Total Current Unpaid</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>

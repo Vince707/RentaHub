@@ -520,7 +520,7 @@
                         </div>
 
                         <div class="d-flex flex-row">
-                          <button type="button" class="btn-white d-flex align-items-center px-3 py-1 "
+                          <button type="button" class="btn-white d-flex align-items-center px-3 py-1"
                             data-bs-toggle="modal" data-bs-target="#modalSendNotificationConfirmation">
                             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                               fill="#FFFFFF">
@@ -981,18 +981,7 @@
                     <td>PHP 209.44</td>
 
                   </tr>
-                  <tfoot>
-                    <tr class="fw-bolder">
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td>200</td>
-                      <td></td>
-                      <td>PHP 209.44</td>
-
-                  </tr>
-                  </tfoot>
+               
                 </tbody>
               </table>
               <div class="d-flex flex-row">
@@ -1268,7 +1257,7 @@
 
                 <!-- Modal footer -->
                 <div class="modal-footer d-flex align-items-end">
-                <div id="error-box-generate-electric" class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-10 col-lg-6" style="color:white; background-color: #a6192e;">
+                <div id="error-box-generate-electric" class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-9" style="color:white; background-color: #a6192e;">
                   <i class="bi bi-exclamation-triangle-fill fs-3"></i>
                   <div>
                     <strong class="fs-5">Warning!</strong><br/>
@@ -1427,7 +1416,7 @@
 
                 <!-- Modal footer -->
                 <div class="modal-footer d-flex align-items-end">
-                <div id="error-box-generate-water" class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-10 col-lg-6" style="color:white; background-color: #a6192e;">
+                <div id="error-box-generate-water" class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-9" style="color:white; background-color: #a6192e;">
                   <i class="bi bi-exclamation-triangle-fill fs-3"></i>
                   <div>
                     <strong class="fs-5">Warning!</strong><br/>
@@ -1586,8 +1575,18 @@
 
                 <!-- Modal footer -->
                 <div class="modal-footer d-flex align-items-end">
-                  <button type="button" class="btn-red" data-bs-dismiss="modal">Cancel</button>
-                  <button type="button" class="btn-green-fill" id="button-modify-electric">Modify</button>
+                  <div id="error-box-modify-electric" class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-9" style="color:white; background-color: #a6192e;">
+                    <i class="bi bi-exclamation-triangle-fill fs-3"></i>
+                    <div>
+                      <strong class="fs-5">Warning!</strong><br/>
+                      <span class="small" id="error-text-modify-electric"></span>
+                    </div>
+                  </div>
+                  <div class="ms-auto">
+                    <button type="button" class="btn-red" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn-green-fill" id="button-modify-electric">Modify</button>
+                  </div>
+                  
                 </div>
               </div>
             </div>
@@ -1853,7 +1852,7 @@
 
                 <!-- Modal footer -->
                 <div class="modal-footer d-flex align-items-end">
-                  <div id="error-box-modify-electric-metadata" class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-10 col-lg-6" style="color:white; background-color: #a6192e;">
+                  <div id="error-box-modify-electric-metadata" class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-7" style="color:white; background-color: #a6192e;">
                     <i class="bi bi-exclamation-triangle-fill fs-3"></i>
                     <div>
                       <strong class="fs-5">Warning!</strong><br/>
@@ -1987,7 +1986,7 @@
 
                 <!-- Modal footer -->
                 <div class="modal-footer d-flex align-items-end">
-                  <div id="error-box-modify-water-metadata" class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-10 col-lg-6" style="color:white; background-color: #a6192e;">
+                  <div id="error-box-modify-water-metadata" class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-7" style="color:white; background-color: #a6192e;">
                     <i class="bi bi-exclamation-triangle-fill fs-3"></i>
                     <div>
                       <strong class="fs-5">Warning!</strong><br/>
@@ -2167,7 +2166,7 @@
 
         <!-- Modal footer -->
         <div class="modal-footer d-flex align-items-end">
-          <div id="error-box-record-payment" class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-10 col-lg-6" style="color:white; background-color: #a6192e;">
+          <div id="error-box-record-payment" class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-12" style="color:white; background-color: #a6192e;">
             <i class="bi bi-exclamation-triangle-fill fs-3"></i>
             <div>
               <strong class="fs-5">Warning!</strong><br/>
@@ -2242,6 +2241,7 @@
               <input type="hidden" id="hidden-record-bill-id" name="bill_id" />
               <input type="hidden" id="hidden-record-reading-id" name="reading_id" />
               <input type="hidden" id="hidden-record-overdue-bill-ids" name="overdue_bill_ids" />
+              <input type="hidden" id="hidden-record-overdue-reading-ids" name="overdue_reading_ids" />
               <input type="hidden" id="hidden-record-receipt-number" name="receipt_number" />
               <input type="hidden" id="hidden-record-renter-id" name="renter_id" />
               <input type="hidden" id="hidden-record-payment-type" name="payment_type" />

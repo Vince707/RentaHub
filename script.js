@@ -12,10 +12,10 @@ class PaymentContext {
   }
 
   get selectedReadingId() {
-    return this.#selectedReadingId;
+    return [...this.#selectedReadingId];
   }
   set selectedReadingId(value) {
-    this.#selectedReadingId = value;
+    this.#selectedReadingId = [...value];
   }
 
   get overdueBillIdsArray() {
@@ -433,7 +433,7 @@ function populateOverdueBillsCardRenterRole(renterId) {
   });
   console.log("Total Rent overdue:", rentOverdue, "Due date:", rentDueDate);
 
-  const overdueBills = getOverdueBillsForRenter(renterId);
+  const overdueBills = getTrulyOverdueBillIds(renterId);
   console.log("getOverdueBillsForRenter result:", overdueBills);
   updateOverdueBillCard(overdueBills, renterId);
   console.log("updateOverdueBillCard called");
@@ -550,7 +550,7 @@ function populateIndividualBillDetailsRenterRole(monthStr, renterId) {
                         water.current = bill.currentReading || '';
                         water.previous = getPreviousWaterReading(renterId, monthStr);
                         water.consumed = bill.consumedKwh || '';
-                        water.rate = reading.amountPerKwh || '';
+                        water.rate = parseFloat(parseFloat(reading.amountPerKwh.replace(/,/g, '') || 0).toFixed(2));
                         water.bill = parseFloat(bill.amount) || 0;
                         water.paid = 0; // Infer this based on status
 
@@ -917,6 +917,182 @@ function populateBillingSummaryForAllRenters(renterDataMap, roomsDataMap, rentBi
   $('#billings-summary tbody').html(rowsHtml);
 }
 
+function updateTotalOverdue(renterId) {
+  const today = new Date();
+  let totalOverdue = 0;
+
+  // Sum overdue rent bills with status Unpaid or Partial (dueDate < today)
+  Object.values(rentBillsMap).forEach(bill => {
+    if (
+      String(bill.renterId) === String(renterId) &&
+      bill.dueDate &&
+      (bill.status === 'Unpaid' || bill.status === 'Partial')
+    ) {
+      const dueDate = new Date(bill.dueDate);
+      if (dueDate < today) {
+        totalOverdue += parseFloat(bill.amount) || 0;
+      }
+    }
+  });
+
+  // Sum overdue utility bills (Electricity & Water) with status Unpaid or Partial (dueDate < today)
+  ['Electricity', 'Water'].forEach(type => {
+    if (utilityBillsMap[type]) {
+      utilityBillsMap[type].readings.forEach(reading => {
+        if (reading.dueDate) {
+          const dueDate = new Date(reading.dueDate);
+          if (dueDate < today) {
+            reading.bills.forEach(bill => {
+              if (
+                String(bill.renterId) === String(renterId) &&
+                (bill.status === 'Unpaid' || bill.status === 'Partial')
+              ) {
+                totalOverdue += parseFloat(bill.amount) || 0;
+              }
+            });
+          }
+        }
+      });
+    }
+  });
+
+  // Format amount with PHP prefix and two decimals
+  const formattedAmount = 'PHP ' + totalOverdue.toLocaleString("en-PH", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+
+  // Update the element with id 'total-overdue-value-individual-payments'
+  const $el = $('#total-overdue-value-individual-payments');
+  if ($el.length) {
+    $el.text(formattedAmount);
+  } else {
+    console.warn('Element with id="total-overdue-value-individual-payments" not found.');
+  }
+}
+function populatePaymentsSummaryForRenter(renterId) {
+    console.log('--- populatePaymentsSummaryForRenter Debug Start ---');
+    console.log(`Function called for renterId: "${renterId}"`);
+
+    const $tbody = $('#payments-summary-individual tbody');
+    console.log(`  Clearing existing rows from tbody (#payments-summary-individual tbody).`);
+    $tbody.empty();
+
+    if (!renterId) {
+        console.log('  renterId is empty or null. Returning early.');
+        $tbody.append('<tr><td colspan="7" class="text-center text-muted">Please select a renter to view payments.</td></tr>');
+        return;
+    }
+
+    // Get renter info
+    const renter = renterDataMap[renterId];
+    if (!renter) {
+        console.warn(`Renter with ID "${renterId}" not found in renterDataMap. Returning early.`);
+        $tbody.append(`<tr><td colspan="7" class="text-center text-danger">Renter with ID "${renterId}" not found.</td></tr>`);
+        return;
+    }
+    console.log(`  Found renter for ID "${renterId}":`, renter);
+
+    // Compose full renter name
+    const fullNameParts = [
+        renter.firstName,
+        renter.middleName,
+        renter.surname,
+        renter.extension
+    ].filter(Boolean);
+    const fullName = fullNameParts.join(' ');
+    console.log(`  Composed full renter name: "${fullName}"`);
+
+    // Get room number from renter's unitId
+    // Ensure roomsDataMap exists and is an object
+    const room = (roomsDataMap && roomsDataMap[renter.unitId]) || {};
+    const roomNo = room.roomNo || '';
+    console.log(`  Renter's unitId: "${renter.unitId}". Corresponding roomNo: "${roomNo}"`);
+    if (!roomsDataMap) {
+        console.warn('  roomsDataMap is undefined or null.');
+    } else if (!roomsDataMap[renter.unitId]) {
+        console.warn(`  Room data for unitId "${renter.unitId}" not found in roomsDataMap.`);
+    }
+
+    // Filter payments for this renter
+    console.log('  Filtering payments from paymentsMap...');
+    // --- IMPORTANT NOTE FOR DEBUG ---
+    // If paymentsMap was populated as paymentsMap[id] = {...},
+    // then Object.values(paymentsMap) will give you the payment objects without their 'id' key.
+    // If 'receiptNo' should be the payment's unique ID, you need to ensure 'id' is
+    // part of the payment object when it's created or adjust how you filter/iterate.
+    // For now, we will add 'id' into the filtered payment object for demonstration
+    // if it's not already there.
+    const payments = [];
+    if (paymentsMap) { // Check if paymentsMap is defined
+        for (const paymentId in paymentsMap) {
+            if (paymentsMap.hasOwnProperty(paymentId)) {
+                const payment = paymentsMap[paymentId];
+                if (String(payment.renterId) === String(renterId)) {
+                    // Attach the ID as a property for easier use in the loop
+                    payments.push({ ...payment, id: paymentId }); 
+                }
+            }
+        }
+    } else {
+        console.warn('  paymentsMap is undefined or null. No payments can be filtered.');
+    }
+    console.log(`  Filtered payments for renter "${renterId}":`, payments);
+
+
+    if (payments.length === 0) {
+        console.log('  No payments found for this renter. Appending "No payments found" row.');
+        $tbody.append('<tr><td colspan="7" class="text-center text-muted">No payments found.</td></tr>');
+        return;
+    }
+
+    console.log('\n  --- Generating rows for each payment ---');
+    // The previous receiptNo logic was flawed, always taking the last ID from paymentsMap.
+    // By adding 'id' to the payment object during filtering, we can now access it directly.
+    payments.forEach((payment, index) => {
+        console.log(`    Processing payment ${index + 1}:`, payment);
+
+        // Format payment date (assuming YYYY-MM-DD)
+        let paymentDateFormatted = 'N/A';
+        if (payment.paymentDate) {
+            const d = new Date(payment.paymentDate);
+            if (!isNaN(d.getTime())) { // Use getTime() to check for valid date
+                paymentDateFormatted = d.toLocaleDateString('en-PH', { year: 'numeric', month: '2-digit', day: '2-digit' });
+                console.log(`      Payment Date: "${payment.paymentDate}" formatted to "${paymentDateFormatted}"`);
+            } else {
+                console.warn(`      Invalid Payment Date for payment ID "${payment.id || 'N/A'}": "${payment.paymentDate}". Showing as N/A.`);
+            }
+        } else {
+            console.log(`      Payment Date is empty for payment ID "${payment.id || 'N/A'}". Showing as N/A.`);
+        }
+
+        // Format amount with PHP prefix and thousands separator
+        const amountNum = parseFloat(payment.amount) || 0;
+        const amountFormatted = 'PHP ' + amountNum.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        console.log(`      Amount: "${payment.amount}" parsed as ${amountNum.toFixed(2)} formatted to "${amountFormatted}"`);
+
+        // Receipt No. - now directly from the payment object itself, assuming it was added during filtering
+        const receiptNo = payment.id || 'N/A'; // Correctly gets the ID for the current payment
+        console.log(`      Receipt No: "${receiptNo}"`);
+        
+        const rowHtml = `
+            <tr>
+                <td>${receiptNo}</td>
+                <td>${roomNo}</td>
+                <td>${fullName}</td>
+                <td>${paymentDateFormatted}</td>
+                <td>${amountFormatted}</td>
+                <td>${payment.paymentType || ''}</td>
+                <td>${payment.paymentAmountType || ''}</td>
+            </tr>
+        `;
+        console.log(`    Appending row HTML for payment ID "${receiptNo}":`, rowHtml);
+
+        $tbody.append(rowHtml);
+    });
+
+    console.log('--- populatePaymentsSummaryForRenter Debug End ---');
+}
 
 function populateBillingSummary(renterDataMap, roomsDataMap, rentBillsMap, utilityBillsMap) {
     // Determines badge and color class based on status and amount
@@ -2474,6 +2650,15 @@ if (currentUserStr) {
       populateBillingSummary(renterDataMap, roomsDataMap, rentBillsMap, utilityBillsMap);
       populateBillingSummaryForRenter(renterId, renterDataMap, roomsDataMap, rentBillsMap, utilityBillsMap);
 
+        // When either select changes, update metrics
+      $('#select-payments-renter').on('change input', function() {
+        const renterIdPayments = $('#select-payments-renter').val();
+        if (renterIdPayments) {
+          populatePaymentsSummaryForRenter(renterIdPayments);
+        }
+      });
+
+
       $('#individual-month-due-renter-role').on('change', function() {
         const currentUser = JSON.parse(currentUserStr);
         currentUserId = currentUser.id; // This is the user ID you stored
@@ -2603,6 +2788,169 @@ $('#total-overdue-tasks').text(totalOverdueTasks);
 
 
 
+
+
+
+
+    function updateTotalUnpaid(renterId) {
+  let totalUnpaid = 0;
+
+  // Sum unpaid rent bills for the renter
+  Object.values(rentBillsMap).forEach(bill => {
+    if (String(bill.renterId) === String(renterId) && (bill.status === 'Unpaid' || bill.status === 'Partial')) {
+      if (bill.status === 'Unpaid') {
+        totalUnpaid += parseFloat(bill.amount) || 0;
+      } else if (bill.status === 'Partial') {
+        totalUnpaid += parseFloat(bill.debt) || 0;
+      }
+    }
+  });
+
+  // Sum unpaid utility bills (Electricity & Water) for the renter
+  ['Electricity', 'Water'].forEach(type => {
+    if (utilityBillsMap[type]) {
+      utilityBillsMap[type].readings.forEach(reading => {
+        reading.bills.forEach(bill => {
+          if (String(bill.renterId) === String(renterId) && (bill.status === 'Unpaid' || bill.status === 'Partial')) {
+            if (bill.status === 'Unpaid') {
+              totalUnpaid += parseFloat(bill.amount) || 0;
+            } else if (bill.status === 'Partial') {
+              totalUnpaid += parseFloat(bill.debt) || 0;
+            }
+          }
+        });
+      });
+    }
+  });
+
+  // Format as 'PHP ' + amount with 2 decimals
+  const formattedAmount = 'PHP ' + totalUnpaid.toLocaleString("en-PH", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+
+  // Update the element with id 'total-unpaid-{renterId}'
+  $('#total-unpaid-value-individual-payments').text(formattedAmount);
+}
+
+
+function updateTotalPaid(renterId) {
+  let totalPaid = 0;
+
+  // Sum all payments for the renter
+  Object.values(paymentsMap).forEach(payment => {
+    if (String(payment.renterId) === String(renterId)) {
+      totalPaid += parseFloat(payment.amount) || 0;
+    }
+  });
+
+  // Format as 'PHP ' + amount with 2 decimals
+  const formattedAmount = 'PHP ' + totalPaid.toLocaleString("en-PH", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+
+  // Update the element with id 'total-paid-value-individual-payments-{renterId}'
+  $("#total-paid-value-individual-payments").text(formattedAmount);
+}
+
+function updateTotalPaidCurrentMonth(renterId) {
+  const today = new Date();
+  const currentYear = today.getFullYear();
+  const currentMonth = today.getMonth(); // 0-based: January = 0
+
+  let totalPaid = 0;
+
+  Object.values(paymentsMap).forEach(payment => {
+    if (String(payment.renterId) === String(renterId)) {
+      if (payment.paymentDate) {
+        const paymentDate = new Date(payment.paymentDate);
+        if (
+          paymentDate.getFullYear() === currentYear &&
+          paymentDate.getMonth() === currentMonth
+        ) {
+          totalPaid += parseFloat(payment.amount) || 0;
+        }
+      }
+    }
+  });
+
+  const formattedAmount = 'PHP ' + totalPaid.toLocaleString("en-PH", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+
+  $("#total-current-paid-value-individual-payments").text(formattedAmount);
+}
+
+
+function updateTotalOverpaid(renterId) {
+  let totalBills = 0;
+  let totalPayments = 0;
+
+  // Sum all rent bills amounts for the renter
+  Object.values(rentBillsMap).forEach(bill => {
+    if (String(bill.renterId) === String(renterId)) {
+      totalBills += parseFloat(bill.amount) || 0;
+    }
+  });
+
+  // Sum all utility bills amounts for the renter (Electricity & Water)
+  ['Electricity', 'Water'].forEach(type => {
+    if (utilityBillsMap[type]) {
+      utilityBillsMap[type].readings.forEach(reading => {
+        reading.bills.forEach(bill => {
+          if (String(bill.renterId) === String(renterId)) {
+            totalBills += parseFloat(bill.amount) || 0;
+          }
+        });
+      });
+    }
+  });
+
+  // Sum all payments for the renter
+  Object.values(paymentsMap).forEach(payment => {
+    if (String(payment.renterId) === String(renterId)) {
+      totalPayments += parseFloat(payment.amount) || 0;
+    }
+  });
+
+  // Calculate overpaid amount (payments - bills, only if positive)
+  const overpaid = Math.max(0, totalPayments - totalBills);
+
+  // Format amount with PHP prefix and two decimals
+  const formattedAmount = 'PHP ' + overpaid.toLocaleString("en-PH", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+
+  // Update the element with fixed id 'total-overpaid-value'
+  const $el = $('#total-overpaid-value-individual-payments');
+  if ($el.length) {
+    $el.text(formattedAmount);
+  } else {
+    console.warn('Element with id="total-overpaid-value" not found.');
+  }
+}
+
+
+
+
+
+
+    // When either select changes, update metrics
+    $('#select-payments-renter').on('change input', function() {
+      const renterId = $('#select-payments-renter').val();
+      if (renterId) {
+        updateTotalUnpaid(renterId);
+        updateTotalPaid(renterId);
+        updateTotalPaidCurrentMonth(renterId);
+        updateTotalOverpaid(renterId);
+        updateTotalOverdue(renterId);
+        // populatePaymentsSummaryForRenter(renterId);
+      }
+    });
+
     function updateIndividualMetrics(renterId, selectedMonth) {
       let totalUnpaid = 0;
       let currentBill = 0;
@@ -2692,6 +3040,7 @@ $('#total-overdue-tasks').text(totalOverdueTasks);
     function updateElectricBillCard(bill, reading, renterId) {
   // Remove any existing Pay or Paid button
   $('.electric-pay-button .pay-btn, .electric-pay-button .paid-btn').remove();
+  // $('.electric-bill-card .send-notification-billings').hide();
 
   // Get the card container
   const $card = $('.electric-bill-card .gradient-red-bg, .electric-bill-card .gradient-green-bg');
@@ -2700,11 +3049,14 @@ $('#total-overdue-tasks').text(totalOverdueTasks);
     // Ensure card is red
     $card.removeClass('gradient-green-bg').addClass('gradient-red-bg');
 
+  // $('.electric-bill-card .send-notification-billings').show();
+
+
     // Add Pay button
     $('.electric-pay-button').append(
       `<button type="button"
               class="btn-white pay-btn d-flex align-items-center px-3 py-1"
-              data-type="Electric"
+              data-type="Electricity"
               data-bill-id="${bill.id}"
               data-reading-id="${reading.id}"
               data-renter-id="${renterId}"
@@ -2712,6 +3064,7 @@ $('#total-overdue-tasks').text(totalOverdueTasks);
               data-bs-target="#modalRecordPayment">
         Pay
       </button>`
+      
     );
   } else {
     // Ensure card is green
@@ -3016,14 +3369,23 @@ function updateOverdueBillCard(overdueBills, renterId) {
 
     // Prepare a data attribute with all bill keys (IDs) for modal use
     const billIds = overdueBills.map(bill => bill.id).join(',');
-    console.log("OTHER: " + billIds);
+    console.log("Bill IDs: " + billIds);
+
+    // Prepare a data attribute with all reading IDs for modal use
+    // Assuming each bill has a readingId property; if not, adjust accordingly
+    const readingIds = overdueBills
+      .map(bill => bill.readingId || '')  // fallback to empty string if no readingId
+      .filter(id => id)                   // remove empty strings
+      .join(',');
+    console.log("Reading IDs: " + readingIds);
 
     // Add Pay button (could be for all overdue bills at once)
     $('.overdue-pay-button').append(
       `<button type="button"
               class="btn-white pay-btn d-flex align-items-center px-3 py-1"
               data-type="Overdue"
-              data-bill-ids="${billIds}"
+              data-bill-id="${billIds}"
+              data-reading-id="${readingIds}"
               data-renter-id="${renterId}"
               data-bs-toggle="modal"
               data-bs-target="#modalRecordPayment">
@@ -3314,25 +3676,35 @@ function getNextReceiptNumber() {
 
 $(document).on('click', '.pay-btn', function() {
   console.log("--- .pay-btn clicked ---");
+
   const type = $(this).attr('data-type');
-  // If your HTML uses 'Electric', consider mapping it here:
-  // const mappedType = type === 'Electric' ? 'Electricity' : type;
-  // For now, we use type as-is, but in logic, we use 'Electricity'
-  const billId = $(this).attr('data-bill-id');
-  const readingId = $(this).attr('data-reading-id');
+  const billIdStr = $(this).attr('data-bill-id') || '';
+  const readingIdStr = $(this).attr('data-reading-id') || '';
   const renterId = $(this).attr('data-renter-id');
-  console.log("type:", type, "billId:", billId, "readingId:", readingId, "renterId:", renterId);
+  console.log("type:", type, "billId:", billIdStr, "readingId:", readingIdStr, "renterId:", renterId);
 
   let bill = null;
   let reading = null;
   let billsToPay = [];
+  let readingIdsForPayment = [];  // Collect relevant reading IDs
+
+  // Helper: parse comma-separated IDs into array
+  const billIds = billIdStr.split(',').map(id => id.trim()).filter(id => id);
+  const readingIds = readingIdStr.split(',').map(id => id.trim()).filter(id => id);
+  const today = new Date();
+
+  // Helper function to check if reading is overdue
+  function isReadingOverdue(reading) {
+    if (!reading.dueDate) return false;
+    const dueDate = new Date(reading.dueDate);
+    return dueDate < today;
+  }
 
   if (type === 'Electricity' && utilityBillsMap['Electricity']) {
     console.log("Looking for Electricity bill...");
-    reading = utilityBillsMap['Electricity'].readings.find(r => r.id == readingId);
+    reading = utilityBillsMap['Electricity'].readings.find(r => r.id === readingIdStr);
     if (reading) {
-      console.log("Found reading:", reading);
-      bill = reading.bills.find(b => b.id == billId);
+      bill = reading.bills.find(b => b.id === billIdStr);
       if (bill) console.log("Found bill:", bill);
       else console.log("Bill not found in reading");
     } else {
@@ -3340,10 +3712,9 @@ $(document).on('click', '.pay-btn', function() {
     }
   } else if (type === 'Water' && utilityBillsMap['Water']) {
     console.log("Looking for Water bill...");
-    reading = utilityBillsMap['Water'].readings.find(r => r.id == readingId);
+    reading = utilityBillsMap['Water'].readings.find(r => r.id === readingIdStr);
     if (reading) {
-      console.log("Found reading:", reading);
-      bill = reading.bills.find(b => b.id == billId);
+      bill = reading.bills.find(b => b.id === billIdStr);
       if (bill) console.log("Found bill:", bill);
       else console.log("Bill not found in reading");
     } else {
@@ -3351,164 +3722,140 @@ $(document).on('click', '.pay-btn', function() {
     }
   } else if (type === 'Rent') {
     console.log("Looking for Rent bill...");
-    bill = rentBillsMap[billId];
+    bill = rentBillsMap[billIdStr];
     if (bill) console.log("Found bill:", bill);
     else console.log("Rent bill not found");
   } else if (type === 'Overdue') {
     console.log("Looking for Overdue bills...");
-    const billIdsStr = $(this).attr('data-bill-ids') || '';
-    console.log("BillIdsStr", billIdsStr);
-    const billIds = billIdsStr.split(',').map(id => id.trim()).filter(id => id);
-    console.log("Overdue bill IDs:", billIds);
 
     billIds.forEach(id => {
       let foundBill = null;
-      // Electricity
+      let foundReadingId = null;
+
+      // Check Electricity bills
       if (!foundBill && utilityBillsMap['Electricity']) {
-        console.log("Checking Electricity for bill ID:", id);
         for (const reading of utilityBillsMap['Electricity'].readings) {
-          if (Array.isArray(reading.bills)) {
-            foundBill = reading.bills.find(b => b.id === id);
-          } else if (reading.bill) {
-            const billsArr = Array.isArray(reading.bill) ? reading.bill : [reading.bill];
-            foundBill = billsArr.find(b => b.id === id);
-          }
-          if (foundBill) {
-            console.log("Found bill in Electricity:", foundBill);
-            break;
+          if (readingIds.includes(reading.id)) {
+            if (Array.isArray(reading.bills)) {
+              foundBill = reading.bills.find(b => b.id === id && isReadingOverdue(reading));
+            } else if (reading.bill) {
+              const billsArr = Array.isArray(reading.bill) ? reading.bill : [reading.bill];
+              foundBill = billsArr.find(b => b.id === id && isReadingOverdue(reading));
+            }
+            if (foundBill) {
+              foundReadingId = reading.id; // Store the reading ID
+              break;
+            }
           }
         }
       }
-      // Water
+
+      // Check Water bills
       if (!foundBill && utilityBillsMap['Water']) {
-        console.log("Checking Water for bill ID:", id);
         for (const reading of utilityBillsMap['Water'].readings) {
-          if (Array.isArray(reading.bills)) {
-            foundBill = reading.bills.find(b => b.id === id);
-          } else if (reading.bill) {
-            const billsArr = Array.isArray(reading.bill) ? reading.bill : [reading.bill];
-            foundBill = billsArr.find(b => b.id === id);
-          }
-          if (foundBill) {
-            console.log("Found bill in Water:", foundBill);
-            break;
+          if (readingIds.includes(reading.id)) {
+            if (Array.isArray(reading.bills)) {
+              foundBill = reading.bills.find(b => b.id === id && isReadingOverdue(reading));
+            } else if (reading.bill) {
+              const billsArr = Array.isArray(reading.bill) ? reading.bill : [reading.bill];
+              foundBill = billsArr.find(b => b.id === id && isReadingOverdue(reading));
+            }
+            if (foundBill) {
+              foundReadingId = reading.id; // Store the reading ID
+              break;
+            }
           }
         }
       }
-      // Rent
+
+      // Check Rent bills
       if (!foundBill && rentBillsMap[id]) {
-        console.log("Checking Rent for bill ID:", id);
-        foundBill = rentBillsMap[id];
-        if (foundBill) console.log("Found bill in Rent:", foundBill);
+        const rentBill = rentBillsMap[id];
+        if (rentBill.dueDate && new Date(rentBill.dueDate) < today) {
+          foundBill = rentBill;
+          foundReadingId = null; // No reading for rent
+        }
       }
+
       if (foundBill) {
         billsToPay.push(foundBill);
-        console.log("Added bill to billsToPay:", foundBill);
+        readingIdsForPayment.push(foundReadingId); // Track the reading ID
+        console.log("Added overdue bill to billsToPay:", foundBill, "reading ID:", foundReadingId);
       } else {
-        console.log("Bill ID not found:", id);
+        console.log("Bill ID not found or not overdue:", id);
       }
     });
 
     if (billsToPay.length === 0) {
-      console.log("No overdue bills found");
       alert("No overdue bills found. Please check the data attributes.");
       return;
     }
-    console.log("billsToPay:", billsToPay);
   }
 
-  // If not overdue type, check if bill found
+  // For non-overdue types, check if bill found
   if (type !== 'Overdue' && !bill) {
-    console.log("Bill not found");
     alert("Bill not found. Please check the data attributes.");
     return;
   }
 
   // === SET PAYMENT CONTEXT ===
   if (type === 'Overdue') {
-    console.log("Setting context for overdue payment");
     paymentContext.isOverduePayment = true;
     paymentContext.overdueBillIdsArray = billsToPay.map(b => b.id);
+
+    // Update selectedReadingId to contain only relevant reading IDs
+    paymentContext.selectedReadingId = readingIdsForPayment.filter(id => id).length === 1 ? readingIdsForPayment[0] : readingIdsForPayment.filter(id => id); // Remove null and undefined values
+
     paymentContext.selectedBillId = null;
-    paymentContext.selectedReadingId = null;
   } else {
-    console.log("Setting context for single bill payment");
     paymentContext.isOverduePayment = false;
-    paymentContext.selectedBillId = billId || null;
-    paymentContext.selectedReadingId = readingId || null;
+    paymentContext.selectedBillId = billIdStr || null;
+    paymentContext.selectedReadingId = readingIdStr || null;
     paymentContext.overdueBillIdsArray = [];
   }
-  console.log("paymentContext:", {
-    isOverduePayment: paymentContext.isOverduePayment,
-    overdueBillIdsArray: paymentContext.overdueBillIdsArray,
-    selectedBillId: paymentContext.selectedBillId,
-    selectedReadingId: paymentContext.selectedReadingId
-  });
 
-  // Set modal fields
+  console.log("paymentContext:", paymentContext);
+
+  // Set renter ID in modal
   $('#record-payment-renter').val(renterId);
-  console.log("Set renter ID:", renterId);
 
   // --- CHECKBOX LOGIC ---
   if (type === 'Overdue') {
-    console.log("Setting checkboxes for overdue payment");
     $('#record-payment-electric-checkbox').prop('checked', false);
     $('#record-payment-water-checkbox').prop('checked', false);
     $('#record-payment-rent-checkbox').prop('checked', false);
 
-    const typesPresent = new Set(billsToPay.map(b => b.type || 
-      (b.id && b.id.startsWith('E') ? 'Electricity' : 
-       b.id && b.id.startsWith('W') ? 'Water' : 
+    const typesPresent = new Set(billsToPay.map(b => b.type ||
+      (b.id && b.id.startsWith('E') ? 'Electricity' :
+       b.id && b.id.startsWith('W') ? 'Water' :
        b.id && b.id.startsWith('R') ? 'Rent' : null)
     ));
-    if (typesPresent.has('Electricity')) {
-      $('#record-payment-electric-checkbox').prop('checked', true);
-      console.log("Checked Electricity");
-    }
-    if (typesPresent.has('Water')) {
-      $('#record-payment-water-checkbox').prop('checked', true);
-      console.log("Checked Water");
-    }
-    if (typesPresent.has('Rent')) {
-      $('#record-payment-rent-checkbox').prop('checked', true);
-      console.log("Checked Rent");
-    }
+    if (typesPresent.has('Electricity')) $('#record-payment-electric-checkbox').prop('checked', true);
+    if (typesPresent.has('Water')) $('#record-payment-water-checkbox').prop('checked', true);
+    if (typesPresent.has('Rent')) $('#record-payment-rent-checkbox').prop('checked', true);
   } else {
-    console.log("Setting checkboxes for single bill payment");
     $('#record-payment-electric-checkbox').prop('checked', type === 'Electricity');
     $('#record-payment-water-checkbox').prop('checked', type === 'Water');
     $('#record-payment-rent-checkbox').prop('checked', type === 'Rent');
-    console.log("Electricity:", type === 'Electricity', "Water:", type === 'Water', "Rent:", type === 'Rent');
   }
 
   // --- AMOUNT LOGIC ---
-let amount = 0;
-if (type === 'Overdue') {
-  console.log("Calculating amount for overdue bills");
-  amount = billsToPay.reduce((sum, b) => {
-    return sum + (b.status === 'Unpaid' ? Number(b.amount) : Number(b.debt));
-  }, 0);
-  console.log("Total amount for overdue bills:", amount);
-} else {
-  console.log("Calculating amount for single bill");
-  if (bill.status === 'Partial') {
-    amount = Number(bill.debt);
-    console.log("Partial bill, amount:", amount);
+  let amount = 0;
+  if (type === 'Overdue') {
+    amount = billsToPay.reduce((sum, b) => {
+      return sum + (b.status === 'Unpaid' ? Number(b.amount) : Number(b.debt));
+    }, 0);
   } else {
-    amount = Number(bill.amount);
-    console.log("Full bill, amount:", amount);
+    if (bill.status === 'Partial') {
+      amount = Number(bill.debt);
+    } else {
+      amount = Number(bill.amount);
+    }
   }
-}
-
 
   $('#record-payment-payment-amount').val(amount);
-  console.log("Set payment amount:", amount);
-
   $('#record-payment-payment-date').val(formatDateToYYYYMMDD(new Date()));
-  console.log("Set payment date");
-
   $('#record-payment-receipt-number').text(getNextReceiptNumber());
-  console.log("Set receipt number");
 
   $('#modalRecordPayment').modal('show');
   console.log("Showed modal");
@@ -3673,6 +4020,16 @@ $(document).ready(function () {
       },
       order: [[2, 'desc']] // Sort by 3rd column (Month Due) descending
     });
+                $('#payments-summary-individual').DataTable({
+                  layout: {
+                  bottomStart: {
+                  buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                  }
+                  },
+                  order: [[0, 'desc']] // Sort by 3rd column (Month Due) descending
+                });
+
+
     
       
     }, 0);
@@ -4864,14 +5221,14 @@ function populateModifyElectricBillTable(dueDate) {
     reading = utilityBillsMap['Electricity'].readings.find(r => r.dueDate && r.dueDate === dueDate);
     if (reading) {
       readingId = reading.id || '';
-      totalBillFromXML = parseFloat(reading.totalBill) || 0;
+      totalBillFromXML = parseFloat(reading.totalBill.replace(/,/g, '')) || 0;
     }
   }
 
   // Store reading ID for form submission
   $('#form-modify-electric').data('readingId', readingId);
 
-  $('#modify-billings-electric-total-bill').val(totalBillFromXML ? formatPHP(totalBillFromXML) : '');
+  $('#modify-billings-electric-total-bill').val(totalBillFromXML);
 
   Object.keys(renterDataMap).forEach(renterId => {
     const renter = renterDataMap[renterId];
@@ -4887,7 +5244,7 @@ function populateModifyElectricBillTable(dueDate) {
       bill = reading.bills.find(b => String(b.renterId) === String(renterId));
       if (bill) {
         billId = bill.id || '';
-        previousReading = parseFloat(bill.previousReading) || 0;
+        previousReading = getPreviousElectricReadingProcessing(renterId, new Date(dueDate).toISOString().slice(0, 7));
         currentReading = bill.currentReading || '';
         consumedKwh = parseFloat(bill.consumedKwh) || (parseFloat(currentReading) - previousReading);
         amountPerKwh = parseFloat(reading.amountPerKwh || bill.amountPerKwh) || 0;
@@ -4997,7 +5354,6 @@ $('#button-modify-electric').on("click", function () {
   if (!isDecimal(totalBill)) {
     return showError("Total bill must be decimal.", "#error-box-modify-electric", "#error-text-modify-electric");
   }
-
   let isValid = true;
   let errorMessage = "";
 
@@ -5165,14 +5521,14 @@ function populateModifyWaterBillTable(dueDate) {
     reading = utilityBillsMap['Water'].readings.find(r => r.dueDate && r.dueDate === dueDate);
     if (reading) {
       readingId = reading.id || '';
-      totalBillFromXML = parseFloat(reading.totalBill) || 0;
+      totalBillFromXML = parseFloat(reading.totalBill.replace(/,/g, '')) || 0;
     }
   }
 
   // Store reading ID for form submission
   $('#form-modify-water').data('readingId', readingId);
 
-  $('#modify-billings-water-total-bill').val(totalBillFromXML ? formatPHP(totalBillFromXML) : '');
+  $('#modify-billings-water-total-bill').val(totalBillFromXML);
 
   Object.keys(renterDataMap).forEach(renterId => {
     const renter = renterDataMap[renterId];
@@ -5188,7 +5544,7 @@ function populateModifyWaterBillTable(dueDate) {
       bill = reading.bills.find(b => String(b.renterId) === String(renterId));
       if (bill) {
         billId = bill.id || '';
-        previousReading = parseFloat(bill.previousReading) || 0;
+        previousReading = getPreviousWaterReadingProcessing(renterId, new Date(dueDate).toISOString().slice(0, 7));
         currentReading = bill.currentReading || '';
         consumedM3 = parseFloat(bill.consumedM3) || (parseFloat(currentReading) - previousReading);
         amountPerM3 = parseFloat(reading.amountPerM3 || bill.amountPerM3) || 0;
@@ -5469,7 +5825,7 @@ function populateWaterBillTable() {
     const today = new Date();
     const currentMonth = today.toISOString().slice(0, 7);
 
-    let previousReading = getPreviousWaterReading(renterId, currentMonth);
+    let previousReading = getPreviousWaterReadingProcessing(renterId, currentMonth);
 
     $tbody.append(`
       <tr>
@@ -5835,21 +6191,45 @@ $(document).ready(function() {
 
 
 
-  $('#button-modify-electric').on("click", function () {
-    // TODO: PROCESS
-    $('#modalModifyElectricBill').modal('hide');
-    $('#modalModifyElectricBillConfirmation').modal('show');
-  });
+  // $('#button-modify-electric').on("click", function () {
+  //   // TODO: PROCESS
+  //   $('#modalModifyElectricBill').modal('hide');
+  //   $('#modalModifyElectricBillConfirmation').modal('show');
+  // });
 
-   $('#button-confirm-modify-electric').on("click", function () {
-    // TODO: XML Write Save
-    // TODO: Clear
-  });
-
-
+  //  $('#button-confirm-modify-electric').on("click", function () {
+  //   // TODO: XML Write Save
+  //   // TODO: Clear
+  // });
 
 
 
+
+
+function getPreviousWaterReadingProcessing(renterId, selectedMonth) {
+  const waterUtility = utilityBillsMap['Water'];
+  if (!waterUtility) return '';
+
+  // Sort readings by dueDate ascending
+  const readings = waterUtility.readings
+    .filter(r => r.dueDate)
+    .sort((a, b) => a.dueDate.localeCompare(b.dueDate));
+
+  // Filter readings with dueDate before selectedMonth
+  const previousReadings = readings.filter(r => r.dueDate < selectedMonth);
+
+  // Iterate from latest to earliest previous reading
+  for (let i = previousReadings.length - 1; i >= 0; i--) {
+    const reading = previousReadings[i];
+    const prevBill = reading.bills.find(b => String(b.renterId) === String(renterId));
+    if (prevBill && prevBill.currentReading != null && prevBill.currentReading !== '') {
+      return prevBill.currentReading;
+    }
+  }
+
+  // If none found, return empty string
+  return '';
+}
 
 
 function getPreviousWaterReading(renterId, selectedMonth) {
@@ -5908,7 +6288,7 @@ function getPreviousWaterReading(renterId, selectedMonth) {
     const currentReading = parseFloat(bill.currentReading) || 0;
     const previousReading = getPreviousWaterReading(renterId, monthYear);
     const consumedM3 = parseFloat(bill.consumedM3) || (currentReading - previousReading);
-    const amountPerM3 = parseFloat(bill.amountPerM3) || 0;
+    const amountPerM3 = parseFloat(readingForMonth.amountPerKwh) || 0;
     const total = parseFloat(bill.amount) || (consumedM3 * amountPerM3);
 
     totalConsumedM3 += consumedM3;
@@ -5951,16 +6331,7 @@ $(document).ready(function() {
   });
 });
 
-  $('#button-modify-water').on("click", function () {
-    // TODO: PROCESS
-    $('#modalModifyWaterBill').modal('hide');
-    $('#modalModifyWaterBillConfirmation').modal('show');
-  });
 
-   $('#button-confirm-modify-water').on("click", function () {
-    // TODO: XML Write Save
-    // TODO: Clear
-  });
 
   // When modal is shown, populate fields from XML
   $('#modalModifyElectricMetadata').on('shown.bs.modal', function() {
@@ -6139,7 +6510,7 @@ $('#button-record-payment').on("click", function () {
 
     // Fill confirmation modal
     $("#confirm-record-receipt-number").text(receiptID);
-    $("#confirm-record-renter-id").text(renterId);
+    $("#confirm-record-renter-id").text(renterDataMap[renterId].firstName + " " + renterDataMap[renterId].middleName + " " + renterDataMap[renterId].surname + " " + renterDataMap[renterId].extension);
     $("#confirm-record-payment-type").text(paymentTypes.join(", "));
     $("#confirm-record-payment-date").text(paymentDate);
     $("#confirm-record-payment-amount").text(paymentAmount);
@@ -6162,10 +6533,12 @@ $('#button-record-payment').on("click", function () {
         $("#hidden-record-bill-id").val("");
         $("#hidden-record-reading-id").val("");
         $("#hidden-record-overdue-bill-ids").val(paymentContext.overdueBillIdsArray.join(","));
+        $("#hidden-record-overdue-reading-ids").val(paymentContext.selectedReadingId.join(","));
     } else {
         $("#hidden-record-bill-id").val(paymentContext.selectedBillId || "");
         $("#hidden-record-reading-id").val(paymentContext.selectedReadingId || "");
         $("#hidden-record-overdue-bill-ids").val("");
+        $("#hidden-record-overdue-reading-ids").val("");
     }
 
     $('#modalRecordPayment').modal('hide');
@@ -6196,6 +6569,81 @@ $('#record-payment-rent-checkbox').prop('checked', false);
     // TODO: Notify Renter
   });
   
+// Main handler for record payment button
+$('#button-record-payment-on-payment').on("click", function () {
+    // Collect input values
+    const receiptID = getNextReceiptNumber();
+    const renterId = $("#record-payment-renter-on-payment").val();
+    const paymentTypes = [];
+    if ($("#record-payment-electric-checkbox-on-payment").is(":checked")) paymentTypes.push("Electricity");
+    if ($("#record-payment-water-checkbox-on-payment").is(":checked")) paymentTypes.push("Water");
+    if ($("#record-payment-rent-checkbox-on-payment").is(":checked")) paymentTypes.push("Rent");
+
+    const paymentDate = $("#record-payment-payment-date-on-payment").val().trim();
+    const paymentAmount = $("#record-payment-payment-amount-on-payment").val().trim();
+    const paymentMethod = $("#record-payment-method-on-payment").val(); 
+    const paymentAmountType = $("#record-payment-amount-type-on-payment").val();
+    const remarks = $("#record-payment-remarks-on-payment").val().trim();
+
+    // VALIDATIONS
+    if (!renterId || !paymentTypes.length || !paymentDate || !paymentAmount || !paymentMethod || !paymentAmountType) {
+      return showError("All required fields must be filled.", "#error-box-record-payment-on-payment", "#error-text-record-payment-on-payment");
+    }    
+
+    if ([renterId, paymentTypes, paymentDate, paymentAmount, paymentMethod, paymentAmountType].some(isWhitespaceOnly)) {
+      return showError("Whitespace-only fields are not allowed.", "#error-box-record-payment-on-payment", "#error-text-record-payment-on-payment");
+    }
+    if ([renterId, paymentTypes, paymentDate, paymentAmount, paymentMethod, paymentAmountType, remarks].some(f => exceedsLengthLimit(f))) {
+      return showError("One or more fields exceed the length limit.", "#error-box-record-payment-on-payment", "#error-text-record-payment-on-payment");
+    }
+    if (!isNumber(paymentAmount)) {
+      return showError("Payment amount must be numeric only.", "#error-box-record-payment-on-payment", "#error-text-record-payment-on-payment");
+    }
+
+    // Fill confirmation modal
+    $("#confirm-record-receipt-number-on-payment").text(receiptID);
+    $("#confirm-record-renter-id-on-payment").text(
+      renterDataMap[renterId].firstName + " " + renterDataMap[renterId].middleName + " " + renterDataMap[renterId].surname + " " + renterDataMap[renterId].extension
+    );
+    $("#confirm-record-payment-type-on-payment").text(paymentTypes.join(", "));
+    $("#confirm-record-payment-date-on-payment").text(paymentDate);
+    $("#confirm-record-payment-amount-on-payment").text(paymentAmount);
+    $("#confirm-record-payment-method-on-payment").text(paymentMethod);
+    $("#confirm-record-payment-amount-type-on-payment").text(paymentAmountType);
+    $("#confirm-record-payment-remarks-on-payment").text(remarks);
+
+    // FILL Hidden form for PHP (for payment confirmation)
+    $("#hidden-record-receipt-number-on-payment").val(receiptID);
+    $("#hidden-record-renter-id-on-payment").val(renterId);
+    $("#hidden-record-payment-type-on-payment").val(paymentTypes.join(", "));
+    $("#hidden-record-payment-date-on-payment").val(paymentDate);
+    $("#hidden-record-payment-amount-on-payment").val(paymentAmount);
+    $("#hidden-record-payment-method-on-payment").val(paymentMethod);
+    $("#hidden-record-payment-amount-type-on-payment").val(paymentAmountType);
+    $("#hidden-record-payment-remarks-on-payment").val(remarks);
+
+    $('#modalRecordPayment-on-payment').modal('hide');
+    $('#modalRecordPaymentConfirmation-on-payment').modal('show');
+    hideError("#error-box-record-payment-on-payment", "#error-text-record-payment-on-payment");
+});
+
+$('#button-confirm-record-payment-on-payment').on("click", function () {
+    // TODO: XML Write Save
+    clearFieldsByIds([
+      "record-payment-renter-on-payment",
+      "record-payment-electric-checkbox-on-payment",
+      "record-payment-water-checkbox-on-payment",
+      "record-payment-rent-checkbox-on-payment",
+      "record-payment-payment-date-on-payment",
+      "record-payment-payment-amount-on-payment",
+      "record-payment-method-on-payment",
+      "record-payment-amount-type-on-payment",
+      "record-payment-remarks-on-payment"
+    ]);
+    $('#record-payment-electric-checkbox-on-payment').prop('checked', false);
+    $('#record-payment-water-checkbox-on-payment').prop('checked', false);
+    $('#record-payment-rent-checkbox-on-payment').prop('checked', false);
+});
 
 
   // $('#button-login').on("click", function () {

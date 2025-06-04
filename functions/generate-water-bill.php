@@ -6,7 +6,6 @@ error_reporting(E_ALL);
 $xmlFile = '../apartment.xml';
 
 if (file_exists($xmlFile)) {
-    echo "XML file found.<br>";
     $xml = simplexml_load_file($xmlFile);
 } else {
     exit('XML file not found.');
@@ -23,51 +22,35 @@ foreach ($xml->billing->utilityBills->utility as $util) {
 if (!$utility) {
     exit('Water utility not found in XML.');
 }
-echo "Water utility node found.<br>";
 
 // Determine new reading ID
-if (!isset($utility->reading)) {
-    $newReadingId = 0;
-    echo "No existing readings, starting at ID 0.<br>";
-} else {
-    $lastReadingId = -1;
+$newReadingId = 0;
+if (isset($utility->reading)) {
     foreach ($utility->reading as $readingNode) {
-        $id = (int)$readingNode['id'];
-        if ($id > $lastReadingId) $lastReadingId = $id;
+        $currentId = (int)$readingNode['id'];
+        if ($currentId >= $newReadingId) {
+            $newReadingId = $currentId + 1;
+        }
     }
-    $newReadingId = $lastReadingId + 1;
-    echo "Last reading ID: $lastReadingId, new reading ID: $newReadingId<br>";
 }
 
 // Set readingDate to today
 $readingDate = date('Y-m-d');
 
-// Set periodEnd to 10th of current month
-$periodEnd = date('Y-m-10');
+// Set periodEnd to 10th of current month or from POST
+$periodEnd = $_POST['periodEnd'] ?? date('Y-m-10');
 
 // Use posted due date or default to today
 $dueDate = $_POST['monthDue'] ?? date('Y-m-d');
 
 $status = 'Unpaid';
 
-echo "Reading Date: $readingDate<br>";
-echo "Period End: $periodEnd<br>";
-echo "Due Date: $dueDate<br>";
-
+// Renters data from POST
 $renters = $_POST['renters'] ?? [];
 
-echo "Renters data received:<br>";
-echo "<pre>" . print_r($renters, true) . "</pre>";
-
-// Calculate total consumed water and total bill amount, removing commas
+// Initialize totals
 $consumedWaterTotal = 0;
 $totalBill = 0;
-foreach ($renters as $renter) {
-    $consumedWaterTotal += floatval(str_replace(',', '', $renter['consumedM3'] ?? 0));
-    $totalBill += floatval(str_replace(',', '', $renter['total'] ?? 0));
-}
-echo "Total consumed water (m3): $consumedWaterTotal<br>";
-echo "Total Bill (sum of renters): $totalBill<br>";
 
 // Create new reading node
 $reading = $utility->addChild('reading');
@@ -75,52 +58,49 @@ $reading->addAttribute('id', $newReadingId);
 $reading->addChild('readingDate', htmlspecialchars($readingDate));
 $reading->addChild('periodEnd', htmlspecialchars($periodEnd));
 $reading->addChild('dueDate', htmlspecialchars($dueDate));
-$reading->addChild('consumedWaterTotal', $consumedWaterTotal);
-$reading->addChild('totalBill', $totalBill);
+$reading->addChild('amountPerCubicM', ''); // Will set from first renter below
+$reading->addChild('consumedCubicMTotal', 0); // Will update after processing renters
+$reading->addChild('totalBill', 0); // Will update after processing renters
 $reading->addChild('status', $status);
 
 $billsNode = $reading->addChild('bills');
 
-// Determine next bill ID
-$lastBillId = -1;
-foreach ($utility->reading as $rd) {
-    foreach ($rd->bills->bill as $billNode) {
-        $billId = (int)preg_replace('/\D/', '', (string)$billNode['id']);
-        if ($billId > $lastBillId) $lastBillId = $billId;
-    }
-}
-$nextBillId = $lastBillId + 1;
-echo "Last bill ID: $lastBillId, next bill ID: $nextBillId<br>";
+$firstBill = true;
 
-// Add bill nodes for each renter
-$once = true;
-foreach ($renters as $renterId => $renter) {
+foreach ($renters as $renterId => $renterData) {
     $bill = $billsNode->addChild('bill');
-    $billIdStr = "W" . $nextBillId++; // Prefix W for Water bills
-    $bill->addAttribute('id', $billIdStr);
+    // Generate bill ID with prefix 'W' and unique number (e.g., newReadingId * 100 + renterId)
+    $billId = 'W' . ($newReadingId * 100 + intval($renterId));
+    $bill->addAttribute('id', $billId);
+
     $bill->addChild('renterId', htmlspecialchars($renterId));
-    $bill->addChild('currentReading', htmlspecialchars($renter['currentReading'] ?? ''));
-    $bill->addChild('previousReading', htmlspecialchars($renter['previousReading'] ?? ''));
-    $bill->addChild('consumedM3', htmlspecialchars($renter['consumedM3'] ?? ''));
-    $bill->addChild('amountPerM3', htmlspecialchars(str_replace(',', '', $renter['amountPerM3'] ?? '')));
-    $bill->addChild('amount', htmlspecialchars(str_replace(',', '', $renter['total'] ?? '')));
-    $bill->addChild('overpaid', 0);
-    $bill->addChild('debt', 0);
+    $bill->addChild('currentReading', htmlspecialchars($renterData['currentReading'] ?? ''));
+    $bill->addChild('previousReading', htmlspecialchars($renterData['previousReading'] ?? ''));
+    $bill->addChild('consumedCubic', htmlspecialchars(str_replace(',', '', $renterData['consumedM3'] ?? '')));
+    $bill->addChild('amountPerCubicM', htmlspecialchars(str_replace(',', '', $renterData['amountPerM3'] ?? '')));
+    $bill->addChild('amount', htmlspecialchars(str_replace(',', '', $renterData['total'] ?? '')));
+    $bill->addChild('overpaid', '0');
+    $bill->addChild('debt', '0');
     $bill->addChild('status', $status);
 
-    if ($once) {
-        $reading->addChild('amountPerM3', htmlspecialchars(str_replace(',', '', $renter['amountPerM3'] ?? '')));
-        $once = false;
+    // For the first bill, set reading's amountPerCubicM
+    if ($firstBill) {
+        $reading->amountPerCubicM = htmlspecialchars(str_replace(',', '', $renterData['amountPerM3'] ?? ''));
+        $firstBill = false;
     }
 
-    echo "Added water bill for renter ID $renterId with bill ID $billIdStr<br>";
+    // Accumulate totals
+    $consumedWaterTotal += floatval(str_replace(',', '', $renterData['consumedM3'] ?? 0));
+    $totalBill += floatval(str_replace(',', '', $renterData['total'] ?? 0));
 }
+
+// Update totals in reading node
+$reading->consumedCubicMTotal = $consumedWaterTotal;
+$reading->totalBill = $totalBill;
 
 // Save XML
 if ($xml->asXML($xmlFile) === false) {
     exit('Failed to save XML file.');
-} else {
-    echo "XML file saved successfully.<br>";
 }
 
 // Redirect after processing

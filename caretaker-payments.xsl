@@ -130,15 +130,12 @@
                                             bottomStart: {
                                             buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
                                             }
-                                            }
+                                            },
+                                            order: [[0, 'desc']] // Sort by 3rd column (Month Due) descending
                                             });
-                                            $('#payments-summary-individual').DataTable({
-                                            layout: {
-                                            bottomStart: {
-                                            buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
-                                            }
-                                            }
-                                            });
+                
+
+                                        
                                             
                                             });
                                             
@@ -320,7 +317,7 @@
                                                                 <button type="button"
                                                                         class="btn-red d-flex align-items-center px-3 py-1"
                                                                         data-bs-toggle="modal"
-                                                                        data-bs-target="#modalRecordPayment">
+                                                                        data-bs-target="#modalRecordPayment-on-payment">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" height="24px"
                                                                          viewBox="0 -960 960 960" width="24px"
                                                                          fill="#891B1B">
@@ -358,7 +355,7 @@
                                                                             <div
                                                                                 class="gradient-red-bg d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
                                                                                 <p class="h6 font-white my-0">Total Unpaid</p>
-                                                                                <p class="h3 font-white my-0" id="total-unpaid-in-payments">PHP 7,208.28</p>
+                                                                                <p class="h3 font-white my-0" id="total-unpaid-in-payments">PHP 0.00</p>
                                                                             </div>
                                                                         </div>
                                                                         
@@ -366,7 +363,7 @@
                                                                             <div
                                                                                 class="gradient-red-bg d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
                                                                                 <p class="h6 font-white my-0">Total Current Payments</p>
-                                                                                <p class="h3 font-white my-0" id="total-current-in-payments">PHP 7,208.28</p>
+                                                                                <p class="h3 font-white my-0" id="total-current-in-payments">PHP 0.00</p>
                                                                             </div>
                                                                         </div>
                                                                         
@@ -403,7 +400,8 @@
                                                             <!-- Get Room Number from renter information -->
                                                             <td>
                                                                 <xsl:variable name="renterId" select="renterId"/>
-                                                                <xsl:value-of select="$data//apartmentManagement/renters/renter[@id=$renterId]/roomNo"/>
+                                                                <xsl:variable name="unitId" select="$data//apartmentManagement/renters/renter[@id=$renterId]/rentalInfo/unitId"/>
+                                                                <xsl:value-of select="$data//apartmentManagement/rooms/room[@id=$unitId]/roomNo"/>
                                                             </td>
                                                             
                                                             <!-- Renter Name -->
@@ -459,66 +457,75 @@
                                                                     class="d-flex flex-sm-row flex-column justify-content-between align-items-start mt-3">
                                                                     <!-- TODO: Populate from XML -->
                                                                     <div class="d-flex flex-column align-items-start w-100">
-                                                                        <select class="form-select custom-select select-sort"
-                                                                                id="select-payments-renter">
-                                                                            <option selected="selected" disabled="disabled " hidden="hidden">Renter</option>
-                                                                            <option value="userid">Dave Alon</option>
+                                                                        <select class="form-select custom-select select-sort me-1 col-1" id="select-payments-renter">
+                                                                            <option selected="selected" disabled="disabled" hidden="hidden">Select Renter...</option>
+                                                                            <xsl:for-each select="$data//apartmentManagement/renters/renter[status='Active']">
+                                                                                <option value="{@id}">
+                                                                                    <xsl:value-of select="personalInfo/name/firstName"/>
+                                                                                    <xsl:text> </xsl:text>
+                                                                                    <xsl:value-of select="personalInfo/name/middleName"/>
+                                                                                    <xsl:if test="personalInfo/name/middleName"> </xsl:if>
+                                                                                    <xsl:text> </xsl:text>
+                                                                                    <xsl:value-of select="personalInfo/name/surname"/>
+                                                                                    <xsl:if test="personalInfo/name/extension">
+                                                                                        <xsl:text> </xsl:text>
+                                                                                        <xsl:value-of select="personalInfo/name/extension"/>
+                                                                                    </xsl:if>
+                                                                                </option>
+                                                                            </xsl:for-each>
                                                                         </select>
+                                                                                    
+                                                                      
                                                                         <p class="font-red mt-2">As of <span
                                                                                 class="current-date"></span></p>
                                                                         
                                                                         <!-- METRICS -->
                                                                         <div class="row gx-3 gy-3 w-100">
                                                                             <div class="col-12 col-sm-6 col-lg-3">
-                                                                                <div
-                                                                                    class="gradient-red-bg d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
-                                                                                    <p class="h6 font-white my-0 text-center">Total
-                                                                                        Unpaid</p>
-                                                                                    <p class="h3 font-white my-0 text-center">PHP
-                                                                                        7,208.28</p>
+                                                                                <div class="gradient-red-bg d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
+                                                                                    <p class="h6 font-white my-0 text-center">Total Unpaid</p>
+                                                                                    <p class="h3 font-white my-0 text-center" id="total-unpaid-value-individual-payments">PHP 0.00</p>
                                                                                 </div>
                                                                             </div>
+                                                                              
                                                                             
                                                                             <div class="col-12 col-sm-6 col-lg-3">
                                                                                 <div
                                                                                     class="gradient-red-bg d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
-                                                                                    <p class="h6 font-white my-0 text-center">Total Current
-                                                                                        Inflows</p>
-                                                                                    <p class="h3 font-white my-0 text-center">PHP
-                                                                                        7,208.28</p>
+                                                                                    <p class="h6 font-white my-0 text-center">Total Paid</p>
+                                                                                    <p class="h3 font-white my-0 text-center" id="total-paid-value-individual-payments">PHP
+                                                                                        0.00</p>
                                                                                 </div>
                                                                             </div>
-                                                                            
+                                                
                                                                             <div class="col-12 col-sm-6 col-lg-3">
-                                                                                <div
-                                                                                    class="red-border d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
-                                                                                    <p class="h6 font-red my-0 text-center">Total Current
-                                                                                        Paid</p>
-                                                                                    <p class="h3 font-red my-0 text-center">PHP 7,208.28</p>
+                                                                                <div class="red-border d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
+                                                                                    <p class="h6 font-red my-0 text-center">Total Current Paid</p>
+                                                                                    <p class="h3 font-red my-0 text-center" id="total-current-paid-value-individual-payments">PHP 0.00</p>
                                                                                 </div>
                                                                             </div>
-                                                                            
+                                                
+                                                
                                                                             <div class="col-12 col-sm-6 col-lg-3">
-                                                                                <div
-                                                                                    class="red-border d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
+                                                                                <div class="red-border d-flex flex-column align-items-center justify-content-center rounded-4 p-3 px-4 h-100">
                                                                                     <p class="h6 font-red my-0 text-center">Overpaid</p>
-                                                                                    <p class="h3 font-red my-0 text-center">PHP 7,208.28</p>
+                                                                                    <p class="h3 font-red my-0 text-center" id="total-overpaid-value-individual-payments">PHP 0.00</p>
                                                                                 </div>
                                                                             </div>
+                                                                              
                                                                             
                                                                         </div>
-                                                                        
+                                            
                                                                         <div class="col-12 col-sm-6 col-lg-6 mt-4">
-                                                                            <div
-                                                                                class="red-border d-flex flex-row align-items-center justify-content-between rounded-4 p-3 px-4 h-100">
+                                                                            <div class="red-border d-flex flex-row align-items-center justify-content-between rounded-4 p-3 px-4 h-100">
                                                                                 <p class="h6 font-red my-0 me-1 text-center">Overdue</p>
-                                                                                <p class="h3 font-red my-0 me-1 text-center">PHP
-                                                                                    7,208.28</p>
+                                                                                <p class="h3 font-red my-0 me-1 text-center" id="total-overdue-value-individual-payments">PHP 0.00</p>
                                                                                 <button type="button" class="btn-red-fill"
                                                                                         data-bs-toggle="modal"
                                                                                         data-bs-target="#modalSendNotificationConfirmation">Notify</button>
                                                                             </div>
                                                                         </div>
+                                                                                                    
                                                                         
                                                                         <p class="h3 font-red-gradient me-2 mt-3">Payments History</p>
                                                                         <div class="horizontal mt-1 w-100"></div>
@@ -538,15 +545,7 @@
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>
-                                                                                <tr>
-                                                                                    <td>R25000001</td>
-                                                                                    <td>1A</td>
-                                                                                    <td>Dave Alon</td>
-                                                                                    <td>02/12/2025</td>
-                                                                                    <td>PHP 4,291.18</td>
-                                                                                    <td>Rent</td>
-                                                                                    <td>Full Payment</td>
-                                                                                </tr>
+                                                                               
                                                                             </tbody>
                                                                         </table>
                                                                         
@@ -558,213 +557,199 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                                            
-                                                            <!-- Modal Record Payment -->
-  <div class="modal fade" id="modalRecordPayment" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-md modal-fullscreen-md-down">
-      <div class="modal-content p-4">
-
-        <!-- Modal Header -->
-        <div class="modal-header d-flex flex-column align-items-start">
-          <p class="modal-title h2 font-red-gradient">Record
-            Payment</p>
-          <p class="modal-title h4 font-red-gradient" id="record-payment-receipt-number"></p>
-        </div>
-
-        <!-- Modal body -->
-        <div class="modal-body">
-          <div class="d-flex flex-column">
-            <select class="form-select custom-select select-sort me-1 col-1" id="record-payment-renter">
-              <option selected="selected" disabled="disabled" hidden="hidden">Renter Name *</option>
-              <xsl:for-each select="$data//apartmentManagement/renters/renter[status='Active']">
-                    <option value="{userId}">
-                      <xsl:value-of select="personalInfo/name/firstName"/>
-                      <xsl:text> </xsl:text>
-                      <xsl:value-of select="personalInfo/name/middleName"/>
-                      <xsl:if test="personalInfo/name/middleName"> </xsl:if>
-                        <xsl:text> </xsl:text>
-                      <xsl:value-of select="personalInfo/name/surname"/>
-                      <xsl:if test="personalInfo/name/extension">
-                        <xsl:text> </xsl:text>
-                        <xsl:value-of select="personalInfo/name/extension"/>
-                      </xsl:if>
-                    </option>
-                  </xsl:for-each>
-            </select>
-            <p class="h4 font-red-gradient mt-3">Payment Type</p>
-            <div class="d-flex flex-row">
-              <label class="custom-checkbox-container me-2">
-                <input type="checkbox" class="custom-checkbox" id="record-payment-electric-checkbox"/>
-                Electricity
-              </label>
-              <label class="custom-checkbox-container me-2">
-                <input type="checkbox" class="custom-checkbox" id="record-payment-water-checkbox"/>
-                Water
-              </label>
-              <label class="custom-checkbox-container me-2">
-                <input type="checkbox" class="custom-checkbox" id="record-payment-rent-checkbox"/>
-                Rent
-              </label>
-            </div>
-            <p class="h4 font-red-gradient mt-3">Payment Details</p>
-            <div class="date-input-container me-2 mt-3 flex-fill" style="transform: translateX(0);">
-              <label for="record-payment-payment-date" class="date-label">Payment Date <span>*</span></label>
-              <label class="date-input-wrapper">
-                <input type="date" id="record-payment-payment-date" class="custom-date-input" required="required"/>
-                <span class="calendar-icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px"
-                    viewBox="0 -960 960 960" width="24px" fill="#8B0000">
-                    <path
-                      d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Zm280 240q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm-160 0q-17 0-28.5-11.5T280-440q0-17 11.5-28.5T320-480q17 0 28.5 11.5T360-440q0 17-11.5 28.5T320-400Zm320 0q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400ZM480-240q-17 0-28.5-11.5T440-280q0-17 11.5-28.5T480-320q17 0 28.5 11.5T520-280q0 17-11.5 28.5T480-240Zm-160 0q-17 0-28.5-11.5T280-280q0-17 11.5-28.5T320-320q17 0 28.5 11.5T360-280q0 17-11.5 28.5T320-240Zm320 0q-17 0-28.5-11.5T600-280q0-17 11.5-28.5T640-320q17 0 28.5 11.5T680-280q0 17-11.5 28.5T640-240Z" />
-                  </svg></span>
-              </label>
-            </div>
-            <div class="form-floating me-2 flex-fill mt-3">
-              <input type="text" class="form-control" id="record-payment-payment-amount" placeholder="placeholder" required="required"/>
-              <label for="record-payment-payment-amount">Payment
-                Amount *</label>
-            </div>
-            <select class="form-select custom-select select-sort me-1 col-1 mt-3" id="record-payment-method">
-              <option selected="selected" disabled="disabled" hidden="hidden" value="">Payment Method
-                *</option>
-              <option value="cash">Cash</option>
-              <option value="gcash">GCash</option>
-            </select>
-            <select class="form-select custom-select select-sort me-1 col-1 mt-3" id="record-payment-amount-type">
-              <option selected="selected" disabled="disabled" hidden="hidden" value="">Payment Amount Type
-                *</option>
-              <option value="full">Full Payment</option>
-              <option value="partial">Partial Payment</option>
-            </select>
-            <div class="form-floating me-2 flex-fill mt-3">
-              <input type="text" class="form-control" id="record-payment-remarks" placeholder="placeholder" required="required"/>
-              <label for="record-payment-remarks">Remarks</label>
-            </div>
-          </div>
-        </div>
-
-        <!-- Modal footer -->
-        <div class="modal-footer d-flex align-items-end">
-          <div id="error-box-record-payment" class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-10 col-lg-6" style="color:white; background-color: #a6192e;">
-            <i class="bi bi-exclamation-triangle-fill fs-3"></i>
-            <div>
-              <strong class="fs-5">Warning!</strong><br/>
-              <span class="small" id="error-text-record-payment"></span>
-            </div>
-          </div>
-          <div class="ms-auto">
-            <button type="button" class="btn-red"
-            data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn-green-fill"
-            id="button-record-payment">Record</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-  <!-- Modal Record Payment Confirmation-->
-  <div class="modal fade" id="modalRecordPaymentConfirmation" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-md modal-fullscreen-md-down">
-      <div class="modal-content p-4">
-
-        <!-- Modal Header -->
-        <div class="modal-header d-flex align-items-center justify-content-center">
-          <p class="modal-title h2 font-red text-center">Record
-            Payment Confirmation</p>
-        </div>
-
-        <!-- Modal body -->
-        <div class="modal-body d-flex flex-column">
-          <div class="d-flex flex-row">
-            <p class="h5 font-red-gradient me-2">Receipt No:</p>
-            <p id="confirm-record-receipt-number" class="font-red"></p>
-          </div>
-          <div class="d-flex flex-row">
-            <p class="h5 font-red-gradient me-2">Renter ID:</p>
-            <p id="confirm-record-renter-id" class="font-red"></p>
-          </div>
-          <div class="d-flex flex-row">
-            <p class="h5 font-red-gradient me-2">Payment Type:</p>
-            <p id="confirm-record-payment-type" class="font-red"></p>
-          </div>
-          <div class="d-flex flex-row">
-            <p class="h5 font-red-gradient me-2">Payment Date:</p>
-            <p id="confirm-record-payment-date" class="font-red"></p>
-          </div>
-          <div class="d-flex flex-row">
-            <p class="h5 font-red-gradient me-2">Payment Amount:</p>
-            <p id="confirm-record-payment-amount" class="font-red"></p>
-          </div>
-          <div class="d-flex flex-row">
-            <p class="h5 font-red-gradient me-2">Payment Method:</p>
-            <p id="confirm-record-payment-method" class="font-red"></p>
-          </div>
-          <div class="d-flex flex-row">
-            <p class="h5 font-red-gradient me-2">Payment Amount
-              Type:</p>
-            <p id="confirm-record-payment-amount-type" class="font-red"></p>
-          </div>
-          <div class="d-flex flex-row">
-            <p class="h5 font-red-gradient me-2">Remarks:</p>
-            <p id="confirm-record-payment-remarks" class="font-red"></p>
-          </div>
-
-        </div>
-
-        <!-- Modal footer -->
-        <div class="modal-footer d-flex align-items-center justify-content-center">
-          <button type="button" class="btn-red" data-bs-dismiss="modal">Cancel</button>
-            <form id="hidden-payment-form" method="post" action="functions/pay.php">
-              <input type="hidden" id="hidden-record-bill-id" name="bill_id" />
-              <input type="hidden" id="hidden-record-reading-id" name="reading_id" />
-              <input type="hidden" id="hidden-record-overdue-bill-ids" name="overdue_bill_ids" />
-              <input type="hidden" id="hidden-record-receipt-number" name="receipt_number" />
-              <input type="hidden" id="hidden-record-renter-id" name="renter_id" />
-              <input type="hidden" id="hidden-record-payment-type" name="payment_type" />
-              <input type="hidden" id="hidden-record-payment-date" name="payment_date" />
-              <input type="hidden" id="hidden-record-payment-amount" name="payment_amount" />
-              <input type="hidden" id="hidden-record-payment-method" name="payment_method" />
-              <input type="hidden" id="hidden-record-payment-amount-type" name="payment_amount_type" />
-              <input type="hidden" id="hidden-record-payment-remarks" name="payment_remarks" />
-              <button type="submit" class="btn-green-fill" data-bs-dismiss="modal" data-bs-toggle="modal"
-               data-bs-target="#modalRecordPaymentSuccess" id="button-confirm-record-payment">Confirm</button>
-            </form>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal Record Payment Success -->
-  <div class="modal fade" id="modalRecordPaymentSuccess" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-md modal-fullscreen-md-down">
-      <div class="modal-content p-4">
-
-        <!-- Modal Header -->
-        <div class="modal-header d-flex align-items-center justify-content-center">
-          <p class="modal-title h2 font-green text-center">Payment
-            Recorded Successfully!</p>
-        </div>
-
-        <!-- Modal body -->
-        <div class="modal-body d-flex align-items-center justify-content-center">
-          <svg xmlns="http://www.w3.org/2000/svg" height="200px" viewBox="0 -960 960 960" width="200px" fill="#6EC456">
-            <path
-              d="m421-298 283-283-46-45-237 237-120-120-45 45 165 166Zm59 218q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-156t86-127Q252-817 325-848.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 82-31.5 155T763-197.5q-54 54.5-127 86T480-80Zm0-60q142 0 241-99.5T820-480q0-142-99-241t-241-99q-141 0-240.5 99T140-480q0 141 99.5 240.5T480-140Zm0-340Z" />
-          </svg>
-        </div>
-
-        <!-- Modal footer -->
-        <div class="modal-footer d-flex flex-column align-items-center justify-content-center">
-          <button type="button" class="btn-green-fill" data-bs-dismiss="modal" id="button-success-record-payment-notify"
-            data-bs-toggle="modal" data-bs-target="#modalSendNotificationSuccess">Confirm &amp;
-            Notify</button>
-          <button type="button" class="btn-green" data-bs-dismiss="modal"
-            id="button-success-record-payment">Confirm</button>
-        </div>
-      </div>
-    </div>
-  </div>
+                
+                <!-- Modal Record Payment -->
+                <div class="modal fade" id="modalRecordPayment-on-payment" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered modal-md modal-fullscreen-md-down">
+                        <div class="modal-content p-4">
+                            
+                            <!-- Modal Header -->
+                            <div class="modal-header d-flex flex-column align-items-start">
+                                <p class="modal-title h2 font-red-gradient">Record Payment</p>
+                                <p class="modal-title h4 font-red-gradient" id="record-payment-receipt-number-on-payment"></p>
+                            </div>
+                            
+                            <!-- Modal body -->
+                            <div class="modal-body">
+                                <div class="d-flex flex-column">
+                                    <select class="form-select custom-select select-sort me-1 col-1" id="record-payment-renter-on-payment">
+                                        <option selected="selected" disabled="disabled" hidden="hidden">Renter Name *</option>
+                                        <xsl:for-each select="$data//apartmentManagement/renters/renter[status='Active']">
+                                            <option value="{userId}">
+                                                <xsl:value-of select="personalInfo/name/firstName"/>
+                                                <xsl:text> </xsl:text>
+                                                <xsl:value-of select="personalInfo/name/middleName"/>
+                                                <xsl:if test="personalInfo/name/middleName"> </xsl:if>
+                                                <xsl:text> </xsl:text>
+                                                <xsl:value-of select="personalInfo/name/surname"/>
+                                                <xsl:if test="personalInfo/name/extension">
+                                                    <xsl:text> </xsl:text>
+                                                    <xsl:value-of select="personalInfo/name/extension"/>
+                                                </xsl:if>
+                                            </option>
+                                        </xsl:for-each>
+                                    </select>
+                                    <p class="h4 font-red-gradient mt-3">Payment Type</p>
+                                    <div class="d-flex flex-row">
+                                        <label class="custom-checkbox-container me-2">
+                                            <input type="checkbox" class="custom-checkbox" id="record-payment-electric-checkbox-on-payment"/>
+                                            Electricity
+                                        </label>
+                                        <label class="custom-checkbox-container me-2">
+                                            <input type="checkbox" class="custom-checkbox" id="record-payment-water-checkbox-on-payment"/>
+                                            Water
+                                        </label>
+                                        <label class="custom-checkbox-container me-2">
+                                            <input type="checkbox" class="custom-checkbox" id="record-payment-rent-checkbox-on-payment"/>
+                                            Rent
+                                        </label>
+                                    </div>
+                                    <p class="h4 font-red-gradient mt-3">Payment Details</p>
+                                    <div class="date-input-container me-2 mt-3 flex-fill" style="transform: translateX(0);">
+                                        <label for="record-payment-payment-date-on-payment" class="date-label">Payment Date <span>*</span></label>
+                                        <label class="date-input-wrapper">
+                                            <input type="date" id="record-payment-payment-date-on-payment" class="custom-date-input" required="required"/>
+                                            <span class="calendar-icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px"
+                                                                                 viewBox="0 -960 960 960" width="24px" fill="#8B0000">
+                                                    <path
+                                                        d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Zm280 240q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm-160 0q-17 0-28.5-11.5T280-440q0-17 11.5-28.5T320-480q17 0 28.5 11.5T360-440q0 17-11.5 28.5T320-400Zm320 0q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400ZM480-240q-17 0-28.5-11.5T440-280q0-17 11.5-28.5T480-320q17 0 28.5 11.5T520-280q0 17-11.5 28.5T480-240Zm-160 0q-17 0-28.5-11.5T280-280q0-17 11.5-28.5T320-320q17 0 28.5 11.5T360-280q0 17-11.5 28.5T320-240Zm320 0q-17 0-28.5-11.5T600-280q0-17 11.5-28.5T640-320q17 0 28.5 11.5T680-280q0 17-11.5 28.5T640-240Z" />
+                                                </svg></span>
+                                        </label>
+                                    </div>
+                                    <div class="form-floating me-2 flex-fill mt-3">
+                                        <input type="text" class="form-control" id="record-payment-payment-amount-on-payment" placeholder="placeholder" required="required"/>
+                                        <label for="record-payment-payment-amount-on-payment">Payment Amount *</label>
+                                    </div>
+                                    <select class="form-select custom-select select-sort me-1 col-1 mt-3" id="record-payment-method-on-payment">
+                                        <option selected="selected" disabled="disabled" hidden="hidden" value="">Payment Method *</option>
+                                        <option value="cash">Cash</option>
+                                        <option value="gcash">GCash</option>
+                                    </select>
+                                    <select class="form-select custom-select select-sort me-1 col-1 mt-3" id="record-payment-amount-type-on-payment">
+                                        <option selected="selected" disabled="disabled" hidden="hidden" value="">Payment Amount Type *</option>
+                                        <option value="full">Full Payment</option>
+                                        <option value="partial">Partial Payment</option>
+                                    </select>
+                                    <div class="form-floating me-2 flex-fill mt-3">
+                                        <input type="text" class="form-control" id="record-payment-remarks-on-payment" placeholder="placeholder" required="required"/>
+                                        <label for="record-payment-remarks-on-payment">Remarks</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Modal footer -->
+                            <div class="modal-footer d-flex align-items-end">
+                                <div id="error-box-record-payment-on-payment" class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-12" style="color:white; background-color: #a6192e;">
+                                    <i class="bi bi-exclamation-triangle-fill fs-3"></i>
+                                    <div>
+                                        <strong class="fs-5">Warning!</strong><br/>
+                                        <span class="small" id="error-text-record-payment-on-payment"></span>
+                                    </div>
+                                </div>
+                                <div class="ms-auto">
+                                    <button type="button" class="btn-red" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="button" class="btn-green-fill" id="button-record-payment-on-payment">Record</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Modal Record Payment Confirmation -->
+                <div class="modal fade" id="modalRecordPaymentConfirmation-on-payment" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered modal-md modal-fullscreen-md-down">
+                        <div class="modal-content p-4">
+                            
+                            <!-- Modal Header -->
+                            <div class="modal-header d-flex align-items-center justify-content-center">
+                                <p class="modal-title h2 font-red text-center">Record Payment Confirmation</p>
+                            </div>
+                            
+                            <!-- Modal body -->
+                            <div class="modal-body d-flex flex-column">
+                                <div class="d-flex flex-row">
+                                    <p class="h5 font-red-gradient me-2">Receipt No:</p>
+                                    <p id="confirm-record-receipt-number-on-payment" class="font-red"></p>
+                                </div>
+                                <div class="d-flex flex-row">
+                                    <p class="h5 font-red-gradient me-2">Renter ID:</p>
+                                    <p id="confirm-record-renter-id-on-payment" class="font-red"></p>
+                                </div>
+                                <div class="d-flex flex-row">
+                                    <p class="h5 font-red-gradient me-2">Payment Type:</p>
+                                    <p id="confirm-record-payment-type-on-payment" class="font-red"></p>
+                                </div>
+                                <div class="d-flex flex-row">
+                                    <p class="h5 font-red-gradient me-2">Payment Date:</p>
+                                    <p id="confirm-record-payment-date-on-payment" class="font-red"></p>
+                                </div>
+                                <div class="d-flex flex-row">
+                                    <p class="h5 font-red-gradient me-2">Payment Amount:</p>
+                                    <p id="confirm-record-payment-amount-on-payment" class="font-red"></p>
+                                </div>
+                                <div class="d-flex flex-row">
+                                    <p class="h5 font-red-gradient me-2">Payment Method:</p>
+                                    <p id="confirm-record-payment-method-on-payment" class="font-red"></p>
+                                </div>
+                                <div class="d-flex flex-row">
+                                    <p class="h5 font-red-gradient me-2">Payment Amount Type:</p>
+                                    <p id="confirm-record-payment-amount-type-on-payment" class="font-red"></p>
+                                </div>
+                                <div class="d-flex flex-row">
+                                    <p class="h5 font-red-gradient me-2">Remarks:</p>
+                                    <p id="confirm-record-payment-remarks-on-payment" class="font-red"></p>
+                                </div>
+                            </div>
+                            
+                            <!-- Modal footer -->
+                            <div class="modal-footer d-flex align-items-center justify-content-center">
+                                <button type="button" class="btn-red" data-bs-dismiss="modal">Cancel</button>
+                                <form id="hidden-payment-form-on-payment" method="post" action="functions/payOnPayments.php">
+                                    <input type="hidden" id="hidden-record-receipt-number-on-payment" name="receipt_number" />
+                                    <input type="hidden" id="hidden-record-renter-id-on-payment" name="renter_id" />
+                                    <input type="hidden" id="hidden-record-payment-type-on-payment" name="payment_type" />
+                                    <input type="hidden" id="hidden-record-payment-date-on-payment" name="payment_date" />
+                                    <input type="hidden" id="hidden-record-payment-amount-on-payment" name="payment_amount" />
+                                    <input type="hidden" id="hidden-record-payment-method-on-payment" name="payment_method" />
+                                    <input type="hidden" id="hidden-record-payment-amount-type-on-payment" name="payment_amount_type" />
+                                    <input type="hidden" id="hidden-record-payment-remarks-on-payment" name="payment_remarks" />
+                                    <button type="submit" class="btn-green-fill" data-bs-dismiss="modal" data-bs-toggle="modal"
+                                            data-bs-target="#modalRecordPaymentSuccess-on-payment" id="button-confirm-record-payment-on-payment">Confirm</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Modal Record Payment Success -->
+                <div class="modal fade" id="modalRecordPaymentSuccess-on-payment" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered modal-md modal-fullscreen-md-down">
+                        <div class="modal-content p-4">
+                            
+                            <!-- Modal Header -->
+                            <div class="modal-header d-flex align-items-center justify-content-center">
+                                <p class="modal-title h2 font-green text-center">Payment Recorded Successfully!</p>
+                            </div>
+                            
+                            <!-- Modal body -->
+                            <div class="modal-body d-flex align-items-center justify-content-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="200px" viewBox="0 -960 960 960" width="200px" fill="#6EC456">
+                                    <path
+                                        d="m421-298 283-283-46-45-237 237-120-120-45 45 165 166Zm59 218q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-156t86-127Q252-817 325-848.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 82-31.5 155T763-197.5q-54 54.5-127 86T480-80Zm0-60q142 0 241-99.5T820-480q0-142-99-241t-241-99q-141 0-240.5 99T140-480q0 141 99.5 240.5T480-140Zm0-340Z" />
+                                </svg>
+                            </div>
+                            
+                            <!-- Modal footer -->
+                            <div class="modal-footer d-flex flex-column align-items-center justify-content-center">
+                                <button type="button" class="btn-green-fill" data-bs-dismiss="modal" id="button-success-record-payment-notify-on-payment"
+                                        data-bs-toggle="modal" data-bs-target="#modalSendNotificationSuccess">Confirm &amp; Notify</button>
+                                <button type="button" class="btn-green" data-bs-dismiss="modal"
+                                        id="button-success-record-payment-on-payment">Confirm</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+  
 
                                                                                     <!-- Modal Send Notification Confirmation -->
                                                                                     <div class="modal fade" id="modalSendNotificationConfirmation"
