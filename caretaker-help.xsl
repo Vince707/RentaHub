@@ -10,25 +10,68 @@
                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                 <title>FAQs/Help Support &#128490; | RentaHub</title>
                 <link rel="icon" type="image/x-icon" href="images/logo-only.png" />
-                <!-- Latest compiled and minified CSS -->
-                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"/>
-                    <!-- Latest compiled JavaScript -->
-                    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
-                            integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
-                            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-                    
-                    <!-- FONTS -->
-                    <link rel="preconnect" href="https://fonts.googleapis.com" />
-                    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
-                        <link href="https://fonts.googleapis.com/css2?family=Varela+Round&amp;display=swap" rel="stylesheet" />
-                            <link rel="stylesheet" type="text/css" href="styles.css" />
-                            <!-- jQuery Script -->
-                            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-                            <script src="script.js"></script>
-                        </head>
+                
+                <!-- Bootstrap 5 CSS -->
+                <link
+                    href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css"
+                    rel="stylesheet"/>
+                
+                <!-- Bootstrap Icons -->
+                <link rel="stylesheet"
+                      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"/>
+                
+                <!-- DataTables Bootstrap 5 CSS -->
+                <link href="https://cdn.datatables.net/2.3.0/css/dataTables.bootstrap5.css"
+                      rel="stylesheet"/>
+                
+                <!-- Google Fonts -->
+                <link rel="preconnect" href="https://fonts.googleapis.com"/>
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin"/>
+                <link
+                    href="https://fonts.googleapis.com/css2?family=Varela+Round&amp;display=swap"
+                    rel="stylesheet"/>
+                
+                <!-- Custom CSS -->
+                <link rel="stylesheet" type="text/css" href="styles.css"/>
+                
+                <!-- jQuery (latest) -->
+                <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+                
+                <!-- Bootstrap 5 JS Bundle (with Popper) -->
+                <script
+                    src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+                
+                <!-- DataTables JS Core + Bootstrap 5 Integration -->
+                <script src="https://cdn.datatables.net/2.3.0/js/dataTables.js"></script>
+                <script
+                    src="https://cdn.datatables.net/2.3.0/js/dataTables.bootstrap5.js"></script>
+                
+                <!-- DataTables Buttons Extensions for Export -->
+                <script
+                    src="https://cdn.datatables.net/buttons/3.2.3/js/dataTables.buttons.js"></script>
+                <script
+                    src="https://cdn.datatables.net/buttons/3.2.3/js/buttons.dataTables.js"></script>
+                <script
+                    src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+                <script
+                    src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+                <script
+                    src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+                <script
+                    src="https://cdn.datatables.net/buttons/3.2.3/js/buttons.html5.min.js"></script>
+                <script
+                    src="https://cdn.datatables.net/buttons/3.2.3/js/buttons.print.min.js"></script>
+                
+                <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+                </script>
+                <!-- Custom JS -->
+                <script src="script.js"></script>
+            </head>
                         <script>
+                (function () {
+                emailjs.init("0PPn2GEXyW3Nrjq_v"); // Replace with your EmailJS User ID
+                                })();
+                
                 // Allowed roles for this page
                 const allowedRoles = ['admin', 'caretaker'];
                 
@@ -110,6 +153,25 @@
                 $('#accounts-menu-item').hide();
                 }
                 });
+                
+                function sendInquiry(inquiry) {
+                const currentUserStr = localStorage.getItem('currentUser');
+                if (!currentUserStr) return;
+                    
+                    const currentUser = JSON.parse(currentUserStr);
+                
+                    const templateParams = {
+                        inquiry: inquiry,
+                        renterEmail: currentUser.email
+                    };
+                    
+                    emailjs.send('service_8p2cgis', 'template_1glsq68', templateParams)
+                    .then(function (response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                    }, function (error) {
+                    console.error('FAILED...', error);
+                });
+                    }
                         </script>
                         
                         <body class="h-100">
@@ -794,7 +856,7 @@
                                                             <div class="ms-auto">
                                                                 <button type="button" class="btn-red" data-bs-dismiss="modal"
                                                                         id="button-cancel-send-inquiry">Cancel</button>
-                                                                <button type="button" class="btn-green-fill" id="button-send-inquiry">Send</button>
+                                                                <button type="button" class="btn-green-fill" id="button-send-inquiry" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalSendInquiryConfirmation">Send</button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -861,6 +923,14 @@
                                         
                                         
                                         <script>
+                    $('#button-confirm-send-inquiry').on('click', function() {
+                        sendInquiry($('#inquiry-message').val());
+                    });
+                    
+                    $('#button-send-inquiry').on('click', function() {
+                        $('#confirm-send-inquiry-message').text($('#inquiry-message').val());
+                    });
+                                            
                                             const translations = {
                                             // RENTER MANAGEMENT
                                             faqA1: {

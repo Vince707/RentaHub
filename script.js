@@ -4202,6 +4202,14 @@ function displaySuccessModal() {
     
   }
 
+  // NEW: Handle rent bill generated success
+  const rentBillStatus = urlParams.get('rentBill');
+  if (rentBillStatus === 'generated') {
+    $('#modalGenerateRentBillSuccess').modal('show'); // Make sure you have a modal with this ID
+    // Optionally, if generating a rent bill also triggers a notification:
+    // window.location.href = 'functions/sendNotificationAll.php?message=Rent%20Bill%20is%20Generated&current_page=billings';
+  }
+
   // Handle electric metadata modified success
   const electricMetadataStatus = urlParams.get('electricmetadata');
   if (electricMetadataStatus === 'modified') {
@@ -5195,6 +5203,7 @@ $(document).on('click', '#account-button-account-delete', function() {
 
   // Reset or clear any other inputs if needed
 });
+
 
 
 
@@ -7182,6 +7191,43 @@ $('#button-confirm-record-payment-on-payment').on("click", function () {
     $('#record-payment-rent-checkbox-on-payment').prop('checked', false);
 });
 
+// Handle Generate button click
+$('#button-generate-rent-bill').on('click', function () {
+  const renterId = $('#generate-rent-bill-renter-id').val();
+  const amount = $('#generate-rent-bill-amount').val().trim();
+  const dueDate = $('#generate-rent-bill-due-date').val();
+
+  // Validate inputs
+  if (!renterId) {
+    showError('Please enter the Renter ID.',"#error-box-generate-rent-bill", "#error-text-generate-rent-bill");
+    return;
+  }
+  if (!amount || isNaN(amount) || Number(amount) <= 0) {
+    showError('Please enter a valid amount greater than 0.',"#error-box-generate-rent-bill", "#error-text-generate-rent-bill");
+    return;
+  }
+  if (!dueDate) {
+    showError('Please select a due date.',"#error-box-generate-rent-bill", "#error-text-generate-rent-bill");
+    return;
+  }
+
+   $('#error-text-generate-rent-bill').text('');
+  $('#error-box-generate-rent-bill').addClass('d-none');
+
+  // Populate confirmation modal fields
+  $('#confirm-generate-rent-bill-renter-id').text(renterDataMap[renterId].firstName + " " + renterDataMap[renterId].middleName + " " + renterDataMap[renterId].surname + " " + renterDataMap[renterId].extension);
+  $('#confirm-generate-rent-bill-amount').text('PHP ' + Number(amount).toFixed(2));
+  $('#confirm-generate-rent-bill-due-date').text(dueDate);
+
+  // Populate hidden form inputs
+  $('#hidden-generate-rent-bill-renter-id').val(renterId);
+  $('#hidden-generate-rent-bill-amount').val(amount);
+  $('#hidden-generate-rent-bill-due-date').val(dueDate);
+
+  // Show confirmation modal and hide current modal
+  $('#modalGenerateRentBill').modal('hide');
+  $('#modalGenerateRentBillConfirmation').modal('show');
+});
 
   // $('#button-login').on("click", function () {
   //   // Collect input values

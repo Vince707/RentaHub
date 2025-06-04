@@ -309,6 +309,15 @@
               </svg>
               Water Bill
             </button>
+            <button type="button" class="ms-1 btn-red d-flex align-items-center px-3 py-1" data-bs-toggle="modal"
+            data-bs-target="#modalGenerateRentBill">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                         fill="#8B0000">
+                      <path
+                        d="M760-400v-260L560-800 360-660v60h-80v-100l280-200 280 200v300h-80ZM560-800Zm20 160h40v-40h-40v40Zm-80 0h40v-40h-40v40Zm80 80h40v-40h-40v40Zm-80 0h40v-40h-40v40ZM280-220l278 76 238-74q-5-9-14.5-15.5T760-240H558q-27 0-43-2t-33-8l-93-31 22-78 81 27q17 5 40 8t68 4q0-11-6.5-21T578-354l-234-86h-64v220ZM40-80v-440h304q7 0 14 1.5t13 3.5l235 87q33 12 53.5 42t20.5 66h80q50 0 85 33t35 87v40L560-60l-280-78v58H40Zm80-80h80v-280h-80v280Z" />
+                    </svg>
+            Rent Bill
+          </button>
           </div>
         </div>
         <div class="horizontal mt-1 mb-2"></div>
@@ -2267,8 +2276,159 @@
       </div>
     </div>
   </div>
+        
+        
+        
+        
+        
+        
+        
+        <!-- Modal Generate Rent Bill -->
+        <div class="modal fade" id="modalGenerateRentBill" tabindex="-1">
+          <div class="modal-dialog modal-dialog-centered modal-md modal-fullscreen-md-down">
+            <div class="modal-content p-4">
+              
+              <!-- Modal Header -->
+              <div class="modal-header">
+                <p class="modal-title h2 font-red-gradient">Generate Rent Bill</p>
+              </div>
+              
+              <!-- Modal Body -->
+              <div class="modal-body d-flex flex-column">
+                <div class="d-flex flex-row mb-3 flex-wrap col-12">
+                  <div class="d-flex flex-row mb-3 flex-wrap col-12">
+                    <div class="me-2 mb-3 flex-fill">
+                      <select class="form-select custom-select select-sort me-1 col-1" id="generate-rent-bill-renter-id">
+                        <option selected="selected" disabled="disabled" hidden="hidden">Select Renter... *</option>
+                        <xsl:for-each select="$data//apartmentManagement/renters/renter[status='Active']">
+                          <xsl:variable name="unitId" select="rentalInfo/unitId"/>
+                          
+                          <option value="{userId}">
+                            <!-- Lookup roomNo by matching unitId -->
+                            <xsl:value-of select="$data//apartmentManagement/rooms/room[rentPrice and @id = $unitId]/roomNo"/>
+                            <xsl:text> </xsl:text>
+                            <xsl:value-of select="personalInfo/name/firstName"/>
+                            <xsl:text> </xsl:text>
+                            <xsl:value-of select="personalInfo/name/middleName"/>
+                            <xsl:if test="personalInfo/name/middleName"> </xsl:if>
+                            <xsl:text> </xsl:text>
+                            <xsl:value-of select="personalInfo/name/surname"/>
+                            <xsl:if test="personalInfo/name/extension">
+                              <xsl:text> </xsl:text>
+                              <xsl:value-of select="personalInfo/name/extension"/>
+                            </xsl:if>
+                          </option>
+                        </xsl:for-each>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-floating me-2 flex-fill">
+                    <input type="number" step="0.01" min="0" class="form-control" id="generate-rent-bill-amount" placeholder="" required="required"/>
+                    <label for="generate-rent-bill-amount">Amount (PHP) *</label>
+                  </div>
+                  <div class="date-input-container me-2 flex-fill">
+                    <label for="generate-rent-bill-due-date" class="date-label">Due Date <span>*</span></label>
+                    <label class="date-input-wrapper">
+                      <input type="date" id="generate-rent-bill-due-date" class="custom-date-input" required="required"/>
+                      <span class="calendar-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#8B0000">
+                          <path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Zm280 240q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm-160 0q-17 0-28.5-11.5T280-440q0-17 11.5-28.5T320-480q17 0 28.5 11.5T360-440q0 17-11.5 28.5T320-400Zm320 0q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400ZM480-240q-17 0-28.5-11.5T440-280q0-17 11.5-28.5T480-320q17 0 28.5 11.5T520-280q0 17-11.5 28.5T480-240Zm-160 0q-17 0-28.5-11.5T280-280q0-17 11.5-28.5T320-320q17 0 28.5 11.5T360-280q0 17-11.5 28.5T320-240Zm320 0q-17 0-28.5-11.5T600-280q0-17 11.5-28.5T640-320q17 0 28.5 11.5T680-280q0 17-11.5 28.5T640-240Z"/>
+                        </svg>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Modal Footer -->
+              <div class="modal-footer d-flex justify-content-between">
+                <div id="error-box-generate-rent-bill" class="alert d-none flex-row align-items-start gap-3 p-3 border-0 rounded-3 col-12" style="color:white; background-color: #a6192e;">
+                  <i class="bi bi-exclamation-triangle-fill fs-3"></i>
+                  <div>
+                    <strong class="fs-5">Warning!</strong><br/>
+                    <span class="small" id="error-text-generate-rent-bill"></span>
+                  </div>
+                </div>
+                <div class="ms-auto">
+                  <button type="button" class="btn-red" data-bs-dismiss="modal" id="button-cancel-generate-rent-bill">Cancel</button>
+                  <button type="button" class="btn-green-fill" id="button-generate-rent-bill">Generate</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Modal Generate Rent Bill Confirmation -->
+        <div class="modal fade" id="modalGenerateRentBillConfirmation" tabindex="-1">
+          <div class="modal-dialog modal-dialog-centered modal-md modal-fullscreen-md-down">
+            <div class="modal-content p-4">
+              
+              <!-- Modal Header -->
+              <div class="modal-header ">
+                <p class="modal-title h2 font-red-gradient">Generate Rent Bill Confirmation</p>
+              </div>
+              
+              <!-- Modal Body -->
+              <div class="modal-body d-flex flex-column align-items-start text-center gap-3">
+                <div class="d-flex flex-row">
+                  <p class="h5 font-red-gradient mb-1">Renter:</p>
+                  <p id="confirm-generate-rent-bill-renter-id" class="font-red mb-2"></p>
+                </div>
+                <div class="d-flex flex-row">
+                  <p class="h5 font-red-gradient mb-1">Amount:</p>
+                  <p id="confirm-generate-rent-bill-amount" class="font-red mb-2"></p>
+                </div>
+                <div class="d-flex flex-row">
+                  <p class="h5 font-red-gradient mb-1">Due Date:</p>
+                  <p id="confirm-generate-rent-bill-due-date" class="font-red mb-2"></p>
+                </div>
+              </div>
+              
+              <!-- Modal Footer -->
+              <div class="modal-footer align-items-end">
+                <button type="button" class="btn-red me-2" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalGenerateRentBill">Cancel</button>
+                <form id="form-generate-rent-bill" method="POST" action="functions/generate-rent-bill.php">
+                  <input type="hidden" name="renter_id" id="hidden-generate-rent-bill-renter-id" />
+                  <input type="hidden" name="amount" id="hidden-generate-rent-bill-amount" />
+                  <input type="hidden" name="due_date" id="hidden-generate-rent-bill-due-date" />
+                  <button type="submit" class="btn-green-fill" id="button-confirm-generate-rent-bill">Confirm</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Modal Generate Rent Bill Success -->
+        <div class="modal fade" id="modalGenerateRentBillSuccess" tabindex="-1">
+          <div class="modal-dialog modal-dialog-centered modal-md modal-fullscreen-md-down">
+            <div class="modal-content p-4">
+              
+              <!-- Modal Header -->
+              <div class="modal-header d-flex align-items-center justify-content-center">
+                <p class="modal-title h2 font-green text-center">Rent Bill Generated Successfully!</p>
+              </div>
+              
+              <!-- Modal Body -->
+              <div class="modal-body d-flex align-items-center justify-content-center">
+                <svg xmlns="http://www.w3.org/2000/svg" height="200px" viewBox="0 -960 960 960" width="200px" fill="#6EC456"><path d="m421-298 283-283-46-45-237 237-120-120-45 45 165 166Zm59 218q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-156t86-127Q252-817 325-848.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 82-31.5 155T763-197.5q-54 54.5-127 86T480-80Zm0-60q142 0 241-99.5T820-480q0-142-99-241t-241-99q-141 0-240.5 99T140-480q0 141 99.5 240.5T480-140Zm0-340Z"/></svg>
+              </div>
+              
+              <!-- Modal Footer -->
+              <div class="modal-footer d-flex align-items-center justify-content-center">
+                <button type="button" class="btn-green-fill" data-bs-dismiss="modal" id="button-success-generate-rent-bill">Confirm</button>
+              </div>
+            </div>
+          </div>
+        </div>
 
-
+        
+        
+        
+        
+        
+        
+        
+        
 </body>
 
 </html>

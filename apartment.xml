@@ -3790,15 +3790,14 @@
                 <debt>0</debt>
                 <status>Paid</status>
             </bill>
-            <bill id="R3">
+            <!-- <bill id="R3">
                 <renterId>3</renterId>
                 <amount>4200</amount>
-                <dueDate>2025-06-05</dueDate>
+                <dueDate>2025-06-10</dueDate>
                 <overpaid>0</overpaid>
                 <debt>0</debt>
-                <!-- Half paid -->
                 <status>Unpaid</status>
-            </bill>
+            </bill> -->
             <bill id="R4">
                 <renterId>4</renterId>
                 <amount>5000</amount>
@@ -3975,39 +3974,8 @@
                 <debt>0</debt>
                 <status>Paid</status>
             </bill>
-            <bill id="R26">
-                <renterId>3</renterId>
-                <amount>4700</amount>
-                <dueDate>2025-02-02</dueDate>
-                <overpaid>0</overpaid>
-                <debt>0</debt>
-                <status>Paid</status>
-            </bill>
-            <bill id="R27">
-                <renterId>3</renterId>
-                <amount>4700</amount>
-                <dueDate>2025-03-03</dueDate>
-                <overpaid>0</overpaid>
-                <debt>0</debt>
-                <status>Paid</status>
-            </bill>
-            <bill id="R28">
-                <renterId>3</renterId>
-                <amount>4700</amount>
-                <dueDate>2025-04-04</dueDate>
-                <overpaid>0</overpaid>
-                <debt>0</debt>
-                <status>Paid</status>
-            </bill>
-            <bill id="R29">
-                <renterId>3</renterId>
-                <amount>4700</amount>
-                <dueDate>2025-05-05</dueDate>
-                <overpaid>0</overpaid>
-                <debt>0</debt>
-                <status>Paid</status>
-            </bill>
-        </rentBills>
+          
+        <bill id="R26"><renterId>3</renterId><amount>4300</amount><dueDate>2025-06-11</dueDate><overpaid>0</overpaid><debt>0</debt><status>Unpaid</status></bill></rentBills>
     </billing>
 
     <payments>
